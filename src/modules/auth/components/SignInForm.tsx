@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { CustomInput } from '@/components/CustomInput';
 import { ButtonsSelectProviders } from './ButtonsSelectProviders';
 import { CustomLoading } from '@/components/CustomLoading';
-import { LogIn } from 'lucide-react';
+import { LogIn, Mail } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
@@ -50,6 +50,7 @@ export const SignInForm = () => {
             placeholder='john@mail.com'
             type='email'
             tabindex={1}
+            addon={Mail}
           />
           <div className='w-full  flex items-center justify-end'>
             <Link
