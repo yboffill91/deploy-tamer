@@ -88,7 +88,7 @@ export default function ResetPasswordPage() {
               You can now log in with your new password.
             </p>
             <Button asChild className='w-full'>
-              <Link href='/login'>Go to login</Link>
+              <Link href='/sign_in'>Go to Sign In</Link>
             </Button>
           </CardContent>
         </Card>

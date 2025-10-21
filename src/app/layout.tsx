@@ -14,10 +14,8 @@ const layout = ({ children }: { children: Readonly<ReactNode> }) => {
           bodyFont.className
         )}
       >
-        <AuthProvider>
-          {children}
-          <Toaster position='top-center'  />
-        </AuthProvider>
+        <AuthProvider>{children}</AuthProvider>
+        <Toaster position='top-center' />
       </body>
     </html>
   );

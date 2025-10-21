@@ -64,7 +64,7 @@ export const CustomInput = <TFieldValues extends FieldValues>({
       {isPasswordField ? (
         <InputGroup
           className={cn(
-            'bg-input',
+            'bg-primary/10',
             error &&
               'bg-destructive/5 border-destructive/20 placeholder:text-destructive/40 text-destructive'
           )}
@@ -98,7 +98,7 @@ export const CustomInput = <TFieldValues extends FieldValues>({
       ) : addon ? (
         <InputGroup
           className={cn(
-            'bg-input',
+            'bg-primary/10',
             error &&
               'bg-destructive/5 border-destructive/20 placeholder:text-destructive/40 text-destructive'
           )}
@@ -128,7 +128,7 @@ export const CustomInput = <TFieldValues extends FieldValues>({
           placeholder={placeholder}
           tabIndex={tabindex}
           className={cn(
-            'bg-input rounded',
+            'bg-primary/10 rounded',
             error &&
               'bg-destructive/5 border-destructive/20 placeholder:text-destructive/40 text-destructive'
           )}

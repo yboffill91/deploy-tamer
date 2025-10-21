@@ -11,7 +11,7 @@ export default function MessagePage() {
         <p className='text-lg text-muted-foreground text-pretty'>
           This is a public page
         </p>
-        <Link href={'/sign-in'}>
+        <Link href={'/sign_in'}>
           <Button>Sign In</Button>
         </Link>
       </div>

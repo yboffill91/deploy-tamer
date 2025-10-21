@@ -67,7 +67,7 @@ export default function ForgotPasswordPage() {
               password.
             </p>
             <Button asChild className='w-full bg-transparent' variant='outline'>
-              <Link href='/sign-in'>
+              <Link href='/sign_in'>
                 <ArrowLeft className='mr-2 h-4 w-4' />
                 Back to Sign In
               </Link>
@@ -111,7 +111,7 @@ export default function ForgotPasswordPage() {
             </Button>
 
             <Button asChild variant='ghost' className='w-full' type='button'>
-              <Link href='/sign-in'>
+              <Link href='/sign_in'>
                 <ArrowLeft className='mr-2 h-4 w-4' />
                 Back to Sign In
               </Link>

@@ -15,7 +15,7 @@ export function useCurrentUser() {
 
   useEffect(() => {
     execute();
-  }, [execute]);
+  }, []);
 
   const refreshUser = async () => {
     return execute();

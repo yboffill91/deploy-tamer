@@ -19,6 +19,7 @@ export * from './drawer';
 export * from './dropdown-menu';
 export * from './form';
 export * from './hover-card';
+export * from './input-group';
 export * from './input-otp';
 export * from './input';
 export * from './label';

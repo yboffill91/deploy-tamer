@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { CustomInput } from '@/components/CustomInput';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
-import { Mail, UserPlus } from 'lucide-react';
+import { User, UserPlus } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { CustomLoading } from '@/components/CustomLoading';
 import { ButtonsSelectProviders } from './ButtonsSelectProviders';
@@ -50,7 +50,7 @@ export const SignUpForm = () => {
             name='email'
             placeholder='john@mail.com'
             type='email'
-            addon={Mail}
+            addon={User}
           />
           <div className='space-y-2'>
             <CustomInput

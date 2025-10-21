@@ -1,5 +1,4 @@
 import Link from 'next/link';
-
 import {
   Card,
   CardDescription,
@@ -7,29 +6,27 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { SignInForm } from '@/modules/auth/components/SignInForm';
+import { SignUpForm } from '@/modules/auth/components/SignUpForm';
 
-export default function LoginPage() {
+export default function RegisterPage() {
   return (
     <div className='min-h-screen flex items-center justify-center p-4 bg-background'>
       <Card className='w-full max-w-md'>
         <CardHeader className='space-y-1'>
           <CardTitle className='text-2xl font-semibold text-balance'>
-            Sign In
+            Sign Up
           </CardTitle>
-          <CardDescription>
-            Type your credentials to fully access
-          </CardDescription>
+          <CardDescription>Type your data to get Signed Up</CardDescription>
         </CardHeader>
-        <SignInForm />
+        <SignUpForm />
         <CardFooter>
           <p className='text-sm text-muted-foreground text-center w-full'>
-            Don&apos;t have an account yet?{' '}
+            Allready have an account?{' '}
             <Link
-              href='/sign-up'
+              href='/sign_in'
               className='text-primary hover:underline font-medium'
             >
-              Sign-Up
+              Sign In
             </Link>
           </p>
         </CardFooter>

@@ -52,25 +52,27 @@ export const SignInForm = () => {
             tabindex={1}
             addon={Mail}
           />
-          <div className='w-full  flex items-center justify-end'>
-            <Link
-              href={'/forgot-password'}
-              className='text-right text-sm w-full text-muted-foreground'
-              tabIndex={3}
-            >
-              Forgot your password?
-            </Link>
-          </div>
-          <div>
-            <CustomInput
-              register={register}
-              error={errors.password}
-              label='Password'
-              name='password'
-              placeholder='*********'
-              type='password'
-              tabindex={2}
-            />
+          <div className='relative'>
+            <div className='w-full  flex items-center justify-end'>
+              <Link
+                href={'/forgot_password'}
+                className='text-right text-sm text-primary w-full absolute bottom-0 right-0.5'
+                tabIndex={3}
+              >
+                Forgot your password?
+              </Link>
+            </div>
+            <div>
+              <CustomInput
+                register={register}
+                error={errors.password}
+                label='Password'
+                name='password'
+                placeholder='*********'
+                type='password'
+                tabindex={2}
+              />
+            </div>
           </div>
         </div>
         <Button
