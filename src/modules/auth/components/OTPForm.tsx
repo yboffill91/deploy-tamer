@@ -10,7 +10,7 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { CustomLoading } from "@/components/CustomLoading";
-import { ShieldCheck } from "lucide-react";
+import { Minus, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -18,6 +18,7 @@ import { useState } from "react";
 import { otpSchema, otpType } from "../models";
 import { LocalStorageOTPRepository } from "@/infraestructure/repositories/OTPRepository";
 import { useAuth } from "../providers/AuthProvider";
+import { Separator } from "@/components/ui";
 
 export const OTPForm = () => {
   const {
@@ -26,7 +27,8 @@ export const OTPForm = () => {
     formState: { errors },
   } = useForm<otpType>({
     resolver: zodResolver(otpSchema),
-    mode: "onBlur",
+
+    mode: "onChange",
   });
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -86,6 +88,7 @@ export const OTPForm = () => {
                   <InputOTPSlot index={0} />
                   <InputOTPSlot index={1} />
                   <InputOTPSlot index={2} />
+
                   <InputOTPSlot index={3} />
                   <InputOTPSlot index={4} />
                   <InputOTPSlot index={5} />

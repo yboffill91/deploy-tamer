@@ -11,9 +11,9 @@ import { LogIn, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { useAuth } from "../providers/AuthProvider";
 import Link from "next/link";
 import { useEffect } from "react";
+import { useAuth } from "@/modules/auth";
 
 export const SignInForm = () => {
   const {
@@ -25,7 +25,7 @@ export const SignInForm = () => {
     mode: "onBlur",
   });
   const router = useRouter();
-  const { login, error, loading } = useAuth();
+  const { login, error, loading, user } = useAuth();
 
   useEffect(() => {
     if (error) {
@@ -35,6 +35,8 @@ export const SignInForm = () => {
 
   const onSubmit = async (data: userLoginType) => {
     await login(data.email, data.password);
+
+    console.log("Pasé por aqui");
     router.push("/verify_account");
   };
 

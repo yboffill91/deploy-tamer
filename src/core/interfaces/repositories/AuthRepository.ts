@@ -8,5 +8,5 @@ export interface AuthRepository {
   logout(): Promise<void>;
   register(email: Email, password: Password): Promise<User>;
   resetPassword(email: Email): Promise<void>;
-  confirmPasswordReset(oobCode: string, newPassword: Password): Promise<void>;
+  confirmPasswordReset(oobCode: string, newPassword: string): Promise<void>;
 }

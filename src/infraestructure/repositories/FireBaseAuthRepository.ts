@@ -113,18 +113,18 @@ export class FirebaseAuthRepository implements AuthRepository {
 
   async confirmPasswordReset(
     oobCode: string,
-    newPassword: Password
+    newPassword: string
   ): Promise<void> {
     try {
-      await confirmPasswordReset(this.auth, oobCode, newPassword.getValue());
+      await confirmPasswordReset(this.auth, oobCode, newPassword);
     } catch (error: any) {
       if (error.code === 'auth/invalid-action-code') {
         throw new AuthError(
-          'El enlace de restablecimiento no es válido o ha expirado'
+          'Reset link has expired'
         );
       }
       throw new AuthError(
-        error.message || 'Error al restablecer la contraseña'
+        error.message || 'Error resetting the password'
       );
     }
   }
