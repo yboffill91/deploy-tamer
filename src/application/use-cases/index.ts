@@ -7,4 +7,3 @@ export * from './RegisterUserWithProviderCaseUse';
 export * from './ResetPasswordConfirmUseCase';
 export * from './ResetPasswordUseCase';
 export * from './SendEmailUseCase';
-export * from './SendOnboardingEmailUseCase';
