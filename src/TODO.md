@@ -12,4 +12,12 @@ firebaseUser.getIdToken()
 
 ## ✅ Arreglar el logout
 
-## Preparar el Middleware para vindear las rutas
+## Preparar el Middleware para bindear las rutas
+
+## ✅ Revisa los console logs del provider de auth, el route de mail
+
+## Cambiar la estructura de carpetas para modularizar la app por boundary feature igual que nest
+
+## Revisar el factory de email
+
+## crear la entidad otp

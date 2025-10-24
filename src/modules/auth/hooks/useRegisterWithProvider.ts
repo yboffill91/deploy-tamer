@@ -1,4 +1,4 @@
-import { FirebaseAuthRepository } from '@/infraestructure/repositorries';
+import { FirebaseAuthRepository } from '@/infraestructure/repositories';
 import { useAsync } from './useAsync';
 
 export function useRegisterUserWithProvider() {

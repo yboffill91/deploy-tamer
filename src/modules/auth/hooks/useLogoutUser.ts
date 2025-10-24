@@ -1,4 +1,4 @@
-import { FirebaseAuthRepository } from '@/infraestructure/repositorries';
+import { FirebaseAuthRepository } from '@/infraestructure/repositories';
 import { LogoutUser } from '@/application/use-cases';
 import { useAsync } from './useAsync';
 

@@ -1,5 +1,5 @@
 import { useAsync } from './useAsync';
-import { FirebaseAuthRepository } from '@/infraestructure/repositorries';
+import { FirebaseAuthRepository } from '@/infraestructure/repositories';
 import { ResetPasswordConfirm } from '@/application/use-cases';
 
 export function useResetPasswordConfirm() {

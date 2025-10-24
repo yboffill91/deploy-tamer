@@ -1,11 +1,11 @@
-'use client';
-import { CustomLoading } from '@/components/CustomLoading';
-import { Button } from '@/components/ui';
-import { cn } from '@/lib/utils';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
-import { useAuth } from '../providers/AuthProvider';
+"use client";
+import { CustomLoading } from "@/components/CustomLoading";
+import { Button } from "@/components/ui";
+import { cn } from "@/lib/utils";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { useAuth } from "../providers/AuthProvider";
 
 export const ButtonsSelectProviders = ({
   loadingMessage,
@@ -16,41 +16,41 @@ export const ButtonsSelectProviders = ({
 
   const { loginWithProvider, error, loading } = useAuth();
 
-  const onClickloginWithProvider = async (provider: 'google' | 'facebook') => {
+  const onClickloginWithProvider = async (provider: "google" | "facebook") => {
     await loginWithProvider(provider);
-    router.push('/profile');
+    router.push("/verify_account");
   };
   return (
     <>
-      <div className={cn('relative')}>
-        <div className='absolute inset-0 flex items-center'>
-          <span className='w-full border-t' />
+      <div className={cn("relative")}>
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
         </div>
-        <div className='relative flex justify-center text-xs uppercase'>
-          <span className='bg-card px-2 text-muted-foreground'>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-card px-2 text-muted-foreground">
             Or continue with
           </span>
         </div>
       </div>
-      <div className='grid  gap-4'>
+      <div className="grid  gap-4">
         <Button
-          variant='outline'
+          variant="outline"
           className={cn(
-            'w-full',
-            loading && 'bg-muted text-muted-foreground/80 pointer-events-none'
+            "w-full",
+            loading && "bg-muted text-muted-foreground/80 pointer-events-none"
           )}
-          onClick={() => onClickloginWithProvider('google')}
+          onClick={() => onClickloginWithProvider("google")}
         >
           {loading ? (
             <CustomLoading message={loadingMessage} />
           ) : (
             <>
               <Image
-                src={'/logos/google.svg'}
+                src={"/logos/google.svg"}
                 width={64}
                 height={64}
-                alt=''
-                className='size-4'
+                alt=""
+                className="size-4"
               />
               Google
             </>

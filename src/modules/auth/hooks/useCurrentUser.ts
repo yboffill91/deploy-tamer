@@ -1,7 +1,7 @@
 'use client';
 import { useEffect } from 'react';
 import { useAsync } from './useAsync';
-import { FirebaseAuthRepository } from '@/infraestructure/repositorries';
+import { FirebaseAuthRepository } from '@/infraestructure/repositories';
 import { GetCurrentUser } from '@/application/use-cases';
 import type { User } from '@/core';
 
