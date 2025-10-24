@@ -1,20 +1,16 @@
-import LoginCodeEmail from '@/modules/email/templates/LoginCodeEmail';
-import { pretty, render } from '@react-email/render'
-
 export interface OTPRepository {
   generateOTP(email: string): Promise<void>;
   verifyOTP(email: string, code: string): Promise<boolean>;
 }
 
 export class LocalStorageOTPRepository implements OTPRepository {
-
-
   private readonly EXPIRATION_TIME_MS = 5 * 60 * 1000;
 
   private generateCode(): string {
     const chars = '0123456789';
-    return Array.from({ length: 6 }, () =>
-      chars[Math.floor(Math.random() * chars.length)]
+    return Array.from(
+      { length: 6 },
+      () => chars[Math.floor(Math.random() * chars.length)]
     ).join('');
   }
 
@@ -268,8 +264,7 @@ export class LocalStorageOTPRepository implements OTPRepository {
         </div>
     </div>
 </body>
-</html>`
-
+</html>`;
 
     await fetch('/api/email', {
       method: 'POST',
@@ -277,7 +272,7 @@ export class LocalStorageOTPRepository implements OTPRepository {
       body: JSON.stringify({
         to: email,
         subject: 'Second Factor Authentication Code',
-        html: html
+        html: html,
       }),
     });
   }
