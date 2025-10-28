@@ -11,13 +11,15 @@ import {
   FacebookAuthProvider,
   sendPasswordResetEmail,
   confirmPasswordReset,
+  updateProfile,
+  updateEmail,
+  updatePassword,
 } from 'firebase/auth';
-import { AuthError, AuthRepository, Email, Password, User } from '@/core';
+import { AuthError, IAuthRepository, Email, Password, User } from '@/core';
 import { firebaseApp } from '../services/firebase';
-import { FirebaseUserMapper } from '../dto';
+import { FirebaseUserMapper, UserProfileDTO } from '../dto';
 
-
-export class FirebaseAuthRepository implements AuthRepository {
+export class FirebaseAuthRepository implements IAuthRepository {
   private readonly auth = getAuth(firebaseApp);
 
   async register(email: Email, password: Password): Promise<User> {
@@ -29,11 +31,10 @@ export class FirebaseAuthRepository implements AuthRepository {
       );
 
       return FirebaseUserMapper.toDomain(user);
-    } catch (error: any) {
-      if (error.code === 'auth/email-already-in-use')
-        throw AuthError.userAlreadyExists();
-      console.warn(error);
-      throw new AuthError(error.message);
+    } catch (error) {
+      throw new AuthError(
+        error instanceof Error ? error.message : 'Error registring user'
+      );
     }
   }
 
@@ -45,10 +46,10 @@ export class FirebaseAuthRepository implements AuthRepository {
         password.getValue()
       );
       return FirebaseUserMapper.toDomain(user);
-    } catch (error: any) {
-      if (error.code === 'auth/invalid-credential')
-        throw AuthError.invalidCredentials();
-      throw new AuthError(error.message);
+    } catch (error) {
+      throw new AuthError(
+        error instanceof AuthError ? error.message : 'Error signing in user'
+      );
     }
   }
 
@@ -61,8 +62,10 @@ export class FirebaseAuthRepository implements AuthRepository {
   async logout(): Promise<void> {
     try {
       await signOut(this.auth);
-    } catch (error: any) {
-      throw new AuthError(error.message || 'Error signing out');
+    } catch (error) {
+      throw new AuthError(
+        error instanceof Error ? error.message : 'Error logging out'
+      );
     }
   }
 
@@ -87,8 +90,10 @@ export class FirebaseAuthRepository implements AuthRepository {
         providerInstance
       );
       return FirebaseUserMapper.toDomain(user);
-    } catch (error: any) {
-      throw new AuthError(error.message);
+    } catch (error) {
+      throw new AuthError(
+        error instanceof Error ? error.message : 'Error singing in user'
+      );
     }
   }
   async resetPassword(email: Email): Promise<void> {
@@ -103,11 +108,10 @@ export class FirebaseAuthRepository implements AuthRepository {
         email.getValue(),
         actionCodeSettings
       );
-    } catch (error: any) {
-      if (error.code === 'auth/user-not-found') {
-        throw AuthError.userNotFound();
-      }
-      throw new AuthError(error.message);
+    } catch (error) {
+      throw new AuthError(
+        error instanceof Error ? error.message : 'Error reseting user password'
+      );
     }
   }
 
@@ -117,14 +121,40 @@ export class FirebaseAuthRepository implements AuthRepository {
   ): Promise<void> {
     try {
       await confirmPasswordReset(this.auth, oobCode, newPassword);
-    } catch (error: any) {
-      if (error.code === 'auth/invalid-action-code') {
-        throw new AuthError(
-          'Reset link has expired'
-        );
-      }
+    } catch (error) {
       throw new AuthError(
-        error.message || 'Error resetting the password'
+        error instanceof Error ? error.message : 'Error resetting password'
+      );
+    }
+  }
+
+  async updateUser(data: UserProfileDTO): Promise<User> {
+    const currentUser = this.auth.currentUser;
+    if (!currentUser) throw new AuthError('User no authenticated');
+
+    try {
+      const { displayName, email, password, photoUrl } = data;
+
+      if (displayName || photoUrl) {
+        await updateProfile(currentUser, {
+          displayName: displayName ?? currentUser.displayName,
+          photoURL: photoUrl ?? currentUser.photoURL,
+        });
+      }
+
+      if (email && email !== currentUser.email) {
+        await updateEmail(currentUser, email);
+      }
+
+      if (password) {
+        await updatePassword(currentUser, password);
+      }
+
+      await currentUser.reload();
+      return FirebaseUserMapper.toDomain(currentUser);
+    } catch (error) {
+      throw new AuthError(
+        error instanceof Error ? error.message : 'Error updating user info'
       );
     }
   }

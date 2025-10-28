@@ -1,0 +1,23 @@
+import { Separator } from '@/components/ui/separator';
+
+interface ContentSectionProps {
+  title: string;
+  desc: string;
+  children: React.JSX.Element;
+}
+
+export function ContentSection({ title, desc, children }: ContentSectionProps) {
+  return (
+    <div className='flex flex-1 flex-col'>
+      <div className='flex-none'>
+        <h3 className='text-lg font-medium'>{title}</h3>
+        <p className='text-muted-foreground text-sm'>{desc}</p>
+      </div>
+      <Separator className='my-4 flex-none' />
+      <div className='faded-bottom relative h-full w-full overflow-y-auto scroll-smooth pr-4 pb-12'>
+        <div className='-mx-1 px-1.5'>{children}</div>
+        {/* <div className='to-background pointer-events-none absolute right-4 bottom-12 left-0 h-16 bg-linear-to-b from-transparent' /> */}
+      </div>
+    </div>
+  );
+}

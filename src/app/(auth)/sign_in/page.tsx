@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/card';
 import { SignInForm } from '@/modules/auth/components/SignInForm';
 
-export default function LoginPage() {
+export default async function LoginPage() {
   return (
     <div className='min-h-screen flex items-center justify-center p-4 bg-background'>
       <Card className='w-full max-w-md'>

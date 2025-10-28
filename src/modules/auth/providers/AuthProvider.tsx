@@ -1,22 +1,25 @@
-"use client";
+'use client';
 
 import {
   createContext,
-  PropsWithChildren,
   ReactNode,
   useContext,
   useEffect,
   useState,
-} from "react";
-import { AuthError, Email, Password, User } from "@/core";
-import { FirebaseAuthRepository } from "@/infraestructure/repositories";
+} from 'react';
+import { AuthError, Email, Password, User } from '@/core';
+import {
+  FirebaseAuthRepository,
+  SessionRepository,
+} from '@/infraestructure/repositories';
 import {
   onAuthStateChanged,
   User as FirebaseUser,
   getAuth,
-} from "firebase/auth";
-import { FirebaseUserMapper } from "@/infraestructure/dto";
-import { LocalStorageOTPRepository } from "@/infraestructure/repositories/OTPRepository";
+} from 'firebase/auth';
+import { FirebaseUserMapper } from '@/infraestructure/dto';
+import { LocalStorageOTPRepository } from '@/infraestructure/repositories/OTPRepository';
+import { useRouter } from 'next/navigation';
 
 interface AuthContextType {
   user: User | null;
@@ -25,7 +28,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string) => Promise<void>;
   loginWithProvider: (
-    provider: "google" | "github" | "facebook"
+    provider: 'google' | 'github' | 'facebook'
   ) => Promise<void>;
 
   logout: () => Promise<void>;
@@ -42,8 +45,11 @@ export const AuthProvider = ({ children }: Props) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const router = useRouter();
+
   const AuthRepository = new FirebaseAuthRepository();
   const OtpRepository = new LocalStorageOTPRepository();
+  const ManageSessionRepository = new SessionRepository();
 
   useEffect(() => {
     const auth = getAuth();
@@ -56,14 +62,13 @@ export const AuthProvider = ({ children }: Props) => {
       }
       setLoading(false);
     });
-
     return () => unsubscribe();
   }, []);
   const generateOtp = async (user: User) => {
     try {
       await OtpRepository.generateOTP(user.email.getValue());
     } catch (error) {
-      setError("Error generating OTP" + error);
+      setError('Error generating OTP' + error);
     }
   };
 
@@ -75,7 +80,9 @@ export const AuthProvider = ({ children }: Props) => {
       const passwordVO = new Password(password);
       const user = await AuthRepository.login(emailVO, passwordVO);
       setUser(user);
+      ManageSessionRepository.createSessionCookie(user.id);
       await generateOtp(user);
+      router.push('/verify_account');
     } catch (error) {
       setError(
         error instanceof Error
@@ -94,7 +101,10 @@ export const AuthProvider = ({ children }: Props) => {
       const passwordVO = new Password(password);
       const user = await AuthRepository.register(emailVO, passwordVO);
       setUser(user);
+      ManageSessionRepository.createSessionCookie(user.id);
+
       await generateOtp(user);
+      router.push('/verify_account');
     } catch (error) {
       setError(
         error instanceof Error
@@ -107,13 +117,16 @@ export const AuthProvider = ({ children }: Props) => {
   };
 
   const loginWithProvider = async (
-    provider: "google" | "github" | "facebook"
+    provider: 'google' | 'github' | 'facebook'
   ) => {
     setLoading(true);
     try {
       const user = await AuthRepository.loginWithProvider(provider);
       setUser(user);
+      ManageSessionRepository.createSessionCookie(user.id);
+
       await generateOtp(user);
+      router.push('/verify_account');
     } catch (error) {
       setError(
         error instanceof Error
@@ -129,6 +142,9 @@ export const AuthProvider = ({ children }: Props) => {
     setLoading(true);
     try {
       await AuthRepository.logout();
+
+      ManageSessionRepository.deleteSessionCookie();
+
       setUser(null);
     } catch (error) {
       setError(
@@ -161,6 +177,6 @@ export const AuthProvider = ({ children }: Props) => {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth must be used within an AuthProvider");
+  if (!context) throw new Error('useAuth must be used within an AuthProvider');
   return context;
 };

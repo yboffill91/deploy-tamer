@@ -1,24 +1,19 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { CardContent } from "@/components/ui/card";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
-import { CustomLoading } from "@/components/CustomLoading";
-import { Minus, ShieldCheck } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
-import { useState } from "react";
-import { otpSchema, otpType } from "../models";
-import { LocalStorageOTPRepository } from "@/infraestructure/repositories/OTPRepository";
-import { useAuth } from "../providers/AuthProvider";
-import { Separator } from "@/components/ui";
+import { Button } from '@/components/ui/button';
+import { CardContent } from '@/components/ui/card';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
+import { CustomLoading } from '@/components/CustomLoading';
+import { Minus, ShieldCheck } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
+import { useState } from 'react';
+import { otpSchema, otpType } from '../models';
+import { LocalStorageOTPRepository } from '@/infraestructure/repositories/OTPRepository';
+import { useAuth } from '../providers/AuthProvider';
 
 export const OTPForm = () => {
   const {
@@ -28,7 +23,7 @@ export const OTPForm = () => {
   } = useForm<otpType>({
     resolver: zodResolver(otpSchema),
 
-    mode: "onChange",
+    mode: 'onChange',
   });
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -40,31 +35,26 @@ export const OTPForm = () => {
 
   const goToLoginHandler = () => {
     localStorage.removeItem(`${user?.email.getValue()}`);
-    router.push("/sign_in");
+    router.push('/sign_in');
   };
 
   const onSubmit = async (data: otpType) => {
     setLoading(true);
 
     if (!user) {
-      toast.error("User not found");
+      toast.error('User not found');
       return;
     }
     try {
-      const isValid = await otpRepository.verifyOTP(
-        user.email.getValue(),
-        data.otp
-      );
+      const isValid = await otpRepository.verifyOTP(user.email.getValue(), data.otp);
       if (!isValid) {
         setTryes((prev) => prev + 1);
-        throw new Error("Invalid or expired code");
+        throw new Error('Invalid or expired code');
       }
-      toast.success("Code validated successfully");
-      router.push("/profile");
+      toast.success('Code validated successfully');
+      router.push('/admin');
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Something went wrong"
-      );
+      toast.error(error instanceof Error ? error.message : 'Something went wrong');
     } finally {
       setLoading(false);
     }
@@ -96,9 +86,7 @@ export const OTPForm = () => {
               </InputOTP>
             )}
           />
-          {errors.otp && (
-            <p className="text-xs text-destructive">{errors.otp.message}</p>
-          )}
+          {errors.otp && <p className="text-xs text-destructive">{errors.otp.message}</p>}
           <p className="text-xs text-muted-foreground text-center">
             Enter the code sent to your email
           </p>
@@ -106,8 +94,8 @@ export const OTPForm = () => {
 
         <Button
           className={cn(
-            "w-full",
-            loading && "bg-muted text-muted-foreground/50 pointer-events-none"
+            'w-full',
+            loading && 'bg-muted text-muted-foreground/50 pointer-events-none',
           )}
           size="lg"
           type="submit"
@@ -126,7 +114,7 @@ export const OTPForm = () => {
       </form>
       {tryes >= 3 && (
         <div className="flex flex-col items-center gap-2">
-          <Button variant={"ghost"} onClick={goToLoginHandler}>
+          <Button variant={'ghost'} onClick={goToLoginHandler}>
             Go back to Sign In
           </Button>
 
@@ -138,9 +126,9 @@ export const OTPForm = () => {
 
       <Button
         type="button"
-        variant={"ghost"}
+        variant={'ghost'}
         onClick={() => {
-          toast.success("Code resent successfully");
+          toast.success('Code resent successfully');
         }}
         tabIndex={3}
       >

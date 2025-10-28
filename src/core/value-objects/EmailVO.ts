@@ -1,5 +1,5 @@
 export class Email {
-  private readonly value: string;
+  private value: string;
 
   constructor(email: string) {
     if (!this.validate(email)) {
@@ -19,5 +19,9 @@ export class Email {
 
   public equals(other: Email): boolean {
     return this.value === other.value;
+  }
+
+  public setValue(newValue: string) {
+    return (this.value = newValue);
   }
 }

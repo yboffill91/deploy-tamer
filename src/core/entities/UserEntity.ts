@@ -21,4 +21,16 @@ export class User {
       params.photoUrl
     );
   }
+
+  getDisplayName() {
+    return this.displayName;
+  }
+
+  getPhotoUrl() {
+    return this.photoUrl;
+  }
+
+  updateEmail(newEmail: string) {
+    return this.email.setValue(newEmail);
+  }
 }
