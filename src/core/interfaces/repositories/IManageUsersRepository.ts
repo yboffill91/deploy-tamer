@@ -7,5 +7,5 @@ export interface IManageUsersRepository {
   create(user: User): Promise<User>;
   update(user: User): Promise<User>;
   delete(id: string): Promise<boolean>;
-  updateRoles(id: string, roles: string[]): Promise<User | null>;
+  // updateRoles(id: string, roles: string[]): Promise<User | null>;
 }

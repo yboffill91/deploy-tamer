@@ -1,4 +1,4 @@
-import { IManageUserRepository, User, UserDTO, UserRole } from '@/core';
+import { IManageUserRepository, User, UserDTO } from '@/core';
 import { mockUsers } from '@/lib/mocks/Users.Mock';
 
 const STORAGE_KEY = 'app_users_mock';
@@ -44,15 +44,15 @@ export class InMemoryUserRepository implements IManageUserRepository {
     }
   }
 
-  async updateRole(userId: string, newRole: UserRole): Promise<void> {
-    // const idx = this.users.findIndex((u) => u.id === userId);
-    // if (idx >= 0) {
-    //   const updated = this.users[idx].updateRole(newRole);
-    //   this.users[idx] = updated;
-    //   this.save();
-    // }
-    console.log(userId, newRole);
-  }
+  // async updateRole(userId: string, newRole: UserRole): Promise<void> {
+  //   // const idx = this.users.findIndex((u) => u.id === userId);
+  //   // if (idx >= 0) {
+  //   //   const updated = this.users[idx].updateRole(newRole);
+  //   //   this.users[idx] = updated;
+  //   //   this.save();
+  //   // }
+  //   console.log(userId, newRole);
+  // }
 
   async saveAll(users: User[]): Promise<void> {
     this.users = users;
