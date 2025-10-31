@@ -1,3 +1,4 @@
+import { IFirebaseUpdateProfileRepository } from '@/core/interfaces';
 import {
   updateEmail,
   updatePassword,
@@ -5,13 +6,9 @@ import {
   User,
 } from 'firebase/auth';
 
-interface IUserRepository {
-  updateUserName(user: User, value: string): Promise<void>;
-  updateUserEmail(user: User, value: string): Promise<void>;
-  updateUserPassword(user: User, value: string): Promise<void>;
-}
-
-export class UserRepository implements IUserRepository {
+export class FirebaseUpdateProfileUser
+  implements IFirebaseUpdateProfileRepository
+{
   async updateUserEmail(user: User, value: string): Promise<void> {
     try {
       await updateEmail(user, value);

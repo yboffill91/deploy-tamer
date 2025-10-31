@@ -1,4 +1,12 @@
-import { ChartBar, KeyIcon, LayoutDashboard, LucideIcon, SearchIcon, User } from 'lucide-react';
+import {
+  KeyIcon,
+  LayoutDashboard,
+  LayoutList,
+  LucideIcon,
+  SearchIcon,
+  ShieldCheck,
+  Users,
+} from 'lucide-react';
 
 export interface NavSubItem {
   title: string;
@@ -33,31 +41,61 @@ export const AdminSidebarItems: NavGroup[] = [
     label: 'Dashboards',
     items: [
       {
-        title: 'Default',
-        url: '/admin/default',
+        title: 'Home',
+        url: '/admin/dashboard',
         icon: LayoutDashboard,
       },
-      {
-        title: 'CRM',
-        url: '/admin/crm',
-        icon: ChartBar,
-      } /* 
+      // {
+      //   title: 'CRM',
+      //   url: '/admin/crm',
+      //   icon: ChartBar,
+      // }
+      /*
       {
         title: "Finance",
         url: "/admin/finance",
         icon: Banknote,
-      }, */,
-      {
-        title: 'Customers',
-        url: '/admin/users',
-        icon: User,
-        comingSoon: false,
-      },
+      }, */
+      // {
+      //   title: 'Users',
+      //   url: '/admin/users',
+      //   icon: User,
+      //   comingSoon: false,
+      // },
       {
         title: 'SEO',
         url: '/admin/seo',
         icon: SearchIcon,
-        subItems: [{ title: 'Keyword Research', url: '/admin/seo/key_research', icon: KeyIcon }],
+        subItems: [
+          {
+            title: 'Keyword Research',
+            url: '/admin/seo/key_research',
+            icon: KeyIcon,
+          },
+        ],
+        comingSoon: false,
+      },
+    ],
+  },
+  {
+    id: 2,
+    label: 'Settings',
+    items: [
+      {
+        title: 'Users',
+        url: '/admin/users',
+        icon: Users,
+      },
+      {
+        title: 'Position',
+        url: '/admin/positions-management',
+        icon: LayoutList,
+      },
+
+      {
+        title: 'Roles',
+        url: '/admin/roles-management',
+        icon: ShieldCheck,
         comingSoon: false,
       },
     ],

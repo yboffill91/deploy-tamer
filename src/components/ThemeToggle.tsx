@@ -9,6 +9,7 @@ export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
@@ -20,25 +21,25 @@ export function ThemeToggle() {
     <Button
       variant={'ghost'}
       size={'sm'}
-      className="flex items-center !p-2 text-foreground"
+      className='flex items-center p-2 text-foreground'
       onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
     >
       {theme === 'dark' && (
         <Sun
-          className=" transition-opacity duration-300 size-4"
+          className=' transition-opacity duration-300 size-4'
           style={{ opacity: theme === 'dark' ? 0.5 : 1 }}
         />
       )}
 
       {theme === 'light' && (
         <Moon
-          className=" transition-opacity duration-300 size-4"
+          className=' transition-opacity duration-300 size-4'
           style={{ opacity: theme === 'light' ? 0.5 : 1 }}
         />
       )}
       {theme === 'system' && (
         <SunMoon
-          className="transition-opacity duration-300 size-4"
+          className='transition-opacity duration-300 size-4'
           style={{
             opacity: theme === 'system' ? 0.5 : 1,
           }}

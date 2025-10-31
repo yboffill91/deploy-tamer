@@ -7,16 +7,12 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { AuthError, Email, Password, User } from '@/core';
+import { Email, Password, User } from '@/core';
 import {
   FirebaseAuthRepository,
   SessionRepository,
 } from '@/infraestructure/repositories';
-import {
-  onAuthStateChanged,
-  User as FirebaseUser,
-  getAuth,
-} from 'firebase/auth';
+import { onAuthStateChanged, getAuth } from 'firebase/auth';
 import { FirebaseUserMapper } from '@/infraestructure/dto';
 import { LocalStorageOTPRepository } from '@/infraestructure/repositories/OTPRepository';
 import { useRouter } from 'next/navigation';

@@ -11,10 +11,9 @@ import toast from 'react-hot-toast';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/modules/auth';
 import { userEditSchema, userEditType } from './models';
-import {
-  FirebaseAuthRepository,
-  UserRepository,
-} from '@/infraestructure/repositories';
+import { FirebaseAuthRepository } from '@/infraestructure/repositories';
+import { ManageUsersRepository } from '@/infraestructure/repositories/ManageUsersRepository';
+import { User } from '@/core';
 
 export const EditUserForm = () => {
   const {
@@ -30,8 +29,21 @@ export const EditUserForm = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [domainUser, setDomainUser] = useState<User | null>(null);
   const userRepository = new FirebaseAuthRepository();
 
+  useEffect(() => {
+    const repo = new ManageUsersRepository();
+    const getDomainUser = async () => {
+      const dmUser = await repo.getByEmail(
+        user?.email.getValue() ?? 'email@email.com'
+      );
+      setDomainUser(dmUser);
+    };
+    getDomainUser();
+  }, [user?.email]);
+
+  console.log(domainUser);
   useEffect(() => {
     setLoading(true);
     try {

@@ -8,7 +8,6 @@ import {
   ShoppingBag,
   GraduationCap,
   Forklift,
-  Search,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';

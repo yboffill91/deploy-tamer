@@ -9,10 +9,9 @@ import { ButtonsSelectProviders } from './ButtonsSelectProviders';
 import { CustomLoading } from '@/components/CustomLoading';
 import { LogIn, Mail } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import toast from 'react-hot-toast';
 import Link from 'next/link';
-import { useEffect } from 'react';
 import { useAuth } from '@/modules/auth';
+import { useErrorToast } from '@/hooks/useErrorToast';
 
 export const SignInForm = () => {
   const {
@@ -25,11 +24,7 @@ export const SignInForm = () => {
   });
   const { login, error, loading } = useAuth();
 
-  useEffect(() => {
-    if (error) {
-      toast.error(error);
-    }
-  }, [error]);
+  useErrorToast(error);
 
   const onSubmit = async (data: userLoginType) => {
     await login(data.email, data.password);

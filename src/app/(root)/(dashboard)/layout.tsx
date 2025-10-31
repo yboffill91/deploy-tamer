@@ -6,7 +6,7 @@ import {
   SidebarTrigger,
 } from '@/components/ui';
 import { cn } from '@/lib/utils';
-import { AppSidebar, SearchDialog } from '@/modules/dashboard';
+import { AppSidebar } from '@/modules/dashboard';
 import { ReactNode } from 'react';
 
 const layout = ({ children }: { children: Readonly<ReactNode> }) => {
@@ -30,11 +30,9 @@ const layout = ({ children }: { children: Readonly<ReactNode> }) => {
                   orientation='vertical'
                   className='mx-2 data-[orientation=vertical]:h-4'
                 />
-                <SearchDialog />
+                {/* <SearchDialog /> */}
               </div>
               <div className='flex items-center gap-2'>
-                {/* <RenovateSuscription /> */}
-                {/* <LayoutControls {...layoutPreferences} /> */}
                 <ThemeToggle />
 
                 {/* <AccountSwitcher users={users} /> */}

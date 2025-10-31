@@ -4,9 +4,13 @@ import { Button } from '@/components/ui/button';
 import { CardContent } from '@/components/ui/card';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from '@/components/ui/input-otp';
 import { CustomLoading } from '@/components/CustomLoading';
-import { Minus, ShieldCheck } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
@@ -46,7 +50,10 @@ export const OTPForm = () => {
       return;
     }
     try {
-      const isValid = await otpRepository.verifyOTP(user.email.getValue(), data.otp);
+      const isValid = await otpRepository.verifyOTP(
+        user.email.getValue(),
+        data.otp
+      );
       if (!isValid) {
         setTryes((prev) => prev + 1);
         throw new Error('Invalid or expired code');
@@ -54,18 +61,20 @@ export const OTPForm = () => {
       toast.success('Code validated successfully');
       router.push('/admin');
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Something went wrong');
+      toast.error(
+        error instanceof Error ? error.message : 'Something went wrong'
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <CardContent className="space-y-4">
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-        <div className="flex flex-col items-center gap-2">
+    <CardContent className='space-y-4'>
+      <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-4'>
+        <div className='flex flex-col items-center gap-2'>
           <Controller
-            name="otp"
+            name='otp'
             control={control}
             render={({ field }) => (
               <InputOTP
@@ -86,8 +95,10 @@ export const OTPForm = () => {
               </InputOTP>
             )}
           />
-          {errors.otp && <p className="text-xs text-destructive">{errors.otp.message}</p>}
-          <p className="text-xs text-muted-foreground text-center">
+          {errors.otp && (
+            <p className='text-xs text-destructive'>{errors.otp.message}</p>
+          )}
+          <p className='text-xs text-muted-foreground text-center'>
             Enter the code sent to your email
           </p>
         </div>
@@ -95,15 +106,15 @@ export const OTPForm = () => {
         <Button
           className={cn(
             'w-full',
-            loading && 'bg-muted text-muted-foreground/50 pointer-events-none',
+            loading && 'bg-muted text-muted-foreground/50 pointer-events-none'
           )}
-          size="lg"
-          type="submit"
+          size='lg'
+          type='submit'
           tabIndex={2}
           disabled={tryes >= 3}
         >
           {loading ? (
-            <CustomLoading message="Verificando" />
+            <CustomLoading message='Verificando' />
           ) : (
             <>
               <ShieldCheck />
@@ -113,19 +124,19 @@ export const OTPForm = () => {
         </Button>
       </form>
       {tryes >= 3 && (
-        <div className="flex flex-col items-center gap-2">
+        <div className='flex flex-col items-center gap-2'>
           <Button variant={'ghost'} onClick={goToLoginHandler}>
             Go back to Sign In
           </Button>
 
-          <p className="text-xs text-destructive">
+          <p className='text-xs text-destructive'>
             You have exceeded the maximum number of attempts
           </p>
         </div>
       )}
 
       <Button
-        type="button"
+        type='button'
         variant={'ghost'}
         onClick={() => {
           toast.success('Code resent successfully');

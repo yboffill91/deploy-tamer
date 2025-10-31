@@ -1,7 +1,7 @@
 'use client';
 
 // import { useClerk } from '@clerk/nextjs';
-import { EllipsisVertical, CircleUser, CreditCard, LogOut } from 'lucide-react';
+import { EllipsisVertical, CreditCard, LogOut } from 'lucide-react';
 import Link from 'next/link';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
