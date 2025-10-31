@@ -7,4 +7,3 @@ export * from './OTPRepository';
 export * from './PositionManagementRepository';
 export * from './RoleManagementRepository';
 export * from './SessionRepository';
-export * from './UserManagementRepository';

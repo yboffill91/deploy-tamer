@@ -1,76 +1,51 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-//  Este repositorio es para tratar el mock de usuarios y roles hasta que esté listo el backend
+import { User } from '@/core';
+import { UserDTO } from '@/core/dto';
+import { IUserManagementRepository } from '@/core/interfaces';
 
-import { IManageUsersRepository, User } from '@/core';
-import {
-  loadFromLocalStorage,
-  saveToLocalStorage,
-} from '@/lib/mocks/localStorage';
-import { defaultUsers } from '@/lib/mocks/mockUsers';
+export class UserManagementRepository implements IUserManagementRepository {
+  private readonly STORAGE_KEY = 'users';
 
-const STORAGE_KEY = 'mock_users';
-
-export class ManageUsersRepository implements IManageUsersRepository {
-  private users: User[];
-
-  constructor() {
-    const saved = loadFromLocalStorage<any[]>(STORAGE_KEY);
-    this.users = (saved ?? defaultUsers).map((u) => User.fromPrimitives(u));
-    if (!saved) this.persist();
+  async findAll(): Promise<UserDTO[]> {
+    const data = localStorage.getItem(this.STORAGE_KEY);
+    if (!data) return [];
+    return JSON.parse(data) as UserDTO[];
   }
 
-  private persist() {
-    saveToLocalStorage(
-      STORAGE_KEY,
-      this.users.map((u) => u.toPrimitives())
-    );
+  async findById(id: string): Promise<UserDTO | null> {
+    const users = await this.findAll();
+    return users.find((u) => u.id === id) ?? null;
   }
 
-  async getAll(): Promise<User[]> {
-    return this.users;
+  async findByEmail(email: string): Promise<UserDTO | null> {
+    const users = await this.findAll();
+    return users.find((u) => u.email === email) ?? null;
   }
 
-  async getById(id: string): Promise<User | null> {
-    return this.users.find((u) => u.id === id) ?? null;
+  async save(user: User | UserDTO): Promise<void> {
+    let dto: UserDTO;
+
+    if ('toPrimitives' in user) {
+      dto = user.toPrimitives();
+    } else {
+      dto = user;
+    }
+
+    const users = await this.findAll();
+    const index = users.findIndex((u) => u.id === dto.id);
+
+    if (index >= 0) users[index] = dto;
+    else users.push(dto);
+
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(users));
   }
 
-  async getByEmail(email: string): Promise<User | null> {
-    const normalized = email.toLowerCase();
-    return (
-      this.users.find((u) => u.email.getValue().toLowerCase() === normalized) ??
-      null
-    );
+  async delete(id: string): Promise<void> {
+    const users = await this.findAll();
+    const filtered = users.filter((u) => u.id !== id);
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(filtered));
   }
 
-  async create(user: User): Promise<User> {
-    const exists = this.users.find((u) => u.id === user.id);
-    if (exists) throw new Error(`User with id ${user.id} already exists`);
-    this.users.push(user);
-    this.persist();
-    return user;
+  async clear(): Promise<void> {
+    localStorage.removeItem(this.STORAGE_KEY);
   }
-
-  async update(user: User): Promise<User> {
-    const idx = this.users.findIndex((u) => u.id === user.id);
-    if (idx === -1) throw new Error(`User with id ${user.id} not found`);
-    this.users[idx] = user;
-    this.persist();
-    return user;
-  }
-
-  async delete(email: string): Promise<boolean> {
-    const prevLength = this.users.length;
-    this.users = this.users.filter((u) => u.email.getValue() !== email);
-    this.persist();
-    return this.users.length < prevLength;
-  }
-
-  // async updateRoles(id: string, roles: string[]): Promise<User | null> {
-  //   const user = this.users.find((u) => u.id === id);
-  //   if (!user) return null;
-  //   const updated = user.setRoles(roles);
-  //   this.users = this.users.map((u) => (u.id === id ? updated : u));
-  //   this.persist();
-  //   return updated;
-  // }
 }

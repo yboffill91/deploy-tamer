@@ -1,9 +1,9 @@
-import { PositionList } from '@/modules/users/admin/components';
+import { UserList } from '@/modules/users/admin/components/UsersList';
 
 const UsersPage = () => {
   return (
     <div>
-      <PositionList />
+      <UserList />
     </div>
   );
 };

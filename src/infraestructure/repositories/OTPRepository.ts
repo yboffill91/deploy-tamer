@@ -1,3 +1,5 @@
+import { AuthError } from '@/core';
+
 export interface OTPRepository {
   generateOTP(email: string): Promise<void>;
   verifyOTP(email: string, code: string): Promise<boolean>;
@@ -266,7 +268,7 @@ export class LocalStorageOTPRepository implements OTPRepository {
 </body>
 </html>`;
 
-    await fetch('/api/email', {
+    const response = await fetch('/api/email', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -275,6 +277,10 @@ export class LocalStorageOTPRepository implements OTPRepository {
         html: html,
       }),
     });
+
+    const data = await response.json();
+    if (!response.ok)
+      throw Error('Error sending second factor verification email', data);
   }
 
   async verifyOTP(email: string, code: string): Promise<boolean> {
