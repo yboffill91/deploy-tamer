@@ -52,6 +52,9 @@ export const RoleList = () => {
         <>Loading...</>
       ) : (
         <>
+          <div className='my-6 flex items-center justify-end'>
+            <Button onClick={() => setShowModal(true)}>Add New</Button>
+          </div>
           <GenericDataTable
             data={roles}
             onDelete={(role) => {
@@ -73,7 +76,7 @@ export const RoleList = () => {
           <ControlledDialog
             open={showEdit}
             onOpenChange={setShowEdit}
-            title={`Edit role ${selectedRole?.name}`}
+            title={`Edit role`}
           >
             <RoleEditForm roleId={selectedRole?.id ?? ' '} />
           </ControlledDialog>
@@ -93,9 +96,6 @@ export const RoleList = () => {
           </ControlledDialog>
         </>
       )}
-      <div className='mt-6 flex items-center justify-end'>
-        <Button onClick={() => setShowModal(true)}>Add New</Button>
-      </div>
     </>
   );
 };

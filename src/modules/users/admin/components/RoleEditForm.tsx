@@ -37,7 +37,6 @@ export function RoleEditForm({ roleId, onSuccess }: Props) {
     defaultValues: { name: '' },
   });
 
-  // Cargar datos del rol
   useEffect(() => {
     const loadRole = async () => {
       const role = await repository.findById(roleId);

@@ -105,12 +105,13 @@ export function NavUser() {
             </Link>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem asChild className='cursor-pointer'>
+              {/* <DropdownMenuItem asChild className='cursor-pointer'>
                 <Link href='/admin/settings/billing'>
                   <CreditCard className='mr-2 h-4 w-4' />
                   <span>Billing</span>
                 </Link>
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
+              <p className='text-muted'>User Actions Bulk</p>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem className='cursor-pointer' onClick={handleLogout}>

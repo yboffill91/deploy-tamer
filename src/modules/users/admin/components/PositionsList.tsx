@@ -63,6 +63,9 @@ export const PositionList = () => {
         <>Loading...</>
       ) : (
         <>
+          <div className='my-6 flex items-center justify-end'>
+            <Button onClick={() => setShowModal(true)}>Add New</Button>
+          </div>
           <GenericDataTable
             data={tableData} // usamos la versión "pulida" con nombres
             onDelete={(item) => {
