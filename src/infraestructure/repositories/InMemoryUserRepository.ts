@@ -45,12 +45,13 @@ export class InMemoryUserRepository implements IManageUserRepository {
   }
 
   async updateRole(userId: string, newRole: UserRole): Promise<void> {
-    const idx = this.users.findIndex((u) => u.id === userId);
-    if (idx >= 0) {
-      const updated = this.users[idx].updateRole(newRole);
-      this.users[idx] = updated;
-      this.save();
-    }
+    // const idx = this.users.findIndex((u) => u.id === userId);
+    // if (idx >= 0) {
+    //   const updated = this.users[idx].updateRole(newRole);
+    //   this.users[idx] = updated;
+    //   this.save();
+    // }
+    console.log(userId, newRole);
   }
 
   async saveAll(users: User[]): Promise<void> {
