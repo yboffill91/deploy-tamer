@@ -2,7 +2,7 @@ export * from './AccessFeatureRepository';
 export * from './FireBaseAuthRepository';
 export * from './FirebaseUpdateProfileRepository';
 export * from './InMemoryUserRepository';
-export * from './ManageUsersRepository';
+// export * from './ManageUsersRepository';
 export * from './OTPRepository';
 export * from './PositionManagementRepository';
 export * from './RoleManagementRepository';
