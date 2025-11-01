@@ -1,19 +1,45 @@
-// import { SectionCards } from '@/modules/users/admin';
+'use client';
 
-// export default function Page() {
-//   return (
-//     <div className='@container/main flex flex-col gap-4 md:gap-6'>
-//       {/* <SectionCards /> */}
-//       {/* <ChartAreaInteractive /> */}
-//       {/* <MVPSuccessMetrics /> */}
-//     </div>
-//   );
-// }
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
 
-import React from 'react';
+import { getAuth } from 'firebase/auth';
+import { UserCheck } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 const AdminPage = () => {
-  return <div>AdminPage</div>;
+  const [token, setToken] = useState<string | undefined>();
+
+  useEffect(() => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    const getToken = async () => {
+      const fbToken = await user?.getIdToken();
+      setToken(fbToken ?? 'No token');
+    };
+    getToken();
+  }, [token]);
+  console.log(token);
+  console.log(token);
+  return (
+    <Empty>
+      <EmptyHeader>
+        <EmptyMedia variant='icon'>
+          <UserCheck />
+        </EmptyMedia>
+        <EmptyTitle>User Management Features on development</EmptyTitle>
+        <EmptyDescription>Working on the project .</EmptyDescription>
+      </EmptyHeader>
+      <EmptyContent></EmptyContent>
+    </Empty>
+  );
 };
 
 export default AdminPage;

@@ -9,6 +9,7 @@ import { Button } from '@/components/ui';
 import { GenericDataTable } from '@/components/GenericDataTable';
 import { ControlledDialog } from '@/components/ControlledDialog';
 import { Trash2 } from 'lucide-react';
+import { UserAddForm } from './UserAddForm';
 
 export const UserList = () => {
   const { users, loading, refresh } = useUsers();
@@ -19,7 +20,6 @@ export const UserList = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [userToDelete, setUserToDelete] = useState<string | null>(null);
 
-  // tableData puede ser directamente users (ya son DTO)
   const tableData = useMemo(() => users, [users]);
 
   const manageDelete = async () => {
@@ -39,7 +39,7 @@ export const UserList = () => {
   };
 
   const manageEdit = (userId: string) => {
-    router.push(`/admin/users-management/${userId}`);
+    router.push(`/admin/users/${userId}`);
   };
 
   return (
@@ -68,11 +68,7 @@ export const UserList = () => {
             onOpenChange={setShowModal}
             title='Add new User'
           >
-            {/* <AddUserForm
-              refresh={refresh}
-              onClose={() => setShowModal(false)}
-            /> */}
-            <p>Add user logic</p>
+            <UserAddForm />
           </ControlledDialog>
 
           <ControlledDialog
