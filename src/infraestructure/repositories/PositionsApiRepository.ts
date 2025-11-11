@@ -14,7 +14,11 @@ export class PositionsApiRepository implements IRepository {
     try {
       const positions = await fetchHelper<responsePositionsDTO[]>(positionsApi);
 
-      return positions.map((p) => Object.assign(new PositionsEntity(),p));
+      if (!positions) {
+        throw new Error('Error getting positions');
+      }
+
+      return positions.map((p) => Object.assign(new PositionsEntity(), p));
     } catch (error) {
       throw new Error(
         error instanceof Error ? error.message : 'Error fetching positions'
@@ -27,7 +31,7 @@ export class PositionsApiRepository implements IRepository {
       const position = await fetchHelper<responsePositionsDTO>(
         `${positionsApi}/${id}`
       );
-      return  Object.assign(new PositionsEntity(),position)
+      return Object.assign(new PositionsEntity(), position);
     } catch (error) {
       throw new Error(
         error instanceof Error ? error.message : 'Error fetching position'
@@ -42,6 +46,8 @@ export class PositionsApiRepository implements IRepository {
         headers: this.commonHeader,
         body: JSON.stringify(data),
       });
+
+      if (!created) throw new Error('Error creating position');
 
       return created;
     } catch (error) {
@@ -60,6 +66,8 @@ export class PositionsApiRepository implements IRepository {
           body: JSON.stringify(data),
         }
       );
+
+      if (!updated) throw new Error('Error updating position');
       return updated;
     } catch (error) {
       throw new Error(
