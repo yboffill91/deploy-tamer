@@ -1,28 +1,28 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
-import { Label } from "@/components/ui/label";
-import { PositionsEntity, requestUsersDTO, UsersEntity } from "@/core";
+import { Label } from '@/components/ui/label';
+import { PositionsEntity, requestUsersDTO, UsersEntity } from '@/core';
 import {
   PositionSelect,
   UsersDataTable,
-} from "@/modules/users/admin/components";
+} from '@/modules/users/admin/components';
 import {
   PositionsApiRepository,
   UsersApiRepository,
-} from "@/infraestructure/repositories";
-import { toast } from "react-hot-toast";
-import { CustomLoading } from "@/components/CustomLoading";
-import { CustomEmpty } from "@/components/CustomEmpty";
-import { AlertTriangle, Users } from "lucide-react";
-import { ControlledDialog } from "@/components/ControlledDialog";
-import { Card, CardContent } from "@/components/ui";
-import { getAuth } from "firebase/auth";
-import { CommonHeader } from "@/modules/users/admin";
-import { CustomPageLoader } from "@/components/CustomPageLoader";
+} from '@/infraestructure/repositories';
+import { toast } from 'react-hot-toast';
+import { CustomLoading } from '@/components/CustomLoading';
+import { CustomEmpty } from '@/components/CustomEmpty';
+import { AlertTriangle, Users } from 'lucide-react';
+import { ControlledDialog } from '@/components/ControlledDialog';
+import { Card, CardContent } from '@/components/ui';
+import { getAuth } from 'firebase/auth';
+import { CommonHeader } from '@/modules/users/admin';
+import { CustomPageLoader } from '@/components/CustomPageLoader';
 
 export default function UsersPage() {
   const [users, setUsers] = useState<UsersEntity[] | null>(null);
@@ -31,7 +31,7 @@ export default function UsersPage() {
   const [editingUser, setEditingUser] = useState<UsersEntity | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [formData, setFormData] = useState<requestUsersDTO>({
-    email: "",
+    email: '',
     positionId: undefined,
   });
 
@@ -55,7 +55,7 @@ export default function UsersPage() {
         setPositions(positions);
       } catch (error) {
         setIsError(
-          error instanceof Error ? error.message : "Error fetching data"
+          error instanceof Error ? error.message : 'Error fetching data'
         );
       } finally {
         setIsLoading(false);
@@ -73,7 +73,7 @@ export default function UsersPage() {
 
   const handleAddUser = () => {
     setEditingUser(null);
-    setFormData({ email: "", positionId: undefined });
+    setFormData({ email: '', positionId: undefined });
     setIsDialogOpen(true);
   };
 
@@ -88,17 +88,17 @@ export default function UsersPage() {
 
   const handleSaveUser = async () => {
     if (!formData.email!.trim()) {
-      setIsError("Please enter an email");
+      setIsError('Please enter an email');
       return;
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email!)) {
-      setIsError("Please enter a valid email");
+      setIsError('Please enter a valid email');
       return;
     }
 
     if (!formData.positionId) {
-      setIsError("Please select a position");
+      setIsError('Please select a position');
       return;
     }
 
@@ -108,10 +108,10 @@ export default function UsersPage() {
         await user_repo.update(editingUser.id!.toString(), formData);
         const newUser = await user_repo.findAll();
         setUsers(newUser);
-        toast.success("User updated successfully");
+        toast.success('User updated successfully');
       } catch (error) {
         setIsError(
-          error instanceof Error ? error.message : "Error updating user"
+          error instanceof Error ? error.message : 'Error updating user'
         );
       } finally {
         setIsUpdating(false);
@@ -123,10 +123,10 @@ export default function UsersPage() {
         await user_repo.create(formData);
         const newUser = await user_repo.findAll();
         setUsers(newUser);
-        toast.success("User created successfully");
+        toast.success('User created successfully');
       } catch (error) {
         setIsError(
-          error instanceof Error ? error.message : "Error creating user"
+          error instanceof Error ? error.message : 'Error creating user'
         );
       } finally {
         setIsCreating(false);
@@ -142,7 +142,7 @@ export default function UsersPage() {
 
   const confirmDelete = async () => {
     if (!userToDelete) {
-      setIsError("Nothing to delete");
+      setIsError('Nothing to delete');
       return;
     }
 
@@ -168,37 +168,37 @@ export default function UsersPage() {
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
     setEditingUser(null);
-    setFormData({ email: "", positionId: undefined });
+    setFormData({ email: '', positionId: undefined });
   };
 
   return (
     <>
-      {isLoading && <CustomPageLoader message="Loading Users Data" />}
+      {isLoading && <CustomPageLoader message='Loading Users Data' />}
       {users && (
         <main>
-          <div className="space-y-6">
+          <div className='space-y-6'>
             <CommonHeader
               icon={Users}
-              title={"Users Management"}
-              desc={"Manage your organization users and their positions"}
+              title={'Users Management'}
+              desc={'Manage your organization users and their positions'}
             />
             <ControlledDialog
               open={isDialogOpen}
               onOpenChange={setIsDialogOpen}
-              title={editingUser ? "Edit User" : "Create New User"}
+              title={editingUser ? 'Edit User' : 'Create New User'}
               description={
                 editingUser
-                  ? "Update user details. ID: " + editingUser.id
-                  : "Create a new user and assign a position"
+                  ? 'Update user details. ID: ' + editingUser.id
+                  : 'Create a new user and assign a position'
               }
             >
-              <div className="space-y-6 py-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+              <div className='space-y-6 py-4'>
+                <div className='space-y-2'>
+                  <Label htmlFor='email'>Email</Label>
                   <Input
-                    id="email"
-                    type="email"
-                    placeholder="user@example.com"
+                    id='email'
+                    type='email'
+                    placeholder='user@example.com'
                     value={formData.email}
                     onChange={(e) =>
                       setFormData({ ...formData, email: e.target.value })
@@ -219,17 +219,17 @@ export default function UsersPage() {
                 )}
               </div>
 
-              <div className="flex justify-end gap-2 pt-4">
-                <Button variant="outline" onClick={handleCloseDialog}>
+              <div className='flex justify-end gap-2 pt-4'>
+                <Button variant='outline' onClick={handleCloseDialog}>
                   Cancel
                 </Button>
                 <Button onClick={handleSaveUser}>
                   {isUpdating ? (
-                    <CustomLoading message="Updating User" />
+                    <CustomLoading message='Updating User' />
                   ) : isCreating ? (
-                    <CustomLoading message="Creating User" />
+                    <CustomLoading message='Creating User' />
                   ) : (
-                    "Save User"
+                    'Save User'
                   )}
                 </Button>
               </div>
@@ -238,23 +238,23 @@ export default function UsersPage() {
             <ControlledDialog
               open={confirm}
               onOpenChange={setConfirm}
-              title="Confirm Delete"
+              title='Confirm Delete'
               description={`Are you sure you want to delete the User ${userToDelete?.email}? This action cannot be undone.`}
             >
-              <div className="flex justify-end gap-3 mt-4">
-                <Button variant="outline" onClick={() => setConfirm(false)}>
+              <div className='flex justify-end gap-3 mt-4'>
+                <Button variant='outline' onClick={() => setConfirm(false)}>
                   Cancel
                 </Button>
-                <Button variant="destructive" onClick={confirmDelete}>
+                <Button variant='destructive' onClick={confirmDelete}>
                   {isDeleting ? (
-                    <CustomLoading message="Deleting User" />
+                    <CustomLoading message='Deleting User' />
                   ) : (
-                    "Delete"
+                    'Delete'
                   )}
                 </Button>
               </div>
             </ControlledDialog>
-            <Card className="container">
+            <Card className='container'>
               <CardContent>
                 <UsersDataTable
                   data={users}
@@ -267,10 +267,10 @@ export default function UsersPage() {
           </div>
         </main>
       )}
-      {!isLoading && !users && (
+      {!isLoading && (!users || users.length === 0) && (
         <CustomEmpty
-          title="No Users created yet"
-          description="Create a new user to get started"
+          title='No Users created yet'
+          description='Create a new user to get started'
           icon={AlertTriangle}
           onClick={handleAddUser}
         />

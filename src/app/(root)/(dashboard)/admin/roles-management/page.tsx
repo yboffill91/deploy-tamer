@@ -1,32 +1,32 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useEffect, useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { AlertTriangle, ShieldCheck } from "lucide-react";
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { AlertTriangle, ShieldCheck } from 'lucide-react';
 import {
   buildRolesCascadeDTO,
   FunctionalitiesEntity,
   RolesEntity,
-} from "@/core";
+} from '@/core';
 import {
   CommonHeader,
   FeaturesManager,
   RoleFeature,
   RolesDataTable,
-} from "@/modules/users/admin";
+} from '@/modules/users/admin';
 import {
   FunctionalitiesApiRepository,
   RolesApiRepository,
-} from "@/infraestructure/repositories";
-import toast from "react-hot-toast";
-import { CustomLoading } from "@/components/CustomLoading";
-import { CustomEmpty } from "@/components/CustomEmpty";
-import { ControlledDialog } from "@/components/ControlledDialog";
-import { CustomPageLoader } from "@/components/CustomPageLoader";
+} from '@/infraestructure/repositories';
+import toast from 'react-hot-toast';
+import { CustomLoading } from '@/components/CustomLoading';
+import { CustomEmpty } from '@/components/CustomEmpty';
+import { ControlledDialog } from '@/components/ControlledDialog';
+import { CustomPageLoader } from '@/components/CustomPageLoader';
 
 export default function RolesPage() {
   const [roles, setRoles] = useState<RolesEntity[] | null>(null);
@@ -36,7 +36,7 @@ export default function RolesPage() {
   const [editingRole, setEditingRole] = useState<RolesEntity | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [formData, setFormData] = useState<buildRolesCascadeDTO>({
-    name: "",
+    name: '',
     feature: [],
   });
 
@@ -63,7 +63,7 @@ export default function RolesPage() {
         setFunctionalities(func_data);
       } catch (error) {
         setIsError(
-          error instanceof Error ? error.message : "Error fetching data"
+          error instanceof Error ? error.message : 'Error fetching data'
         );
       } finally {
         setIsLoading(false);
@@ -81,7 +81,7 @@ export default function RolesPage() {
 
   const handleAddRole = () => {
     setEditingRole(null);
-    setFormData({ name: "", feature: [] });
+    setFormData({ name: '', feature: [] });
     setIsDialogOpen(true);
   };
 
@@ -104,7 +104,7 @@ export default function RolesPage() {
 
   const confirmDelete = async () => {
     if (!roleToDelete) {
-      setIsError("Nothing to delete");
+      setIsError('Nothing to delete');
       return;
     }
 
@@ -128,24 +128,24 @@ export default function RolesPage() {
   };
   const handleSaveRole = async () => {
     if (!formData.name!.trim()) {
-      setIsError("Role name is required");
+      setIsError('Role name is required');
       return;
     }
 
     if (editingRole) {
       if (!roles) {
-        setIsError("No roles data");
+        setIsError('No roles data');
         return;
       }
       try {
         setIsUpdating(true);
         await roles_repo.update(editingRole.id!.toString(), formData);
         const newRoles = await roles_repo.findAll();
-        toast.success("Role Updated");
+        toast.success('Role Updated');
         setRoles(newRoles);
       } catch (error) {
         setIsError(
-          error instanceof Error ? error.message : "Error updating role"
+          error instanceof Error ? error.message : 'Error updating role'
         );
       } finally {
         setIsUpdating(false);
@@ -156,11 +156,11 @@ export default function RolesPage() {
         setIsCreating(true);
         await roles_repo.create(formData);
         const newRoles = await roles_repo.findAll();
-        toast.success("New Role Added");
+        toast.success('New Role Added');
         setRoles(newRoles);
       } catch (error) {
         setIsError(
-          error instanceof Error ? error.message : "Error creating role"
+          error instanceof Error ? error.message : 'Error creating role'
         );
       } finally {
         setIsCreating(false);
@@ -169,52 +169,52 @@ export default function RolesPage() {
     }
 
     setIsDialogOpen(false);
-    setFormData({ name: "", feature: [] });
+    setFormData({ name: '', feature: [] });
   };
 
   return (
     <>
       {isLoading && (
-        <CustomPageLoader message="Loading Roles and Features data ..." />
+        <CustomPageLoader message='Loading Roles and Features data ...' />
       )}
       {roles && (
         <div>
-          <div className="space-y-6 container ">
-            <div className="flex items-center justify-between">
+          <div className='space-y-6 container '>
+            <div className='flex items-center justify-between'>
               <CommonHeader
                 icon={ShieldCheck}
-                title={"Roles Management"}
-                desc={"Manage roles and assign permissions to features"}
+                title={'Roles Management'}
+                desc={'Manage roles and assign permissions to features'}
               />
 
               <ControlledDialog
                 open={isDialogOpen}
                 onOpenChange={setIsDialogOpen}
-                title={editingRole ? "Edit Role" : "Create New Role"}
+                title={editingRole ? 'Edit Role' : 'Create New Role'}
                 description={
                   editingRole
-                    ? "Update the role details and permissions"
-                    : "Create a new role and assign permissions"
+                    ? 'Update the role details and permissions'
+                    : 'Create a new role and assign permissions'
                 }
               >
-                <div className="space-y-6">
+                <div className='space-y-6'>
                   <div>
-                    <Label htmlFor="role-name" className="text-sm font-medium">
+                    <Label htmlFor='role-name' className='text-sm font-medium'>
                       Role Name
                     </Label>
                     <Input
-                      id="role-name"
-                      placeholder="e.g., Administrator, Editor, Viewer"
+                      id='role-name'
+                      placeholder='e.g., Administrator, Editor, Viewer'
                       value={formData.name}
                       onChange={(e) =>
                         setFormData({ ...formData, name: e.target.value })
                       }
-                      className="mt-2"
+                      className='mt-2'
                     />
                   </div>
 
                   <div>
-                    <Label className="text-sm font-medium mb-3 block">
+                    <Label className='text-sm font-medium mb-3 block'>
                       Permissions
                     </Label>
                     {functionalities && (
@@ -228,20 +228,20 @@ export default function RolesPage() {
                     )}
                   </div>
 
-                  <div className="flex justify-end gap-3">
+                  <div className='flex justify-end gap-3'>
                     <Button
-                      variant="outline"
+                      variant='outline'
                       onClick={() => setIsDialogOpen(false)}
                     >
                       Cancel
                     </Button>
                     <Button onClick={handleSaveRole}>
                       {isCreating ? (
-                        <CustomLoading message="Creatind Role" />
+                        <CustomLoading message='Creatind Role' />
                       ) : isUpdating ? (
-                        <CustomLoading message="Updating Role" />
+                        <CustomLoading message='Updating Role' />
                       ) : (
-                        "Save"
+                        'Save'
                       )}
                     </Button>
                   </div>
@@ -250,18 +250,18 @@ export default function RolesPage() {
               <ControlledDialog
                 open={confirm}
                 onOpenChange={setConfirm}
-                title="Confirm Delete"
+                title='Confirm Delete'
                 description={`Are you sure you want to delete the role ${roleToDelete?.name}? This action cannot be undone.`}
               >
-                <div className="flex justify-end gap-3 mt-4">
-                  <Button variant="outline" onClick={() => setConfirm(false)}>
+                <div className='flex justify-end gap-3 mt-4'>
+                  <Button variant='outline' onClick={() => setConfirm(false)}>
                     Cancel
                   </Button>
-                  <Button variant="destructive" onClick={confirmDelete}>
+                  <Button variant='destructive' onClick={confirmDelete}>
                     {isDeleting ? (
-                      <CustomLoading message="Deleting Role" />
+                      <CustomLoading message='Deleting Role' />
                     ) : (
-                      "Delete"
+                      'Delete'
                     )}
                   </Button>
                 </div>
@@ -281,9 +281,9 @@ export default function RolesPage() {
           </div>
         </div>
       )}
-      {!isLoading && !roles && (
+      {!isLoading && (!roles || roles.length === 0) && (
         <CustomEmpty
-          title="No data yet"
+          title='No data yet'
           description="We don't found any data yet, but you can create a new one"
           onClick={handleAddRole}
           icon={AlertTriangle}

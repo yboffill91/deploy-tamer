@@ -5,19 +5,21 @@ import {
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from "@/components/ui/empty";
+} from '@/components/ui/empty';
 
-import { UserCheck } from "lucide-react";
+import { Settings2 } from 'lucide-react';
 
 const AdminPage = () => {
   return (
     <Empty>
       <EmptyHeader>
-        <EmptyMedia variant="icon">
-          <UserCheck />
+        <EmptyMedia variant='icon'>
+          <Settings2 />
         </EmptyMedia>
-        <EmptyTitle>User Management Features on development</EmptyTitle>
-        <EmptyDescription>Working on the project .</EmptyDescription>
+        <EmptyTitle>Administration module under development.</EmptyTitle>
+        <EmptyDescription>
+          Tamer Team is in development mode. We&apos;ll be finished soon.
+        </EmptyDescription>
       </EmptyHeader>
       <EmptyContent></EmptyContent>
     </Empty>
