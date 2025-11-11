@@ -1,18 +1,19 @@
 'use client';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { useState, useEffect } from 'react';
-import type { User } from '@/core';
+import { UsersEntity } from '@/core';
 import { FirebaseUserMapper } from '@/infraestructure/dto';
 
 export function useFirebaseAuthListener() {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UsersEntity | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
-        setUser(FirebaseUserMapper.toDomain(firebaseUser));
+        const user = FirebaseUserMapper.toDTO(firebaseUser);
+        setUser(Object.assign(new UsersEntity(), user));
       } else {
         setUser(null);
       }
