@@ -1,10 +1,15 @@
 import {
+  ClipboardList,
+  CloudCheck,
+  Earth,
   KeyIcon,
   LayoutDashboard,
   LayoutList,
+  Logs,
   LucideIcon,
   SearchIcon,
   ShieldCheck,
+  Sliders,
   Users,
 } from 'lucide-react';
 
@@ -82,6 +87,11 @@ export const AdminSidebarItems: NavGroup[] = [
     label: 'Settings',
     items: [
       {
+        title: 'Teams',
+        url: '/admin/teams',
+        icon: ClipboardList,
+      },
+      {
         title: 'Users',
         url: '/admin/users',
         icon: Users,
@@ -97,6 +107,28 @@ export const AdminSidebarItems: NavGroup[] = [
         url: '/admin/roles-management',
         icon: ShieldCheck,
         comingSoon: false,
+      },
+      {
+        title: 'Functionalities',
+        url: '/admin/features-management',
+        icon: Sliders,
+      },
+      {
+        title: 'Documents',
+        url: '/admin/documents',
+        icon: CloudCheck,
+        comingSoon: true,
+      },
+      {
+        title: 'Audit Logs',
+        url: '/admin/logs',
+        icon: Logs,
+      },
+      {
+        title: 'Cities Locator',
+        url: '/admin/cities',
+        icon: Earth,
+        comingSoon: true,
       },
     ],
   },

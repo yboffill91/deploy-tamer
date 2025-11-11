@@ -7,56 +7,44 @@ import {
   UserCredential,
   signInWithPopup,
   GithubAuthProvider,
-  User as FirebaseUser,
   FacebookAuthProvider,
   sendPasswordResetEmail,
   confirmPasswordReset,
-  updateProfile,
-  updateEmail,
-  updatePassword,
+
 } from 'firebase/auth';
-import { AuthError, IAuthRepository, Email, Password, User } from '@/core';
+import { AuthError, IAuthRepository, UsersEntity } from '@/core';
 import { firebaseApp } from '../services/firebase';
-import { FirebaseUserMapper, UserProfileDTO } from '../dto';
+import { FirebaseUserMapper } from '../dto';
 
 export class FirebaseAuthRepository implements IAuthRepository {
+
   private readonly auth = getAuth(firebaseApp);
 
-  async register(email: Email, password: Password): Promise<User> {
-    try {
-      const { user } = await createUserWithEmailAndPassword(
-        this.auth,
-        email.getValue(),
-        password.getValue()
-      );
 
-      return FirebaseUserMapper.toDomain(user);
+  async register(email: string, password: string): Promise<UsersEntity> {
+    try {
+      const { user } = await createUserWithEmailAndPassword(this.auth, email, password);
+      const responseDTO = FirebaseUserMapper.toDTO(user);
+      const returnedUser = Object.assign(new UsersEntity(), responseDTO)
+      return returnedUser
     } catch (error) {
       throw new AuthError(
-        error instanceof Error ? error.message : 'Error registring user'
+        error instanceof Error ? error.message : 'Error registering user'
       );
     }
   }
 
-  async login(email: Email, password: Password): Promise<User> {
+  async login(email: string, password: string): Promise<UsersEntity> {
     try {
-      const { user } = await signInWithEmailAndPassword(
-        this.auth,
-        email.getValue(),
-        password.getValue()
-      );
-      return FirebaseUserMapper.toDomain(user);
+      const { user } = await signInWithEmailAndPassword(this.auth, email, password);
+      const responseDTO = FirebaseUserMapper.toDTO(user);
+      const returnedUser = Object.assign(new UsersEntity(), responseDTO)
+      return returnedUser
     } catch (error) {
       throw new AuthError(
-        error instanceof AuthError ? error.message : 'Error signing in user'
+        error instanceof Error ? error.message : 'Error logging in user'
       );
     }
-  }
-
-  async getCurrentUser(): Promise<User | null> {
-    const user = this.auth.currentUser;
-    if (!user || !user.email) return null;
-    return FirebaseUserMapper.toDomain(user);
   }
 
   async logout(): Promise<void> {
@@ -69,9 +57,7 @@ export class FirebaseAuthRepository implements IAuthRepository {
     }
   }
 
-  async loginWithProvider(
-    provider: 'github' | 'google' | 'facebook'
-  ): Promise<User> {
+  async loginWithProvider(provider: 'google' | 'github' | 'facebook'): Promise<UsersEntity> {
     let providerInstance;
 
     if (provider === 'google') {
@@ -89,14 +75,17 @@ export class FirebaseAuthRepository implements IAuthRepository {
         this.auth,
         providerInstance
       );
-      return FirebaseUserMapper.toDomain(user);
+
+      const responseDTO = FirebaseUserMapper.toDTO(user);
+      const returnedUser = Object.assign(new UsersEntity(), responseDTO)
+      return returnedUser
     } catch (error) {
       throw new AuthError(
         error instanceof Error ? error.message : 'Error singing in user'
       );
     }
   }
-  async resetPassword(email: Email): Promise<void> {
+  async resetPassword(email: string): Promise<void> {
     try {
       const actionCodeSettings = {
         url: `${window.location.origin}/reset-password`,
@@ -105,7 +94,7 @@ export class FirebaseAuthRepository implements IAuthRepository {
 
       await sendPasswordResetEmail(
         this.auth,
-        email.getValue(),
+        email,
         actionCodeSettings
       );
     } catch (error) {
@@ -128,38 +117,18 @@ export class FirebaseAuthRepository implements IAuthRepository {
     }
   }
 
-  async updateUser(data: UserProfileDTO): Promise<User> {
-    const currentUser = this.auth.currentUser;
-    if (!currentUser) throw new AuthError('User no authenticated');
-
-    try {
-      const { displayName, email, password, photoUrl } = data;
-
-      if (displayName || photoUrl) {
-        await updateProfile(currentUser, {
-          displayName: displayName ?? currentUser.displayName,
-          photoURL: photoUrl ?? currentUser.photoURL,
-        });
-      }
-
-      if (email && email !== currentUser.email) {
-        await updateEmail(currentUser, email);
-      }
-
-      if (password) {
-        await updatePassword(currentUser, password);
-      }
-
-      await currentUser.reload();
-      return FirebaseUserMapper.toDomain(currentUser);
-    } catch (error) {
-      throw new AuthError(
-        error instanceof Error ? error.message : 'Error updating user info'
-      );
-    }
+  findUser(): UsersEntity {
+    const user = this.auth.currentUser;
+    if (!user) throw new AuthError('User no authenticated');
+    const responseDTO = FirebaseUserMapper.toDTO(user);
+    const returnedUser = Object.assign(new UsersEntity(), responseDTO)
+    return returnedUser
   }
 
-  mapToDomain(user: FirebaseUser): User {
-    return FirebaseUserMapper.toDomain(user);
+  async getUserToken(): Promise<string | null> {
+    const user = this.auth.currentUser;
+    if (!user) return null;
+    return await user.getIdToken();
   }
+
 }

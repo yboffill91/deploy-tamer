@@ -7,7 +7,16 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    const changeTheme = () => {
+      try {
+        setMounted(true);
+      } catch (error) {
+        throw new Error(
+          error instanceof Error ? error.message : "Error changing theme"
+        );
+      }
+    };
+    changeTheme();
   }, []);
 
   if (!mounted) {

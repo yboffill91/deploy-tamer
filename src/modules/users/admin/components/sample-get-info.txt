@@ -1,0 +1,83 @@
+'use client';
+
+import { GenericDataTable } from '@/components/GenericDataTable';
+import {
+  FunctionalityEntity,
+  PositionsEntity,
+  RolesEntity,
+  UsersEntity,
+} from '@/core/entities';
+import { FunctioaliesApiRepository } from '@/infraestructure/repositories/FunctionalitiesApiRepository';
+import { PositionsApiRepository } from '@/infraestructure/repositories/PositionsApiRepository';
+import { RolesApiRepository } from '@/infraestructure/repositories/RolesApiRepository';
+import { UsersApiRepository } from '@/infraestructure/repositories/UsersApiRepository';
+import { useEffect, useState } from 'react';
+
+// import { RoleList } from '@/modules/users/admin/components';
+
+// const RolesPage = () => {
+//   return <RoleList />;
+// };
+
+// export default RolesPage;
+
+const RolesPage = () => {
+  const [functionalities, setFunctionalities] = useState<
+    FunctionalityEntity[] | null
+  >(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState<string | null>(null);
+  const [roles, setRoles] = useState<RolesEntity[] | null>(null);
+  const [positions, setPositions] = useState<PositionsEntity[] | null>(null);
+  const [users, setUsers] = useState<UsersEntity[] | null>(null);
+
+  useEffect(() => {
+    const fn_repo = new FunctioaliesApiRepository();
+    const roles_repo = new RolesApiRepository();
+    const pos_repo = new PositionsApiRepository();
+    const users_repo = new UsersApiRepository();
+
+    const getData = async () => {
+      try {
+        const funcData = await fn_repo.findAll();
+        const rolesData = await roles_repo.findAll();
+        const posData = await pos_repo.findAll();
+        const usersData = await users_repo.findAll();
+        setFunctionalities(funcData);
+        setRoles(rolesData);
+        setPositions(posData);
+        setUsers(usersData);
+      } catch (error) {
+        setIsError(
+          error instanceof Error ? error.message : 'Error loading data'
+        );
+      } finally {
+        setIsLoading(false);
+        setIsError(null);
+      }
+    };
+
+    getData();
+  }, []);
+
+  console.log('Roles: ', JSON.stringify(roles));
+
+  console.log(JSON.stringify(functionalities));
+
+  return (
+    <div className='flex flex-col gap-6'>
+      {isLoading && <div>Loading Data</div>}
+      {isError && <p>isError</p>}
+      {functionalities && <GenericDataTable data={functionalities} />}
+      <hr />
+
+      {roles && <GenericDataTable data={roles} />}
+      <hr />
+      {positions && <GenericDataTable data={positions} />}
+      <hr />
+      {users && <GenericDataTable data={users} />}
+    </div>
+  );
+};
+
+export default RolesPage;

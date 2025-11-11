@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import type React from 'react';
+import type React from "react";
 
 import {
   Dialog,
@@ -8,7 +8,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui';
+} from "@/components/ui";
 
 interface ControlledDialogProps {
   open: boolean;
@@ -28,12 +28,12 @@ export function ControlledDialog({
 }: ControlledDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className='sm:max-w-[425px]'>
+      <DialogContent className="container max-w-sm">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
-        <div className='py-4'>{children}</div>
+        <div className="py-4">{children}</div>
       </DialogContent>
     </Dialog>
   );

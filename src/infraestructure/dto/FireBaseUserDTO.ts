@@ -1,27 +1,24 @@
-import { Email, User } from '@/core';
+// import { Email, User } from '@/core';
+import { User } from 'firebase/auth';
 
-interface FirebaseUserDTO {
-  uid: string;
-  email: string | null;
-  displayName: string | null;
-  photoURL: string | null;
-}
-import { User as FireBaseUser } from 'firebase/auth';
+
 export class FirebaseUserMapper {
-  static toDomain(user: FireBaseUser): User {
-    return new User(
+
+  constructor(readonly uuid: string, readonly email: string, readonly displayName: string, readonly photoURL: string) { }
+
+  static toDTO(user: User): ResponseFireBaseDto {
+    return new ResponseFireBaseDto(
       user.uid,
-      new Email(user.email ?? ''),
+      user.email ?? '',
       user.displayName ?? '',
-      user.photoURL ?? undefined
+      user.photoURL ?? ''
     );
   }
-  static fromDTO(dto: FirebaseUserDTO): User {
-    return new User(
-      dto.uid,
-      new Email(dto.email ?? ''),
-      dto.displayName ?? '',
-      dto.photoURL ?? undefined
-    );
-  }
+
+}
+
+export class ResponseFireBaseDto {
+  constructor(readonly uid: string, readonly email: string, readonly displayName: string, readonly photoURL: string) { }
+
+
 }
