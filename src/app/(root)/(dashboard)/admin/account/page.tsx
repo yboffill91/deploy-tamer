@@ -1,19 +1,5 @@
-'use client';
-import { useAuth } from '@/modules/auth';
-import { ContentSection, EditUserForm } from '@/modules/users/admin';
-
-const AdminAccountSettingsPage = () => {
-  const { user } = useAuth();
-  return (
-    <>
-      <ContentSection
-        title={'Manage Account'}
-        desc={user?.email.getValue() ?? 'User Settings'}
-      >
-        <EditUserForm />
-      </ContentSection>
-    </>
-  );
+const page = () => {
+  return <div>page</div>;
 };
 
-export default AdminAccountSettingsPage;
+export default page;
