@@ -60,7 +60,7 @@ export function RolesSelector({
   };
 
   const availableRolesForSelect = availableRoles.filter(
-    (r) => !selectedRolesSet.has(r.id)
+    (r) => !selectedRolesSet.has(r.id!)
   );
 
   return (
