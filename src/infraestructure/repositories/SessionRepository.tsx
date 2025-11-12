@@ -1,4 +1,4 @@
-import { route, sessionApi } from "@/lib/apis";
+import { sessionApi } from "@/lib/apis";
 
 interface ISessionRepository {
   createSessionCookie(idToken: string | null): Promise<void>;
@@ -6,7 +6,6 @@ interface ISessionRepository {
 }
 
 export class SessionRepository implements ISessionRepository {
-  URL = route;
   async createSessionCookie(idToken: string | null): Promise<void> {
     if (!idToken) throw new Error("No User Id Founded");
     try {
@@ -23,10 +22,10 @@ export class SessionRepository implements ISessionRepository {
 
   async deleteSessionCookie(): Promise<void> {
     try {
-      await fetch(`${URL}api/session/session_delete`, {
+      await fetch(`${sessionApi}/session_delete`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify("session"),
+        body: JSON.stringify("TS_SESSION"),
         credentials: "include",
       });
     } catch (error) {

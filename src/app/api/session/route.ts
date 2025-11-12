@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     });
 
     response.cookies.set({
-      name: 'session',
+      name: 'TS_SESSION',
       value: idToken,
       maxAge: expiresIn,
       httpOnly: true,

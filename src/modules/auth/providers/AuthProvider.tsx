@@ -9,9 +9,12 @@ import {
   useState,
 } from "react";
 import { AuthError, UsersEntity } from "@/core";
-import { FirebaseAuthRepository } from "@/infraestructure/repositories";
+import {
+  FirebaseAuthRepository,
+  SessionRepository,
+  SessionVerificationRepository,
+} from "@/infraestructure/repositories";
 import { FirebaseUserMapper } from "@/infraestructure/dto";
-import { SessionVerificationRepository } from "@/infraestructure/repositories/OTPRepository";
 import { useRouter } from "next/navigation";
 import { showToast } from "@/components/CustomToaster";
 
@@ -43,6 +46,7 @@ export const AuthProvider = ({ children }: Props) => {
 
   const AuthRepository = new FirebaseAuthRepository();
   const OtpRepository = new SessionVerificationRepository();
+  const CookiesManagerRepository = new SessionRepository();
 
   useEffect(() => {
     const auth = getAuth();
@@ -80,6 +84,8 @@ export const AuthProvider = ({ children }: Props) => {
           "We have sent an email to your address with the OTP code for the second authentication factor.",
       });
 
+      CookiesManagerRepository.createSessionCookie(token!);
+
       router.push("/verify_account");
     } catch (error) {
       setError(
@@ -109,6 +115,8 @@ export const AuthProvider = ({ children }: Props) => {
         description:
           "We have sent an email to your address with the OTP code for the second authentication factor.",
       });
+
+      CookiesManagerRepository.createSessionCookie(token!);
 
       router.push("/verify_account");
     } catch (error) {
@@ -141,6 +149,9 @@ export const AuthProvider = ({ children }: Props) => {
         description:
           "We have sent an email to your address with the OTP code for the second authentication factor.",
       });
+
+      CookiesManagerRepository.createSessionCookie(token!);
+
       router.push("/verify_account");
     } catch (error) {
       setError(
@@ -162,6 +173,8 @@ export const AuthProvider = ({ children }: Props) => {
         type: "success",
         description: "Session successfully closed",
       });
+
+      CookiesManagerRepository.deleteSessionCookie();
 
       setUser(null);
     } catch (error) {
