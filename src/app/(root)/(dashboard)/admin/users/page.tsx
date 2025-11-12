@@ -166,6 +166,9 @@ export default function UsersPage() {
         description: `User "${userToDelete.email}" deleted successfully`,
       });
       const users = await user_repo.findAll();
+      if (users.length === 0) {
+        setUsers(null);
+      }
       setUsers(users);
     } catch (error) {
       setIsError(
@@ -189,7 +192,7 @@ export default function UsersPage() {
   return (
     <>
       {isLoading && <CustomPageLoader message="Loading Users Data" />}
-      {users && (
+      {!isLoading && users && users.length > 0 && (
         <main>
           <div className="space-y-6">
             <CommonHeader
@@ -197,78 +200,7 @@ export default function UsersPage() {
               title={"Users Management"}
               desc={"Manage your organization users and their positions"}
             />
-            <ControlledDialog
-              open={isDialogOpen}
-              onOpenChange={setIsDialogOpen}
-              title={editingUser ? "Edit User" : "Create New User"}
-              description={
-                editingUser
-                  ? "Update user details. ID: " + editingUser.id
-                  : "Create a new user and assign a position"
-              }
-            >
-              <div className="space-y-6 py-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="user@example.com"
-                    value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
-                  />
-                </div>
-                {positions && (
-                  <PositionSelect
-                    availablePositions={positions}
-                    selectedPositionId={formData.positionId!}
-                    onPositionChange={(positionId) =>
-                      setFormData({
-                        ...formData,
-                        positionId: positionId as number,
-                      })
-                    }
-                  />
-                )}
-              </div>
 
-              <div className="flex justify-end gap-2 pt-4">
-                <Button variant="outline" onClick={handleCloseDialog}>
-                  Cancel
-                </Button>
-                <Button onClick={handleSaveUser}>
-                  {isUpdating ? (
-                    <CustomLoading message="Updating User" />
-                  ) : isCreating ? (
-                    <CustomLoading message="Creating User" />
-                  ) : (
-                    "Save User"
-                  )}
-                </Button>
-              </div>
-            </ControlledDialog>
-
-            <ControlledDialog
-              open={confirm}
-              onOpenChange={setConfirm}
-              title="Confirm Delete"
-              description={`Are you sure you want to delete the User ${userToDelete?.email}? This action cannot be undone.`}
-            >
-              <div className="flex justify-end gap-3 mt-4">
-                <Button variant="outline" onClick={() => setConfirm(false)}>
-                  Cancel
-                </Button>
-                <Button variant="destructive" onClick={confirmDelete}>
-                  {isDeleting ? (
-                    <CustomLoading message="Deleting User" />
-                  ) : (
-                    "Delete"
-                  )}
-                </Button>
-              </div>
-            </ControlledDialog>
             <Card className="container">
               <CardContent>
                 <UsersDataTable
@@ -282,7 +214,7 @@ export default function UsersPage() {
           </div>
         </main>
       )}
-      {!isLoading && (!users || users.length === 0) && (
+      {!isLoading && (users === null || users.length === 0) && (
         <CustomEmpty
           title="No Users created yet"
           description="Create a new user to get started"
@@ -290,6 +222,80 @@ export default function UsersPage() {
           onClick={handleAddUser}
         />
       )}
+      <>
+        <ControlledDialog
+          open={isDialogOpen}
+          onOpenChange={setIsDialogOpen}
+          title={editingUser ? "Edit User" : "Create New User"}
+          description={
+            editingUser
+              ? "Update user details. ID: " + editingUser.id
+              : "Create a new user and assign a position"
+          }
+        >
+          <div className="space-y-6 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="user@example.com"
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+              />
+            </div>
+            {positions && (
+              <PositionSelect
+                availablePositions={positions}
+                selectedPositionId={formData.positionId!}
+                onPositionChange={(positionId) =>
+                  setFormData({
+                    ...formData,
+                    positionId: positionId as number,
+                  })
+                }
+              />
+            )}
+          </div>
+
+          <div className="flex justify-end gap-2 pt-4">
+            <Button variant="outline" onClick={handleCloseDialog}>
+              Cancel
+            </Button>
+            <Button onClick={handleSaveUser}>
+              {isUpdating ? (
+                <CustomLoading message="Updating User" />
+              ) : isCreating ? (
+                <CustomLoading message="Creating User" />
+              ) : (
+                "Save User"
+              )}
+            </Button>
+          </div>
+        </ControlledDialog>
+
+        <ControlledDialog
+          open={confirm}
+          onOpenChange={setConfirm}
+          title="Confirm Delete"
+          description={`Are you sure you want to delete the User ${userToDelete?.email}? This action cannot be undone.`}
+        >
+          <div className="flex justify-end gap-3 mt-4">
+            <Button variant="outline" onClick={() => setConfirm(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={confirmDelete}>
+              {isDeleting ? (
+                <CustomLoading message="Deleting User" />
+              ) : (
+                "Delete"
+              )}
+            </Button>
+          </div>
+        </ControlledDialog>
+      </>
     </>
   );
 }

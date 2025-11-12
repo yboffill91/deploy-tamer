@@ -1,5 +1,7 @@
 import {
+  Briefcase,
   ClipboardList,
+  Cloud,
   CloudCheck,
   Earth,
   KeyIcon,
@@ -7,6 +9,7 @@ import {
   LayoutList,
   Logs,
   LucideIcon,
+  MonitorCloud,
   SearchIcon,
   ShieldCheck,
   Sliders,
@@ -67,6 +70,12 @@ export const AdminSidebarItems: NavGroup[] = [
       //   icon: User,
       //   comingSoon: false,
       // },
+    ],
+  },
+  {
+    id: 2,
+    label: "Tools",
+    items: [
       {
         title: 'SEO',
         url: '/admin/seo',
@@ -83,42 +92,66 @@ export const AdminSidebarItems: NavGroup[] = [
     ],
   },
   {
-    id: 2,
-    label: 'Settings',
+    id: 3,
+    label: 'HR',
     items: [
       {
-        title: 'Teams',
-        url: '/admin/teams',
-        icon: ClipboardList,
-      },
-      {
-        title: 'Users',
-        url: '/admin/users',
+        title: "User Management",
+        url: '/admin',
         icon: Users,
-      },
-      {
-        title: 'Position',
-        url: '/admin/positions-management',
-        icon: LayoutList,
-      },
+        subItems: [
+          {
+            title: 'Teams',
+            url: '/admin/teams',
+            icon: ClipboardList,
+          },
+          {
+            title: 'Users',
+            url: '/admin/users',
+            icon: Users,
+          },
+          {
+            title: 'Position',
+            url: '/admin/positions-management',
+            icon: LayoutList,
+          },
+          {
+            title: 'Roles',
+            url: '/admin/roles-management',
+            icon: ShieldCheck,
+            comingSoon: false,
+          },
+          {
+            title: 'Functionalities',
+            url: '/admin/features-management',
+            icon: Sliders,
+          },
 
-      {
-        title: 'Roles',
-        url: '/admin/roles-management',
-        icon: ShieldCheck,
-        comingSoon: false,
+        ]
       },
       {
-        title: 'Functionalities',
-        url: '/admin/features-management',
-        icon: Sliders,
-      },
-      {
-        title: 'Documents',
-        url: '/admin/documents',
-        icon: CloudCheck,
-        comingSoon: true,
-      },
+        title: "Client Management",
+        url: '/admin/client-management',
+        icon: Briefcase,
+        subItems: [
+          {
+            title: 'Clients',
+            url: '/admin/clients',
+            icon: Users,
+            comingSoon: true
+          },
+        ]
+      }
+
+    ],
+  },
+  {
+    id: 4,
+    label: "Administration",
+    items: [
+
+
+
       {
         title: 'Audit Logs',
         url: '/admin/logs',
@@ -130,8 +163,38 @@ export const AdminSidebarItems: NavGroup[] = [
         icon: Earth,
         comingSoon: true,
       },
-    ],
+    ]
   },
+  {
+    id: 5, label: "Documents", items: [
+      {
+        title: "Users",
+        url: "/documents/users",
+        icon: MonitorCloud,
+        subItems: [
+          {
+            title: 'Documents',
+            url: '/admin/documents',
+            icon: CloudCheck,
+            comingSoon: true,
+          },
+        ]
+      },
+      {
+        title: "Clients",
+        url: "/documents/clients",
+        icon: Cloud,
+        subItems: [
+          {
+            title: 'Documents',
+            url: '/admin/documents',
+            icon: CloudCheck,
+            comingSoon: true,
+          },
+        ]
+      }
+    ]
+  }
 ];
 
 export const sidebarItems: NavGroup[] = [

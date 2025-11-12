@@ -69,7 +69,7 @@ export function UsersSelector({
             Add User
           </Label>
           <Select value={selectedUser} onValueChange={setSelectedUser}>
-            <SelectTrigger id="user-select" className="mt-1">
+            <SelectTrigger id="user-select" className="mt-1 w-full">
               <SelectValue placeholder="Select a user..." />
             </SelectTrigger>
             <SelectContent>

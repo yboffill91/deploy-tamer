@@ -72,12 +72,12 @@ export function GenericDataTable<TData extends Record<string, any>>({
   onDelete,
   onAdd,
   showAddButton = true,
-  excludeColumns =  [],
+  excludeColumns = [],
   customRenderers = {},
 }: GenericDataTableProps<TData>) {
   const columns = React.useMemo(() => {
     if (data.length === 0) return [];
-    const defaultExclude = ["id","createdAt","updatedAt","deletedAt"];
+    const defaultExclude = ["id", "createdAt", "updatedAt", "deletedAt"];
     return Object.keys(data[0]).filter(
       (key) => !excludeColumns.includes(key) && !defaultExclude.includes(key)
     );
@@ -382,7 +382,7 @@ export function GenericDataTable<TData extends Record<string, any>>({
           <TableHeader>
             <TableRow>
               {visibleColumns.map((column) => (
-                <TableHead key={column}>
+                <TableHead key={column} className="px-4">
                   <Button
                     variant="ghost"
                     onClick={() => handleSort(column)}
@@ -407,7 +407,7 @@ export function GenericDataTable<TData extends Record<string, any>>({
               paginatedData.map((item, index) => (
                 <TableRow key={item.id || index}>
                   {visibleColumns.map((column) => (
-                    <TableCell key={column}>
+                    <TableCell key={column} className="px-4">
                       {renderCellValue(column, item[column], item)}
                     </TableCell>
                   ))}

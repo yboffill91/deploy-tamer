@@ -107,6 +107,9 @@ export default function FunctionalitiesPage() {
         description: `Functionality "${funcToDelete.name}" deleted successfully`,
       });
       const func = await func_repo.findAll();
+      if (func.length === 0) {
+        setFunctionalities(null);
+      }
       setFunctionalities(func);
     } catch (error) {
       setIsError(
@@ -177,7 +180,7 @@ export default function FunctionalitiesPage() {
       {isLoading && (
         <CustomPageLoader message="Loading Functionalities data..." />
       )}
-      {functionalities && (
+      {!isLoading && functionalities && functionalities.length && (
         <div className="">
           <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -186,78 +189,6 @@ export default function FunctionalitiesPage() {
                 title={"Functionalities Management"}
                 desc={"Manage the functionalities available in the system"}
               />
-              <ControlledDialog
-                open={isDialogOpen}
-                onOpenChange={setIsDialogOpen}
-                title={
-                  editingFunctionality
-                    ? "Edit Functionality"
-                    : "Create New Functionality"
-                }
-                description={
-                  editingFunctionality
-                    ? "Update the functionality name"
-                    : "Create a new functionality that can be assigned to roles"
-                }
-              >
-                <div className="space-y-4">
-                  <div>
-                    <Label
-                      htmlFor="functionality-name"
-                      className="text-sm font-medium"
-                    >
-                      Functionality Name
-                    </Label>
-                    <Input
-                      id="functionality-name"
-                      placeholder="e.g., Reports, Analytics, Settings"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ name: e.target.value })}
-                      className="mt-2"
-                    />
-                  </div>
-
-                  <div className="flex justify-end gap-3">
-                    <Button
-                      variant="outline"
-                      onClick={() => setIsDialogOpen(false)}
-                    >
-                      Cancel
-                    </Button>
-                    <Button onClick={handleSaveFunctionality}>
-                      {isUpdating ? (
-                        <CustomLoading message="Updating Functionality" />
-                      ) : isCreating ? (
-                        <CustomLoading message="Creating Functionality" />
-                      ) : (
-                        "Save"
-                      )}
-                    </Button>
-                  </div>
-                </div>
-              </ControlledDialog>
-              <ControlledDialog
-                open={confirmDelete}
-                onOpenChange={setConfirmDelete}
-                title="Confirm Delete"
-                description={`Are you sure you want to delete the functionality ${funcToDelete?.name}? This action cannot be undone.`}
-              >
-                <div className="flex justify-end gap-3 mt-4">
-                  <Button
-                    variant="outline"
-                    onClick={() => setConfirmDelete(false)}
-                  >
-                    Cancel
-                  </Button>
-                  <Button variant="destructive" onClick={confirm}>
-                    {isDeleting ? (
-                      <CustomLoading message="Deleting" />
-                    ) : (
-                      "Delete"
-                    )}
-                  </Button>
-                </div>
-              </ControlledDialog>
             </div>
 
             <Card className="container">
@@ -282,14 +213,79 @@ export default function FunctionalitiesPage() {
           </div>
         </div>
       )}
-      {!isLoading && (!functionalities || functionalities.length === 0) && (
-        <CustomEmpty
-          title="No functionalities created yet"
-          description="Create a new functionality"
-          icon={AlertTriangle}
-          onClick={handleAddFunctionality}
-        />
-      )}
+      {!isLoading &&
+        (functionalities === null || functionalities.length === 0) && (
+          <CustomEmpty
+            title="No functionalities created yet"
+            description="Create a new functionality"
+            icon={AlertTriangle}
+            onClick={handleAddFunctionality}
+          />
+        )}
+      <>
+        <ControlledDialog
+          open={isDialogOpen}
+          onOpenChange={setIsDialogOpen}
+          title={
+            editingFunctionality
+              ? "Edit Functionality"
+              : "Create New Functionality"
+          }
+          description={
+            editingFunctionality
+              ? "Update the functionality name"
+              : "Create a new functionality that can be assigned to roles"
+          }
+        >
+          <div className="space-y-4">
+            <div>
+              <Label
+                htmlFor="functionality-name"
+                className="text-sm font-medium"
+              >
+                Functionality Name
+              </Label>
+              <Input
+                id="functionality-name"
+                placeholder="e.g., Reports, Analytics, Settings"
+                value={formData.name}
+                onChange={(e) => setFormData({ name: e.target.value })}
+                className="mt-2"
+              />
+            </div>
+
+            <div className="flex justify-end gap-3">
+              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleSaveFunctionality}>
+                {isUpdating ? (
+                  <CustomLoading message="Updating Functionality" />
+                ) : isCreating ? (
+                  <CustomLoading message="Creating Functionality" />
+                ) : (
+                  "Save"
+                )}
+              </Button>
+            </div>
+          </div>
+        </ControlledDialog>
+        <ControlledDialog
+          open={confirmDelete}
+          onOpenChange={setConfirmDelete}
+          title="Confirm Delete"
+          description={`Are you sure you want to delete the functionality ${funcToDelete?.name}? This action cannot be undone.`}
+        >
+          <div className="flex justify-end gap-3 mt-4">
+            <Button variant="outline" onClick={() => setConfirmDelete(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={confirm}>
+              {isDeleting ? <CustomLoading message="Deleting" /> : "Delete"}
+            </Button>
+          </div>
+        </ControlledDialog>
+      </>
     </>
   );
 }

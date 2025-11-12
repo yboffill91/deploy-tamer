@@ -162,7 +162,7 @@ export function FeaturesManager({
             value={selectedExistingFeature}
             onValueChange={setSelectedExistingFeature}
           >
-            <SelectTrigger className="mt-1">
+            <SelectTrigger className="mt-1 w-full">
               <SelectValue placeholder="Select a feature..." />
             </SelectTrigger>
             <SelectContent>

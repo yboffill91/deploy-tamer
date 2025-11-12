@@ -18,10 +18,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui";
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props} variant="inset" collapsible="icon">
-      <SidebarHeader className="px-0!">
+      <SidebarHeader className="">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton className="p-0! hover:bg-transparent! min-w-12">
+            <SidebarMenuButton className=" hover:bg-transparent! min-w-12">
               <Avatar className="rounded-lg size-8">
                 <AvatarImage src={"/brand/blue-t.webp"} />
                 <AvatarFallback>TD</AvatarFallback>

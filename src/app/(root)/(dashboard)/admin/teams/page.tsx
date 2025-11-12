@@ -174,6 +174,9 @@ export default function TeamsPage() {
         description: `Team "${teamToDelete.name}" deleted successfully`,
       });
       const teams = await teams_repo.findAll();
+      if (teams.length === 0) {
+        setTeams(null);
+      }
       setTeams(teams);
     } catch (error) {
       setIsError(
@@ -199,7 +202,7 @@ export default function TeamsPage() {
           onClick={handleAddTeam}
         />
       )}
-      {teams && !isLoading && (
+      {!isLoading && teams && teams.length > 0 && (
         <main>
           <div>
             <CommonHeader
@@ -209,103 +212,6 @@ export default function TeamsPage() {
             />
             <Card className="container">
               <CardContent>
-                <ControlledDialog
-                  open={isDialogOpen}
-                  onOpenChange={setIsDialogOpen}
-                  title={editingTeam ? "Edit Team" : "Create New Team"}
-                  description={
-                    editingTeam
-                      ? "Update team details and members"
-                      : "Create a new team and assign users"
-                  }
-                >
-                  <div className="space-y-6 py-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="team-name">Team Name</Label>
-                      <Input
-                        id="team-name"
-                        placeholder="e.g., Engineering Team"
-                        value={formData.name}
-                        onChange={(e) =>
-                          setFormData({ ...formData, name: e.target.value })
-                        }
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="team-description">Description</Label>
-                      <Textarea
-                        id="team-description"
-                        placeholder="Team description..."
-                        value={formData.description}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            description: e.target.value,
-                          })
-                        }
-                        rows={4}
-                      />
-                    </div>
-
-                    <div className="space-y-3">
-                      <Label>Assign Users</Label>
-                      {users ? (
-                        <UsersSelector
-                          availableUsers={users}
-                          selectedUserIds={formData.usersIds ?? []}
-                          onUsersChange={(usersIds) =>
-                            setFormData({ ...formData, usersIds: usersIds })
-                          }
-                        />
-                      ) : (
-                        <CustomLoading message="Loading Users Data" />
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex justify-end gap-2 pt-4">
-                    <Button
-                      variant="outline"
-                      onClick={() => setIsDialogOpen(false)}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      onClick={handleSaveTeam}
-                      disabled={isCreating || isUpdating}
-                    >
-                      {isCreating ? (
-                        <CustomLoading message="Creating Team" />
-                      ) : isUpdating ? (
-                        <CustomLoading message="Updating Team" />
-                      ) : (
-                        "Save Team"
-                      )}
-                    </Button>
-                  </div>
-                </ControlledDialog>
-
-                <ControlledDialog
-                  open={confirm}
-                  onOpenChange={setConfirm}
-                  title="Confirm Delete"
-                  description={`Are you sure you want to delete the team ${teamToDelete?.name}? This action cannot be undone.`}
-                >
-                  <div className="flex justify-end gap-3 mt-4">
-                    <Button variant="outline" onClick={() => setConfirm(false)}>
-                      Cancel
-                    </Button>
-                    <Button variant="destructive" onClick={confirmDeleteTeam}>
-                      {isDeleting ? (
-                        <CustomLoading message="Deleting Team" />
-                      ) : (
-                        "Delete"
-                      )}
-                    </Button>
-                  </div>
-                </ControlledDialog>
-
                 <TeamsDataTable
                   data={teams}
                   onEdit={handleEditTeam}
@@ -317,6 +223,101 @@ export default function TeamsPage() {
           </div>
         </main>
       )}
+      <>
+        <ControlledDialog
+          open={isDialogOpen}
+          onOpenChange={setIsDialogOpen}
+          title={editingTeam ? "Edit Team" : "Create New Team"}
+          description={
+            editingTeam
+              ? "Update team details and members"
+              : "Create a new team and assign users"
+          }
+        >
+          <div className="space-y-6 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="team-name">Team Name</Label>
+              <Input
+                id="team-name"
+                placeholder="e.g., Engineering Team"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="team-description">Description</Label>
+              <Textarea
+                id="team-description"
+                placeholder="Team description..."
+                value={formData.description}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    description: e.target.value,
+                  })
+                }
+                rows={4}
+              />
+            </div>
+
+            <div className="space-y-3">
+              <Label>Assign Users</Label>
+              {users ? (
+                <UsersSelector
+                  availableUsers={users}
+                  selectedUserIds={formData.usersIds ?? []}
+                  onUsersChange={(usersIds) =>
+                    setFormData({ ...formData, usersIds: usersIds })
+                  }
+                />
+              ) : (
+                <CustomLoading message="Loading Users Data" />
+              )}
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-4">
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSaveTeam}
+              disabled={isCreating || isUpdating}
+            >
+              {isCreating ? (
+                <CustomLoading message="Creating Team" />
+              ) : isUpdating ? (
+                <CustomLoading message="Updating Team" />
+              ) : (
+                "Save Team"
+              )}
+            </Button>
+          </div>
+        </ControlledDialog>
+
+        <ControlledDialog
+          open={confirm}
+          onOpenChange={setConfirm}
+          title="Confirm Delete"
+          description={`Are you sure you want to delete the team ${teamToDelete?.name}? This action cannot be undone.`}
+        >
+          <div className="flex justify-end gap-3 mt-4">
+            <Button variant="outline" onClick={() => setConfirm(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={confirmDeleteTeam}>
+              {isDeleting ? (
+                <CustomLoading message="Deleting Team" />
+              ) : (
+                "Delete"
+              )}
+            </Button>
+          </div>
+        </ControlledDialog>
+      </>
     </>
   );
 }

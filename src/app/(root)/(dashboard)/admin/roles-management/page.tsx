@@ -121,6 +121,9 @@ export default function RolesPage() {
         description: `Role "${roleToDelete.name}" deleted successfully`,
       });
       const roles = await roles_repo.findAll();
+      if (roles.length === 0) {
+        setRoles(null);
+      }
       setRoles(roles);
     } catch (error) {
       setIsError(
@@ -193,7 +196,7 @@ export default function RolesPage() {
       {isLoading && (
         <CustomPageLoader message="Loading Roles and Features data ..." />
       )}
-      {roles && (
+      {!isLoading && roles && roles.length > 0 && (
         <div>
           <div className="space-y-6 container ">
             <div className="flex items-center justify-between">
@@ -202,86 +205,6 @@ export default function RolesPage() {
                 title={"Roles Management"}
                 desc={"Manage roles and assign permissions to features"}
               />
-
-              <ControlledDialog
-                open={isDialogOpen}
-                onOpenChange={setIsDialogOpen}
-                title={editingRole ? "Edit Role" : "Create New Role"}
-                description={
-                  editingRole
-                    ? "Update the role details and permissions"
-                    : "Create a new role and assign permissions"
-                }
-              >
-                <div className="space-y-6">
-                  <div>
-                    <Label htmlFor="role-name" className="text-sm font-medium">
-                      Role Name
-                    </Label>
-                    <Input
-                      id="role-name"
-                      placeholder="e.g., Administrator, Editor, Viewer"
-                      value={formData.name}
-                      onChange={(e) =>
-                        setFormData({ ...formData, name: e.target.value })
-                      }
-                      className="mt-2"
-                    />
-                  </div>
-
-                  <div>
-                    <Label className="text-sm font-medium mb-3 block">
-                      Permissions
-                    </Label>
-                    {functionalities && (
-                      <FeaturesManager
-                        availableFeatures={functionalities}
-                        selectedFeatures={formData.feature! as RoleFeature[]}
-                        onFeaturesChange={(features) =>
-                          setFormData({ ...formData, feature: features })
-                        }
-                      />
-                    )}
-                  </div>
-
-                  <div className="flex justify-end gap-3">
-                    <Button
-                      variant="outline"
-                      onClick={() => setIsDialogOpen(false)}
-                    >
-                      Cancel
-                    </Button>
-                    <Button onClick={handleSaveRole}>
-                      {isCreating ? (
-                        <CustomLoading message="Creatind Role" />
-                      ) : isUpdating ? (
-                        <CustomLoading message="Updating Role" />
-                      ) : (
-                        "Save"
-                      )}
-                    </Button>
-                  </div>
-                </div>
-              </ControlledDialog>
-              <ControlledDialog
-                open={confirm}
-                onOpenChange={setConfirm}
-                title="Confirm Delete"
-                description={`Are you sure you want to delete the role ${roleToDelete?.name}? This action cannot be undone.`}
-              >
-                <div className="flex justify-end gap-3 mt-4">
-                  <Button variant="outline" onClick={() => setConfirm(false)}>
-                    Cancel
-                  </Button>
-                  <Button variant="destructive" onClick={confirmDelete}>
-                    {isDeleting ? (
-                      <CustomLoading message="Deleting Role" />
-                    ) : (
-                      "Delete"
-                    )}
-                  </Button>
-                </div>
-              </ControlledDialog>
             </div>
 
             <Card>
@@ -297,7 +220,7 @@ export default function RolesPage() {
           </div>
         </div>
       )}
-      {!isLoading && (!roles || roles.length === 0) && (
+      {!isLoading && (roles === null || roles.length === 0) && (
         <CustomEmpty
           title="No data yet"
           description="We don't found any data yet, but you can create a new one"
@@ -305,6 +228,84 @@ export default function RolesPage() {
           icon={AlertTriangle}
         />
       )}
+      <>
+        <ControlledDialog
+          open={isDialogOpen}
+          onOpenChange={setIsDialogOpen}
+          title={editingRole ? "Edit Role" : "Create New Role"}
+          description={
+            editingRole
+              ? "Update the role details and permissions"
+              : "Create a new role and assign permissions"
+          }
+        >
+          <div className="space-y-6">
+            <div>
+              <Label htmlFor="role-name" className="text-sm font-medium">
+                Role Name
+              </Label>
+              <Input
+                id="role-name"
+                placeholder="e.g., Administrator, Editor, Viewer"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+                className="mt-2"
+              />
+            </div>
+
+            <div>
+              <Label className="text-sm font-medium mb-3 block">
+                Permissions
+              </Label>
+              {functionalities && (
+                <FeaturesManager
+                  availableFeatures={functionalities}
+                  selectedFeatures={formData.feature! as RoleFeature[]}
+                  onFeaturesChange={(features) =>
+                    setFormData({ ...formData, feature: features })
+                  }
+                />
+              )}
+            </div>
+
+            <div className="flex justify-end gap-3">
+              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleSaveRole}>
+                {isCreating ? (
+                  <CustomLoading message="Creatind Role" />
+                ) : isUpdating ? (
+                  <CustomLoading message="Updating Role" />
+                ) : (
+                  "Save"
+                )}
+              </Button>
+            </div>
+          </div>
+        </ControlledDialog>
+        <ControlledDialog
+          open={confirm}
+          onOpenChange={setConfirm}
+          title="Confirm Delete"
+          description={`Are you sure you want to delete the role ${roleToDelete?.name}? This action cannot be undone.`}
+        >
+          <div className="flex justify-end gap-3 mt-4">
+            <Button variant="outline" onClick={() => setConfirm(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={confirmDelete}>
+              {isDeleting ? (
+                <CustomLoading message="Deleting Role" />
+              ) : (
+                "Delete"
+              )}
+            </Button>
+          </div>
+        </ControlledDialog>
+      </>
     </>
   );
 }

@@ -154,8 +154,6 @@ export default function AuditLogsTable() {
     setCurrentPage((prev) => (prev = prev + 1));
   };
 
-  console.log("🛜 Limit", limit);
-
   return (
     <>
       {loading && <CustomPageLoader message="Loading logs data ..." />}

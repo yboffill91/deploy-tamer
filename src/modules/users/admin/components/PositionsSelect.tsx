@@ -63,7 +63,7 @@ export function PositionSelect({
           value={selectedPositionId?.toString() || ""}
           onValueChange={handlePositionChange}
         >
-          <SelectTrigger id="position-select">
+          <SelectTrigger id="position-select" className="w-full">
             <SelectValue placeholder="Choose a position..." />
           </SelectTrigger>
           <SelectContent>

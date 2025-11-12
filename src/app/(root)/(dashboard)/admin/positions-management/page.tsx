@@ -157,8 +157,6 @@ export default function PositionsPage() {
         roles: formData.roles,
       };
 
-      console.log(JSON.stringify(updatePosition));
-
       await pos_repo.update(id, updatePosition);
       showToast({
         message: "Success",
@@ -190,6 +188,9 @@ export default function PositionsPage() {
         description: `Position "${positionToDelete.name}" deleted successfully`,
       });
       const newPositions = await pos_repo.findAll();
+      if (newPositions.length === 0) {
+        setPositions(null);
+      }
       setPositions(newPositions);
     } catch (error) {
       setIsError(
@@ -204,7 +205,7 @@ export default function PositionsPage() {
   return (
     <>
       {isLoading && <CustomPageLoader message="Loading Positions" />}
-      {positions && (
+      {!isLoading && positions && positions.length > 0 && (
         <div>
           <CommonHeader
             icon={LayoutList}
@@ -214,178 +215,8 @@ export default function PositionsPage() {
 
           <Card className="mt-4 container">
             <CardContent>
-              {/* Create Dialog */}
-              <ControlledDialog
-                open={isDialogOpen}
-                onOpenChange={setIsDialogOpen}
-                title={
-                  editingPosition ? "Edit Position" : "Create New Position"
-                }
-                description={
-                  editingPosition
-                    ? "Update position details and roles"
-                    : "Create a new position and assign roles"
-                }
-              >
-                <div className="space-y-6 py-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="position-name">Position Name</Label>
-                    <Input
-                      id="position-name"
-                      placeholder="e.g., Senior Developer"
-                      value={formData.name}
-                      onChange={(e) =>
-                        setFormData({ ...formData, name: e.target.value })
-                      }
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="position-description">Description</Label>
-                    <Textarea
-                      id="position-description"
-                      placeholder="Position description..."
-                      value={formData.description}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          description: e.target.value,
-                        })
-                      }
-                      rows={4}
-                    />
-                  </div>
-                  {isLoading && <CustomLoading message="Loading Roles Info" />}
-                  {roles && (
-                    <div className="space-y-3">
-                      <Label>Assign Roles</Label>
-                      <RolesSelector
-                        availableRoles={roles}
-                        selectedRoles={formData.roles}
-                        onRolesChange={(roles) =>
-                          setFormData({ ...formData, roles })
-                        }
-                      />
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex justify-end gap-2 pt-4">
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsDialogOpen(false)}
-                  >
-                    Cancel
-                  </Button>
-                  <Button onClick={handleSavePosition}>
-                    {isCreating ? (
-                      <CustomLoading message="Creating Position" />
-                    ) : (
-                      "Create Position"
-                    )}
-                  </Button>
-                </div>
-              </ControlledDialog>
-
-              {/* Edit Dialog */}
-              <ControlledDialog
-                open={showEdit}
-                onOpenChange={setShowEdit}
-                title={
-                  editingPosition ? "Edit Position" : "Create New Position"
-                }
-                description={
-                  editingPosition
-                    ? "Update position details and roles"
-                    : "Create a new position and assign roles"
-                }
-              >
-                <div className="space-y-6 py-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="position-name">Position Name</Label>
-                    <Input
-                      id="position-name"
-                      placeholder="e.g., Senior Developer"
-                      value={formData.name}
-                      onChange={(e) =>
-                        setFormData({ ...formData, name: e.target.value })
-                      }
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="position-description">Description</Label>
-                    <Textarea
-                      id="position-description"
-                      placeholder="Position description..."
-                      value={formData.description}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          description: e.target.value,
-                        })
-                      }
-                      rows={4}
-                    />
-                  </div>
-                  {isLoading && <CustomLoading message="Loading Roles Info" />}
-                  {roles && (
-                    <div className="space-y-3">
-                      <Label>Assign Roles</Label>
-                      <RolesSelector
-                        availableRoles={roles}
-                        selectedRoles={formData.roles}
-                        onRolesChange={(roles) =>
-                          setFormData({ ...formData, roles })
-                        }
-                      />
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex justify-end gap-2 pt-4">
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsDialogOpen(false)}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={() =>
-                      editingPosition && handleSaveEdit(editingPosition.id!)
-                    }
-                  >
-                    {isUpdating ? (
-                      <CustomLoading message="Updating Position" />
-                    ) : (
-                      "Update Position"
-                    )}
-                  </Button>
-                </div>
-              </ControlledDialog>
-
-              {/* Delete Dialog */}
-              <ControlledDialog
-                open={confirmPosition}
-                onOpenChange={setConfirmPosition}
-                title="Confirm Delete"
-                description={`Are you sure you want to delete the position "${positionToDelete?.name}"? This action cannot be undone.`}
-              >
-                <div className="flex justify-end gap-3 mt-4">
-                  <Button
-                    variant="outline"
-                    onClick={() => setConfirmPosition(false)}
-                  >
-                    Cancel
-                  </Button>
-                  <Button variant="destructive" onClick={confirmDelete}>
-                    Delete
-                  </Button>
-                </div>
-              </ControlledDialog>
-
               <PositionsDataTable
-                data={positions}
+                data={positions!}
                 onAdd={handleAddPosition}
                 onEdit={(data) => handleEdit(data.id!)}
                 onDelete={(position) => handleDelete(position)}
@@ -394,7 +225,7 @@ export default function PositionsPage() {
           </Card>
         </div>
       )}
-      {!isLoading && (!positions || positions.length === 0) && (
+      {!isLoading && (positions === null || positions.length === 0) && (
         <CustomEmpty
           title="No Positions Created Yet!"
           icon={AlertTriangle}
@@ -402,6 +233,160 @@ export default function PositionsPage() {
           onClick={handleAddPosition}
         />
       )}
+      <>
+        {/* Dialogs */}
+        <ControlledDialog
+          open={isDialogOpen}
+          onOpenChange={setIsDialogOpen}
+          title={editingPosition ? "Edit Position" : "Create New Position"}
+          description={
+            editingPosition
+              ? "Update position details and roles"
+              : "Create a new position and assign roles"
+          }
+        >
+          <div className="space-y-6 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="position-name">Position Name</Label>
+              <Input
+                id="position-name"
+                placeholder="e.g., Senior Developer"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="position-description">Description</Label>
+              <Textarea
+                id="position-description"
+                placeholder="Position description..."
+                value={formData.description}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    description: e.target.value,
+                  })
+                }
+                rows={4}
+              />
+            </div>
+            {isLoading && <CustomLoading message="Loading Roles Info" />}
+            {roles && (
+              <div className="space-y-3">
+                <Label>Assign Roles</Label>
+                <RolesSelector
+                  availableRoles={roles}
+                  selectedRoles={formData.roles}
+                  onRolesChange={(roles) => setFormData({ ...formData, roles })}
+                />
+              </div>
+            )}
+          </div>
+
+          <div className="flex justify-end gap-2 pt-4">
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSavePosition}>
+              {isCreating ? (
+                <CustomLoading message="Creating Position" />
+              ) : (
+                "Create Position"
+              )}
+            </Button>
+          </div>
+        </ControlledDialog>
+
+        {/* Edit Dialog */}
+        <ControlledDialog
+          open={showEdit}
+          onOpenChange={setShowEdit}
+          title={editingPosition ? "Edit Position" : "Create New Position"}
+          description={
+            editingPosition
+              ? "Update position details and roles"
+              : "Create a new position and assign roles"
+          }
+        >
+          <div className="space-y-6 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="position-name">Position Name</Label>
+              <Input
+                id="position-name"
+                placeholder="e.g., Senior Developer"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="position-description">Description</Label>
+              <Textarea
+                id="position-description"
+                placeholder="Position description..."
+                value={formData.description}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    description: e.target.value,
+                  })
+                }
+                rows={4}
+              />
+            </div>
+            {isLoading && <CustomLoading message="Loading Roles Info" />}
+            {roles && (
+              <div className="space-y-3">
+                <Label>Assign Roles</Label>
+                <RolesSelector
+                  availableRoles={roles}
+                  selectedRoles={formData.roles}
+                  onRolesChange={(roles) => setFormData({ ...formData, roles })}
+                />
+              </div>
+            )}
+          </div>
+
+          <div className="flex justify-end gap-2 pt-4">
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={() =>
+                editingPosition && handleSaveEdit(editingPosition.id!)
+              }
+            >
+              {isUpdating ? (
+                <CustomLoading message="Updating Position" />
+              ) : (
+                "Update Position"
+              )}
+            </Button>
+          </div>
+        </ControlledDialog>
+
+        {/* Delete Dialog */}
+        <ControlledDialog
+          open={confirmPosition}
+          onOpenChange={setConfirmPosition}
+          title="Confirm Delete"
+          description={`Are you sure you want to delete the position "${positionToDelete?.name}"? This action cannot be undone.`}
+        >
+          <div className="flex justify-end gap-3 mt-4">
+            <Button variant="outline" onClick={() => setConfirmPosition(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={confirmDelete}>
+              Delete
+            </Button>
+          </div>
+        </ControlledDialog>
+      </>
     </>
   );
 }
