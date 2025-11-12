@@ -13,6 +13,7 @@ import {
   AlertCircle,
   ChevronLeft,
   ChevronRight,
+  FilterX,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -254,24 +255,26 @@ export function GenericDataTable<TData extends Record<string, any>>({
   };
 
   return (
-    <div className="w-full space-y-4">
-      <div className="flex items-center gap-2">
+    <div className="w-full space-y-4 relative">
+      <div className="flex  flex-col-reverse items-center gap-2 md:flex-row">
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              role="combobox"
-              aria-expanded={open}
-              className="w-56 justify-between bg-transparent"
-            >
-              {globalFilter
-                ? `Filtering: ${globalFilter}`
-                : `Search by ${formatColumnHeader(filterColumn)}...`}
-              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-            </Button>
+            <div className="flex items-center gap-2  w-full">
+              <Button
+                variant="outline"
+                role="combobox"
+                aria-expanded={open}
+                className="w-full justify-between bg-transparent"
+              >
+                {globalFilter
+                  ? `Filtering: ${globalFilter}`
+                  : `Search by ${formatColumnHeader(filterColumn)}...`}
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </div>
           </PopoverTrigger>
-          <PopoverContent className="w-56 p-0">
-            <Command>
+          <PopoverContent>
+            <Command className="w-full">
               <CommandInput
                 placeholder={`Search by ${formatColumnHeader(filterColumn)}...`}
                 value={globalFilter}
@@ -314,68 +317,79 @@ export function GenericDataTable<TData extends Record<string, any>>({
                     </div>
                   )}
                 </CommandGroup>
-                {showAddButton && onAdd && globalFilter && (
-                  <div className="border-t p-2">
+                <div className="border-t  flex w-full items-center justify-center">
+                  {showAddButton && onAdd && globalFilter && (
                     <Button
-                      variant="ghost"
                       size="sm"
                       onClick={() => {
                         onAdd(globalFilter);
                         setOpen(false);
                       }}
-                      className="w-full justify-start gap-2"
+                      className="w-justify-start gap-2 w-1/2"
                     >
+                      Add
                       <Plus className="h-4 w-4" />
-                      Add new record{" "}
-                      {filteredData.length <= 0 && (
-                        <Badge>{globalFilter} </Badge>
-                      )}{" "}
                     </Button>
-                  </div>
-                )}
+                  )}
+                  {globalFilter.length > 0 && (
+                    <Button
+                      variant={"ghost"}
+                      onClick={() => setGlobalFilter("")}
+                      className={cn(!showAddButton ? "w-full" : "w-1/2")}
+                    >
+                      <FilterX /> <span>Clear</span>
+                    </Button>
+                  )}
+                </div>
               </CommandList>
             </Command>
           </PopoverContent>
         </Popover>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto bg-transparent">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
+        <div className="flex sm:flex-row flex-col-reverse sm:items-center sm:justify-end items-end justify-end gap-2  w-full ">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild className=" sm:max-w-52 w-full">
+              <Button variant="outline">
+                Columns <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="max-h-64 overflow-y-auto"
+            >
+              {columns
+                .filter((col) => col !== "id")
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column}
+                      className="capitalize"
+                      checked={columnVisibility[column]}
+                      onCheckedChange={(value) =>
+                        setColumnVisibility((prev) => ({
+                          ...prev,
+                          [column]: !!value,
+                        }))
+                      }
+                    >
+                      {formatColumnHeader(column)}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          {showAddButton && onAdd && (
+            <Button
+              onClick={() => {
+                onAdd(globalFilter);
+                setOpen(false);
+              }}
+              className=""
+            >
+              Add
+              <Plus />
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="max-h-64 overflow-y-auto">
-            {columns
-              .filter((col) => col !== "id")
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column}
-                    className="capitalize"
-                    checked={columnVisibility[column]}
-                    onCheckedChange={(value) =>
-                      setColumnVisibility((prev) => ({
-                        ...prev,
-                        [column]: !!value,
-                      }))
-                    }
-                  >
-                    {formatColumnHeader(column)}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-        {showAddButton && onAdd && (
-          <Button
-            onClick={() => {
-              onAdd(globalFilter);
-              setOpen(false);
-            }}
-          >
-            Add
-            <Plus className="h-4 w-4" />
-          </Button>
-        )}
+          )}
+        </div>
       </div>
       <div className="rounded-md border">
         <Table>
@@ -454,9 +468,11 @@ export function GenericDataTable<TData extends Record<string, any>>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between ">
         <div className="flex items-center gap-2">
-          <p className="text-sm text-muted-foreground">Rows/Page </p>
+          <p className="text-sm text-muted-foreground">
+            <span className="hidden sm:block">Rows/Page</span>{" "}
+          </p>
           <Select
             value={String(pageSize)}
             onValueChange={(value) => {
@@ -476,14 +492,9 @@ export function GenericDataTable<TData extends Record<string, any>>({
             </SelectContent>
           </Select>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 ">
           <div className="text-sm text-muted-foreground">
-            {pageSize === "all"
-              ? `Showing all  row(s)`
-              : `Rows ${currentPage * (pageSize as number) + 1}-${Math.min(
-                  (currentPage + 1) * (pageSize as number),
-                  sortedData.length
-                )}`}
+            {pageSize === "all" ? `Showing all  row(s)` : ``}
           </div>
           {pageSize !== "all" && (
             <div className="flex items-center gap-2">
