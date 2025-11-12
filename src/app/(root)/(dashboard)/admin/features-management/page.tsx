@@ -1,28 +1,28 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { AlertTriangle, Sliders } from 'lucide-react';
-import { FunctionalitiesEntity, requestFunctionalitiesDTO } from '@/core';
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { AlertTriangle, Sliders } from "lucide-react";
+import { FunctionalitiesEntity, requestFunctionalitiesDTO } from "@/core";
 
-import { CustomLoading } from '@/components/CustomLoading';
-import { FunctionalitiesDataTable } from '@/modules/users/admin/components';
-import { FunctionalitiesApiRepository } from '@/infraestructure/repositories';
-import toast from 'react-hot-toast';
-import { CustomEmpty } from '@/components/CustomEmpty';
-import { ControlledDialog } from '@/components/ControlledDialog';
-import { CommonHeader } from '@/modules/users/admin';
-import { CustomPageLoader } from '@/components/CustomPageLoader';
+import { CustomLoading } from "@/components/CustomLoading";
+import { FunctionalitiesDataTable } from "@/modules/users/admin/components";
+import { FunctionalitiesApiRepository } from "@/infraestructure/repositories";
+import { CustomEmpty } from "@/components/CustomEmpty";
+import { ControlledDialog } from "@/components/ControlledDialog";
+import { CommonHeader } from "@/modules/users/admin";
+import { CustomPageLoader } from "@/components/CustomPageLoader";
+import { showToast } from "@/components/CustomToaster";
 
 export default function FunctionalitiesPage() {
   const [functionalities, setFunctionalities] = useState<
@@ -32,7 +32,7 @@ export default function FunctionalitiesPage() {
     useState<FunctionalitiesEntity | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [formData, setFormData] = useState<requestFunctionalitiesDTO>({
-    name: '',
+    name: "",
   });
 
   const [isCreating, setIsCreating] = useState(false);
@@ -56,7 +56,7 @@ export default function FunctionalitiesPage() {
         setFunctionalities(data);
       } catch (error) {
         setIsError(
-          error instanceof Error ? error.message : 'An error occurred'
+          error instanceof Error ? error.message : "An error occurred"
         );
       } finally {
         setIsLoading(false);
@@ -67,13 +67,17 @@ export default function FunctionalitiesPage() {
 
   useEffect(() => {
     if (isError) {
-      toast.error(isError);
+      showToast({
+        message: "Error",
+        type: "error",
+        description: isError,
+      });
     }
   }, [isError]);
 
   const handleAddFunctionality = () => {
     setEditingFunctionality(null);
-    setFormData({ name: '' });
+    setFormData({ name: "" });
     setIsDialogOpen(true);
   };
 
@@ -90,16 +94,18 @@ export default function FunctionalitiesPage() {
 
   const confirm = async () => {
     if (!funcToDelete) {
-      setIsError('Nothing to delete');
+      setIsError("Nothing to delete");
       return;
     }
 
     try {
       setIsDeleting(true);
       await func_repo.delete(String(funcToDelete.id));
-      toast.success(
-        `Functionality "${funcToDelete.name}" deleted successfully`
-      );
+      showToast({
+        message: "Success",
+        type: "success",
+        description: `Functionality "${funcToDelete.name}" deleted successfully`,
+      });
       const func = await func_repo.findAll();
       setFunctionalities(func);
     } catch (error) {
@@ -117,7 +123,7 @@ export default function FunctionalitiesPage() {
 
   const handleSaveFunctionality = async () => {
     if (!formData.name!.trim()) {
-      alert('Functionality name is required');
+      alert("Functionality name is required");
       return;
     }
 
@@ -128,10 +134,14 @@ export default function FunctionalitiesPage() {
         setIsUpdating(false);
         const func = await func_repo.findAll();
         setFunctionalities(func);
-        toast.success('Functionality updated successfully');
+        showToast({
+          message: "Success",
+          type: "success",
+          description: "Functionality updated successfully",
+        });
       } catch (error) {
         setIsError(
-          error instanceof Error ? error.message : 'An error occurred'
+          error instanceof Error ? error.message : "An error occurred"
         );
       } finally {
         setIsUpdating(false);
@@ -143,10 +153,14 @@ export default function FunctionalitiesPage() {
         await func_repo.create(formData);
         const func = await func_repo.findAll();
         setFunctionalities(func);
-        toast.success('Functionality updated successfully');
+        showToast({
+          message: "Success",
+          type: "success",
+          description: "Functionality created successfully",
+        });
       } catch (error) {
         setIsError(
-          error instanceof Error ? error.message : 'An error occurred'
+          error instanceof Error ? error.message : "An error occurred"
         );
       } finally {
         setIsCreating(false);
@@ -155,68 +169,68 @@ export default function FunctionalitiesPage() {
     }
 
     setIsDialogOpen(false);
-    setFormData({ name: '' });
+    setFormData({ name: "" });
   };
 
   return (
     <>
       {isLoading && (
-        <CustomPageLoader message='Loading Functionalities data...' />
+        <CustomPageLoader message="Loading Functionalities data..." />
       )}
       {functionalities && (
-        <div className=''>
-          <div className='space-y-6'>
-            <div className='flex items-center justify-between'>
+        <div className="">
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
               <CommonHeader
                 icon={Sliders}
-                title={'Functionalities Management'}
-                desc={'Manage the functionalities available in the system'}
+                title={"Functionalities Management"}
+                desc={"Manage the functionalities available in the system"}
               />
               <ControlledDialog
                 open={isDialogOpen}
                 onOpenChange={setIsDialogOpen}
                 title={
                   editingFunctionality
-                    ? 'Edit Functionality'
-                    : 'Create New Functionality'
+                    ? "Edit Functionality"
+                    : "Create New Functionality"
                 }
                 description={
                   editingFunctionality
-                    ? 'Update the functionality name'
-                    : 'Create a new functionality that can be assigned to roles'
+                    ? "Update the functionality name"
+                    : "Create a new functionality that can be assigned to roles"
                 }
               >
-                <div className='space-y-4'>
+                <div className="space-y-4">
                   <div>
                     <Label
-                      htmlFor='functionality-name'
-                      className='text-sm font-medium'
+                      htmlFor="functionality-name"
+                      className="text-sm font-medium"
                     >
                       Functionality Name
                     </Label>
                     <Input
-                      id='functionality-name'
-                      placeholder='e.g., Reports, Analytics, Settings'
+                      id="functionality-name"
+                      placeholder="e.g., Reports, Analytics, Settings"
                       value={formData.name}
                       onChange={(e) => setFormData({ name: e.target.value })}
-                      className='mt-2'
+                      className="mt-2"
                     />
                   </div>
 
-                  <div className='flex justify-end gap-3'>
+                  <div className="flex justify-end gap-3">
                     <Button
-                      variant='outline'
+                      variant="outline"
                       onClick={() => setIsDialogOpen(false)}
                     >
                       Cancel
                     </Button>
                     <Button onClick={handleSaveFunctionality}>
                       {isUpdating ? (
-                        <CustomLoading message='Updating Functionality' />
+                        <CustomLoading message="Updating Functionality" />
                       ) : isCreating ? (
-                        <CustomLoading message='Creating Functionality' />
+                        <CustomLoading message="Creating Functionality" />
                       ) : (
-                        'Save'
+                        "Save"
                       )}
                     </Button>
                   </div>
@@ -225,33 +239,33 @@ export default function FunctionalitiesPage() {
               <ControlledDialog
                 open={confirmDelete}
                 onOpenChange={setConfirmDelete}
-                title='Confirm Delete'
+                title="Confirm Delete"
                 description={`Are you sure you want to delete the functionality ${funcToDelete?.name}? This action cannot be undone.`}
               >
-                <div className='flex justify-end gap-3 mt-4'>
+                <div className="flex justify-end gap-3 mt-4">
                   <Button
-                    variant='outline'
+                    variant="outline"
                     onClick={() => setConfirmDelete(false)}
                   >
                     Cancel
                   </Button>
-                  <Button variant='destructive' onClick={confirm}>
+                  <Button variant="destructive" onClick={confirm}>
                     {isDeleting ? (
-                      <CustomLoading message='Deleting' />
+                      <CustomLoading message="Deleting" />
                     ) : (
-                      'Delete'
+                      "Delete"
                     )}
                   </Button>
                 </div>
               </ControlledDialog>
             </div>
 
-            <Card className='container'>
+            <Card className="container">
               <CardHeader>
                 <CardTitle>All Functionalities</CardTitle>
                 <CardDescription>
                   {functionalities?.length}
-                  {functionalities?.length !== 1 ? 'ties' : 'ty'} available
+                  {functionalities?.length !== 1 ? "ties" : "ty"} available
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -270,8 +284,8 @@ export default function FunctionalitiesPage() {
       )}
       {!isLoading && (!functionalities || functionalities.length === 0) && (
         <CustomEmpty
-          title='No functionalities created yet'
-          description='Create a new functionality'
+          title="No functionalities created yet"
+          description="Create a new functionality"
           icon={AlertTriangle}
           onClick={handleAddFunctionality}
         />

@@ -18,8 +18,8 @@ import { CustomInput } from "@/components/CustomInput";
 import { CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 
-import toast from "react-hot-toast";
 import { FirebaseAuthRepository } from "@/infraestructure/repositories";
+import { showToast } from "@/components/CustomToaster";
 
 const resetPasswordSchema = z
   .object({
@@ -62,7 +62,11 @@ export default function ResetPasswordPage() {
 
   useEffect(() => {
     if (error) {
-      toast.error(error);
+      showToast({
+        message: "Error",
+        type: "error",
+        description: error,
+      });
     }
   }, [error]);
 

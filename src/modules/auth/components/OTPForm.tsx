@@ -13,7 +13,6 @@ import { CustomLoading } from "@/components/CustomLoading";
 import { ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
 import { useState } from "react";
 import { otpSchema, otpType } from "../models";
 import { useAuth } from "../providers/AuthProvider";
@@ -21,6 +20,7 @@ import {
   FirebaseAuthRepository,
   SessionVerificationRepository,
 } from "@/infraestructure/repositories";
+import { showToast } from "@/components/CustomToaster";
 
 export const OTPForm = () => {
   const {
@@ -45,7 +45,11 @@ export const OTPForm = () => {
     setLoading(true);
 
     if (!user) {
-      toast.error("User not found");
+      showToast({
+        message: "Error",
+        description: "User not found",
+        type: "error",
+      });
       return;
     }
 
@@ -53,12 +57,19 @@ export const OTPForm = () => {
 
     try {
       await OtpRepository.verifyCode(data.otp, token!);
-      toast.success("Code validated successfully");
+      showToast({
+        message: "Success",
+        description: "Code validated successfully",
+        type: "success",
+      });
       router.push("/admin");
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Something went wrong"
-      );
+      showToast({
+        message: "Error",
+        description:
+          error instanceof Error ? error.message : "Something went wrong",
+        type: "error",
+      });
     } finally {
       setLoading(false);
     }

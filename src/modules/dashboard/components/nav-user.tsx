@@ -24,7 +24,7 @@ import { getInitials } from "@/lib/utils";
 import { useAuth } from "@/modules/auth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import { showToast } from "@/components/CustomToaster";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
@@ -33,7 +33,12 @@ export function NavUser() {
   const router = useRouter();
 
   useEffect(() => {
-    if (error) toast.error(error);
+    if (error)
+      showToast({
+        message: "Error",
+        description: error,
+        type: "error",
+      });
   }, [error]);
 
   const handleLogout = async () => {

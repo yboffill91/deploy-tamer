@@ -4,8 +4,8 @@ import { Button } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { useAuth } from "../providers/AuthProvider";
+import { showToast } from "@/components/CustomToaster";
 
 export const ButtonsSelectProviders = ({
   loadingMessage,
@@ -80,7 +80,12 @@ export const ButtonsSelectProviders = ({
           )}
         </Button> */}
       </div>
-      {error && toast.error(`Authentication error: ${error}`)}
+      {error &&
+        showToast({
+          message: "Error",
+          description: error,
+          type: "error",
+        })}
     </>
   );
 };

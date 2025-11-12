@@ -234,3 +234,47 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom Toast */
+
+.my-toast {
+  width: 365px;
+  width: 100%;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 12px;
+  box-shadow: 0 8px 22px rgba(12, 12, 12, 0.12);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto;
+}
+
+/* Success */
+.my-toast--success {
+  background: linear-gradient(0deg, #0f5132 0%, #145a3a 100%);
+  color: #ffffff;
+}
+
+/* Error */
+.my-toast--error {
+  background: linear-gradient(0deg, #7b1d1d 0%, #6a1414 100%);
+  color: #ffffff;
+}
+
+/* Icon */
+.my-toast .toast-icon svg {
+  width: 20px;
+  height: 20px;
+  color: #ffffff;
+}
+
+/* Text */
+.my-toast .toast-title {
+  font-weight: 600;
+  font-size: 14px;
+}
+.my-toast .toast-desc {
+  font-size: 13px;
+  opacity: 0.9;
+  margin-top: 2px;
+}

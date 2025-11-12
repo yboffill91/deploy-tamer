@@ -35,7 +35,6 @@ import { cn } from "@/lib/utils";
 import { LogsEntity } from "@/core/entities";
 import { LogsApiRepository } from "@/infraestructure/repositories/LogsApiRepository";
 import { useEffect, useMemo, useState } from "react";
-import toast from "react-hot-toast";
 import {
   Card,
   CardContent,
@@ -47,6 +46,7 @@ import {
 } from "@/components/ui";
 import { AuditLogModal, CommonHeader } from "@/modules/users/admin";
 import { CustomPageLoader } from "@/components/CustomPageLoader";
+import { showToast } from "@/components/CustomToaster";
 
 const ACTION_COLORS: Record<string, string> = {
   CREATE: "bg-green-500/10 text-green-700 dark:text-green-400",
@@ -109,9 +109,13 @@ export default function AuditLogsTable() {
 
   useEffect(() => {
     if (isError) {
-      toast.error(isError);
+      showToast({
+        message: "Error",
+        type: "error",
+        description: isError,
+      });
     }
-  });
+  }, [isError]);
 
   // Get unique actions and table names for filters
   const uniqueActions = useMemo(

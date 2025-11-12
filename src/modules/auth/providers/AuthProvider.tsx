@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import { onAuthStateChanged, getAuth } from 'firebase/auth';
+import { onAuthStateChanged, getAuth } from "firebase/auth";
 import {
   createContext,
   ReactNode,
   useContext,
   useEffect,
   useState,
-} from 'react';
-import { AuthError, UsersEntity } from '@/core';
-import { FirebaseAuthRepository } from '@/infraestructure/repositories';
-import { FirebaseUserMapper } from '@/infraestructure/dto';
-import { SessionVerificationRepository } from '@/infraestructure/repositories/OTPRepository';
-import { useRouter } from 'next/navigation';
-import toast from 'react-hot-toast';
+} from "react";
+import { AuthError, UsersEntity } from "@/core";
+import { FirebaseAuthRepository } from "@/infraestructure/repositories";
+import { FirebaseUserMapper } from "@/infraestructure/dto";
+import { SessionVerificationRepository } from "@/infraestructure/repositories/OTPRepository";
+import { useRouter } from "next/navigation";
+import { showToast } from "@/components/CustomToaster";
 
 interface AuthContextType {
   user: UsersEntity | null;
@@ -22,7 +22,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string) => Promise<void>;
   loginWithProvider: (
-    provider: 'google' | 'github' | 'facebook'
+    provider: "google" | "github" | "facebook"
   ) => Promise<void>;
 
   logout: () => Promise<void>;
@@ -73,11 +73,14 @@ export const AuthProvider = ({ children }: Props) => {
 
       OtpRepository.getCode(token!);
 
-      toast.success(
-        'We have sent an email to your address with the OTP code for the second authentication factor.'
-      );
+      showToast({
+        message: "Success",
+        type: "success",
+        description:
+          "We have sent an email to your address with the OTP code for the second authentication factor.",
+      });
 
-      router.push('/verify_account');
+      router.push("/verify_account");
     } catch (error) {
       setError(
         error instanceof Error
@@ -100,11 +103,14 @@ export const AuthProvider = ({ children }: Props) => {
 
       OtpRepository.getCode(token!);
 
-      toast.success(
-        'We have sent an email to your address with the OTP code for the second authentication factor.'
-      );
+      showToast({
+        message: "Success",
+        type: "success",
+        description:
+          "We have sent an email to your address with the OTP code for the second authentication factor.",
+      });
 
-      router.push('/verify_account');
+      router.push("/verify_account");
     } catch (error) {
       setError(
         error instanceof Error
@@ -117,7 +123,7 @@ export const AuthProvider = ({ children }: Props) => {
   };
 
   const loginWithProvider = async (
-    provider: 'google' | 'github' | 'facebook'
+    provider: "google" | "github" | "facebook"
   ) => {
     setLoading(true);
     try {
@@ -129,10 +135,13 @@ export const AuthProvider = ({ children }: Props) => {
 
       OtpRepository.getCode(token!);
 
-      toast.success(
-        'We have sent an email to your address with the OTP code for the second authentication factor.'
-      );
-      router.push('/verify_account');
+      showToast({
+        message: "Success",
+        type: "success",
+        description:
+          "We have sent an email to your address with the OTP code for the second authentication factor.",
+      });
+      router.push("/verify_account");
     } catch (error) {
       setError(
         error instanceof Error
@@ -148,7 +157,11 @@ export const AuthProvider = ({ children }: Props) => {
     setLoading(true);
     try {
       await AuthRepository.logout();
-      toast.success('Session successfully closed');
+      showToast({
+        message: "Success",
+        type: "success",
+        description: "Session successfully closed",
+      });
 
       setUser(null);
     } catch (error) {
@@ -182,6 +195,6 @@ export const AuthProvider = ({ children }: Props) => {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context)
-    throw new AuthError('useAuth must be used within an AuthProvider');
+    throw new AuthError("useAuth must be used within an AuthProvider");
   return context;
 };

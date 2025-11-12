@@ -1,29 +1,29 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
-import { Label } from '@/components/ui/label';
-import { PositionFormData } from '@/modules/users/admin/components/models';
+import { Label } from "@/components/ui/label";
+import { PositionFormData } from "@/modules/users/admin/components/models";
 import {
   PositionsDataTable,
   RolesSelector,
-} from '@/modules/users/admin/components';
-import { Card, CardContent } from '@/components/ui';
-import { ControlledDialog } from '@/components/ControlledDialog';
-import { PositionsDTO, PositionsEntity, RolesEntity } from '@/core';
+} from "@/modules/users/admin/components";
+import { Card, CardContent } from "@/components/ui";
+import { ControlledDialog } from "@/components/ControlledDialog";
+import { PositionsDTO, PositionsEntity, RolesEntity } from "@/core";
 import {
   PositionsApiRepository,
   RolesApiRepository,
-} from '@/infraestructure/repositories';
-import { CustomLoading } from '@/components/CustomLoading';
-import { toast } from 'react-hot-toast';
-import { CustomEmpty } from '@/components/CustomEmpty';
-import { AlertTriangle, LayoutList } from 'lucide-react';
-import { CommonHeader } from '@/modules/users/admin';
-import { CustomPageLoader } from '@/components/CustomPageLoader';
+} from "@/infraestructure/repositories";
+import { CustomLoading } from "@/components/CustomLoading";
+import { CustomEmpty } from "@/components/CustomEmpty";
+import { AlertTriangle, LayoutList } from "lucide-react";
+import { CommonHeader } from "@/modules/users/admin";
+import { CustomPageLoader } from "@/components/CustomPageLoader";
+import { showToast } from "@/components/CustomToaster";
 
 export default function PositionsPage() {
   const [positions, setPositions] = useState<PositionsEntity[] | null>(null);
@@ -31,8 +31,8 @@ export default function PositionsPage() {
     useState<PositionsEntity | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [formData, setFormData] = useState<PositionFormData>({
-    name: '',
-    description: '',
+    name: "",
+    description: "",
     roles: [],
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -60,7 +60,7 @@ export default function PositionsPage() {
         setRoles(roles_data);
       } catch (error) {
         setIsError(
-          error instanceof Error ? error.message : 'Error loading data'
+          error instanceof Error ? error.message : "Error loading data"
         );
       } finally {
         setIsLoading(false);
@@ -68,25 +68,33 @@ export default function PositionsPage() {
     };
     getData();
     if (isError) {
-      toast.error(isError);
+      showToast({
+        message: "Error",
+        type: "error",
+        description: isError,
+      });
       setIsError(null);
     }
   }, []);
 
   useEffect(() => {
     if (isError) {
-      toast.error(isError);
+      showToast({
+        message: "Error",
+        type: "error",
+        description: isError,
+      });
     }
   }, [isError]);
 
   const handleAddPosition = () => {
     setEditingPosition(null);
-    setFormData({ name: '', description: '', roles: [] });
+    setFormData({ name: "", description: "", roles: [] });
     setIsDialogOpen(true);
   };
   const handleSavePosition = async () => {
     if (!formData.name.trim()) {
-      setIsError('Please enter a position name');
+      setIsError("Please enter a position name");
       return;
     }
 
@@ -96,7 +104,7 @@ export default function PositionsPage() {
       name: formData.name,
       description:
         formData.description.length <= 1
-          ? 'Undescribted'
+          ? "Undescribted"
           : formData.description,
       roles: formData.roles,
     };
@@ -104,12 +112,16 @@ export default function PositionsPage() {
     try {
       setIsCreating(true);
       await pos_repo.create(positionToAdd);
-      toast.success('Position added succesfully');
+      showToast({
+        message: "Success",
+        type: "success",
+        description: "Position added successfully",
+      });
       const newPositions = await pos_repo.findAll();
       setPositions(newPositions);
     } catch (e) {
       setIsError(
-        e instanceof Error ? e.message : 'Error creating new position'
+        e instanceof Error ? e.message : "Error creating new position"
       );
     } finally {
       setIsCreating(false);
@@ -131,7 +143,7 @@ export default function PositionsPage() {
 
   const handleSaveEdit = async (id: string) => {
     if (!formData.name.trim()) {
-      setIsError('Position Name is required');
+      setIsError("Position Name is required");
       return;
     }
     try {
@@ -140,7 +152,7 @@ export default function PositionsPage() {
         name: formData.name,
         description:
           formData.description.length <= 1
-            ? 'Undescribed'
+            ? "Undescribed"
             : formData.description,
         roles: formData.roles,
       };
@@ -148,11 +160,15 @@ export default function PositionsPage() {
       console.log(JSON.stringify(updatePosition));
 
       await pos_repo.update(id, updatePosition);
-      toast.success('Position updated successfully');
+      showToast({
+        message: "Success",
+        type: "success",
+        description: "Position updated successfully",
+      });
       const newPositions = await pos_repo.findAll();
       setPositions(newPositions);
     } catch (e) {
-      setIsError(e instanceof Error ? e.message : 'Error updating position');
+      setIsError(e instanceof Error ? e.message : "Error updating position");
     } finally {
       setIsUpdating(false);
       setIsDialogOpen(false);
@@ -168,12 +184,16 @@ export default function PositionsPage() {
 
     try {
       await pos_repo.delete(String(positionToDelete.id));
-      toast.success(`Position "${positionToDelete.name}" deleted successfully`);
+      showToast({
+        message: "Success",
+        type: "success",
+        description: `Position "${positionToDelete.name}" deleted successfully`,
+      });
       const newPositions = await pos_repo.findAll();
       setPositions(newPositions);
     } catch (error) {
       setIsError(
-        error instanceof Error ? error.message : 'Error deleting position'
+        error instanceof Error ? error.message : "Error deleting position"
       );
     } finally {
       setConfirmPosition(false);
@@ -183,36 +203,36 @@ export default function PositionsPage() {
 
   return (
     <>
-      {isLoading && <CustomPageLoader message='Loading Positions' />}
+      {isLoading && <CustomPageLoader message="Loading Positions" />}
       {positions && (
         <div>
           <CommonHeader
             icon={LayoutList}
-            title={'Positions Management'}
-            desc={'Manage your organization positions and assigned roles'}
+            title={"Positions Management"}
+            desc={"Manage your organization positions and assigned roles"}
           />
 
-          <Card className='mt-4 container'>
+          <Card className="mt-4 container">
             <CardContent>
               {/* Create Dialog */}
               <ControlledDialog
                 open={isDialogOpen}
                 onOpenChange={setIsDialogOpen}
                 title={
-                  editingPosition ? 'Edit Position' : 'Create New Position'
+                  editingPosition ? "Edit Position" : "Create New Position"
                 }
                 description={
                   editingPosition
-                    ? 'Update position details and roles'
-                    : 'Create a new position and assign roles'
+                    ? "Update position details and roles"
+                    : "Create a new position and assign roles"
                 }
               >
-                <div className='space-y-6 py-4'>
-                  <div className='space-y-2'>
-                    <Label htmlFor='position-name'>Position Name</Label>
+                <div className="space-y-6 py-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="position-name">Position Name</Label>
                     <Input
-                      id='position-name'
-                      placeholder='e.g., Senior Developer'
+                      id="position-name"
+                      placeholder="e.g., Senior Developer"
                       value={formData.name}
                       onChange={(e) =>
                         setFormData({ ...formData, name: e.target.value })
@@ -220,11 +240,11 @@ export default function PositionsPage() {
                     />
                   </div>
 
-                  <div className='space-y-2'>
-                    <Label htmlFor='position-description'>Description</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="position-description">Description</Label>
                     <Textarea
-                      id='position-description'
-                      placeholder='Position description...'
+                      id="position-description"
+                      placeholder="Position description..."
                       value={formData.description}
                       onChange={(e) =>
                         setFormData({
@@ -235,9 +255,9 @@ export default function PositionsPage() {
                       rows={4}
                     />
                   </div>
-                  {isLoading && <CustomLoading message='Loading Roles Info' />}
+                  {isLoading && <CustomLoading message="Loading Roles Info" />}
                   {roles && (
-                    <div className='space-y-3'>
+                    <div className="space-y-3">
                       <Label>Assign Roles</Label>
                       <RolesSelector
                         availableRoles={roles}
@@ -250,18 +270,18 @@ export default function PositionsPage() {
                   )}
                 </div>
 
-                <div className='flex justify-end gap-2 pt-4'>
+                <div className="flex justify-end gap-2 pt-4">
                   <Button
-                    variant='outline'
+                    variant="outline"
                     onClick={() => setIsDialogOpen(false)}
                   >
                     Cancel
                   </Button>
                   <Button onClick={handleSavePosition}>
                     {isCreating ? (
-                      <CustomLoading message='Creating Position' />
+                      <CustomLoading message="Creating Position" />
                     ) : (
-                      'Create Position'
+                      "Create Position"
                     )}
                   </Button>
                 </div>
@@ -272,20 +292,20 @@ export default function PositionsPage() {
                 open={showEdit}
                 onOpenChange={setShowEdit}
                 title={
-                  editingPosition ? 'Edit Position' : 'Create New Position'
+                  editingPosition ? "Edit Position" : "Create New Position"
                 }
                 description={
                   editingPosition
-                    ? 'Update position details and roles'
-                    : 'Create a new position and assign roles'
+                    ? "Update position details and roles"
+                    : "Create a new position and assign roles"
                 }
               >
-                <div className='space-y-6 py-4'>
-                  <div className='space-y-2'>
-                    <Label htmlFor='position-name'>Position Name</Label>
+                <div className="space-y-6 py-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="position-name">Position Name</Label>
                     <Input
-                      id='position-name'
-                      placeholder='e.g., Senior Developer'
+                      id="position-name"
+                      placeholder="e.g., Senior Developer"
                       value={formData.name}
                       onChange={(e) =>
                         setFormData({ ...formData, name: e.target.value })
@@ -293,11 +313,11 @@ export default function PositionsPage() {
                     />
                   </div>
 
-                  <div className='space-y-2'>
-                    <Label htmlFor='position-description'>Description</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="position-description">Description</Label>
                     <Textarea
-                      id='position-description'
-                      placeholder='Position description...'
+                      id="position-description"
+                      placeholder="Position description..."
                       value={formData.description}
                       onChange={(e) =>
                         setFormData({
@@ -308,9 +328,9 @@ export default function PositionsPage() {
                       rows={4}
                     />
                   </div>
-                  {isLoading && <CustomLoading message='Loading Roles Info' />}
+                  {isLoading && <CustomLoading message="Loading Roles Info" />}
                   {roles && (
-                    <div className='space-y-3'>
+                    <div className="space-y-3">
                       <Label>Assign Roles</Label>
                       <RolesSelector
                         availableRoles={roles}
@@ -323,9 +343,9 @@ export default function PositionsPage() {
                   )}
                 </div>
 
-                <div className='flex justify-end gap-2 pt-4'>
+                <div className="flex justify-end gap-2 pt-4">
                   <Button
-                    variant='outline'
+                    variant="outline"
                     onClick={() => setIsDialogOpen(false)}
                   >
                     Cancel
@@ -336,9 +356,9 @@ export default function PositionsPage() {
                     }
                   >
                     {isUpdating ? (
-                      <CustomLoading message='Updating Position' />
+                      <CustomLoading message="Updating Position" />
                     ) : (
-                      'Update Position'
+                      "Update Position"
                     )}
                   </Button>
                 </div>
@@ -348,17 +368,17 @@ export default function PositionsPage() {
               <ControlledDialog
                 open={confirmPosition}
                 onOpenChange={setConfirmPosition}
-                title='Confirm Delete'
+                title="Confirm Delete"
                 description={`Are you sure you want to delete the position "${positionToDelete?.name}"? This action cannot be undone.`}
               >
-                <div className='flex justify-end gap-3 mt-4'>
+                <div className="flex justify-end gap-3 mt-4">
                   <Button
-                    variant='outline'
+                    variant="outline"
                     onClick={() => setConfirmPosition(false)}
                   >
                     Cancel
                   </Button>
-                  <Button variant='destructive' onClick={confirmDelete}>
+                  <Button variant="destructive" onClick={confirmDelete}>
                     Delete
                   </Button>
                 </div>
@@ -376,9 +396,9 @@ export default function PositionsPage() {
       )}
       {!isLoading && (!positions || positions.length === 0) && (
         <CustomEmpty
-          title='No Positions Created Yet!'
+          title="No Positions Created Yet!"
           icon={AlertTriangle}
-          description='You have not created any positions yet.'
+          description="You have not created any positions yet."
           onClick={handleAddPosition}
         />
       )}
