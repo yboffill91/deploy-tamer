@@ -1,7 +1,7 @@
 const currentYear = new Date().getFullYear();
 
 export const APP_CONFIG = {
-  name: 'Tamer Studio',
+  name: 'TAMERStudio',
   version: '0.0.1',
   copyright: `© ${currentYear}, Studio Admin.`,
   meta: {
