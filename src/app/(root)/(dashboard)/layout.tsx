@@ -1,4 +1,5 @@
 import { Breadcrumb } from "@/components/Breadcrumb";
+import { DeviceWarningModal } from "@/components/DeviceWarningModal";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import {
   Separator,
@@ -13,6 +14,8 @@ import { ReactNode } from "react";
 const layout = ({ children }: { children: Readonly<ReactNode> }) => {
   return (
     <>
+      <DeviceWarningModal />
+
       <SidebarProvider defaultOpen>
         <AppSidebar variant="sidebar" />
         <SidebarInset

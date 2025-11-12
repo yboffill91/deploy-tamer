@@ -1,6 +1,5 @@
 "use client";
 
-import { DeviceWarningModal } from "@/components/DeviceWarningModal";
 import {
   Empty,
   EmptyContent,
@@ -17,8 +16,6 @@ const AdminPage = () => {
   const {} = useIsMobile();
   return (
     <>
-      <DeviceWarningModal />
-
       <Empty>
         <EmptyHeader>
           <EmptyMedia variant="icon">
