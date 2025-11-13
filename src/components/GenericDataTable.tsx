@@ -267,22 +267,24 @@ export function GenericDataTable<TData extends Record<string, any>>({
 
   return (
     <div className='w-full space-y-4 relative'>
-      <div className='flex flex-col-reverse items-center gap-2 md:flex-row'>
+      <div className='flex flex-col-reverse sm:flex-row gap-2'>
         {data.length > 10 && (
           <Popover open={open} onOpenChange={setOpen}>
-            <div className='flex items-center gap-2 w-full'>
+            <div className='flex items-center gap-2'>
               <PopoverTrigger asChild>
-                <div className='flex items-center gap-2 w-full'>
-                  <div className='w-full  flex justify-between gap-2 '>
+                <div className='flex items-center gap-2'>
+                  <div className='w-full  flex justify-start gap-2 '>
                     <Button
                       variant='outline'
                       role='combobox'
                       aria-expanded={open}
-                      className='w-full justify-between bg-transparent'
+                      className='justify-between bg-transparent w-[250px]'
                     >
-                      {globalFilter
-                        ? `Filtering: ${globalFilter}`
-                        : `Search by ${formatColumnHeader(filterColumn)}...`}
+                      {globalFilter ? (
+                        <span className='line-clamp-1'>{globalFilter}</span>
+                      ) : (
+                        `Search by ${formatColumnHeader(filterColumn)}...`
+                      )}
                       <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
                     </Button>
                   </div>
@@ -297,8 +299,8 @@ export function GenericDataTable<TData extends Record<string, any>>({
                 <FilterX />
               </Button>
             </div>
-            <PopoverContent>
-              <Command className='w-full'>
+            <PopoverContent className='w-[250px]'>
+              <Command>
                 <CommandInput
                   placeholder={`Search by ${formatColumnHeader(
                     filterColumn
@@ -363,16 +365,16 @@ export function GenericDataTable<TData extends Record<string, any>>({
             </PopoverContent>
           </Popover>
         )}
-        <div className='flex sm:flex-row flex-col-reverse sm:items-center sm:justify-end items-end justify-end gap-2 w-full '>
+        <div className='flex items-end justify-end  gap-2  w-full '>
           <DropdownMenu>
-            <DropdownMenuTrigger asChild className='sm:max-w-52 w-full'>
+            <DropdownMenuTrigger asChild className='w-[180px]'>
               <Button variant='outline'>
                 Columns <ChevronDown className='ml-2 h-4 w-4' />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align='end'
-              className='max-h-64 overflow-y-auto'
+              className=' w-[180px] overflow-y-auto'
             >
               {columns
                 .filter((col) => col !== 'id')
@@ -388,7 +390,10 @@ export function GenericDataTable<TData extends Record<string, any>>({
                       }))
                     }
                   >
-                    {formatColumnHeader(column)}
+                    <span className='line-clamp-1'>
+                      {' '}
+                      {formatColumnHeader(column)}{' '}
+                    </span>
                   </DropdownMenuCheckboxItem>
                 ))}
             </DropdownMenuContent>
@@ -436,48 +441,39 @@ export function GenericDataTable<TData extends Record<string, any>>({
                     </TableCell>
                   ))}
                   <TableCell className='text-right'>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant='ghost' size='icon'>
-                          <MoreHorizontal />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent>
-                        <DropdownMenuItem>
-                          <Button
-                            variant='ghost'
-                            onClick={() => {
-                              setSelectedItem(item);
-                              setViewOpen(true);
-                            }}
-                            className='w-full justify-start'
-                          >
-                            <Eye className='h-4 w-4' /> View
-                          </Button>
-                        </DropdownMenuItem>
-                        {onEdit && (
-                          <DropdownMenuItem>
-                            <Button
-                              variant='ghost'
-                              onClick={() => onEdit(item!)}
-                              className='w-full justify-start '
-                            >
-                              <Edit className='h-4 w-4' /> Edit
-                            </Button>
-                          </DropdownMenuItem>
-                        )}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                    {onDelete && (
+                    <div className='flex gap-1 items-center justify-end'>
                       <Button
                         variant='ghost'
-                        size='icon'
-                        onClick={() => onDelete(item)}
-                        className='h-8 w-8 text-destructive bg-destructive/10 hover:text-destructive'
+                        size={'icon'}
+                        onClick={() => {
+                          setSelectedItem(item);
+                          setViewOpen(true);
+                        }}
                       >
-                        <Trash2 className='h-4 w-4' />
+                        <Eye className='h-4 w-4' />
                       </Button>
-                    )}
+
+                      {onEdit && (
+                        <Button
+                          variant='ghost'
+                          onClick={() => onEdit(item!)}
+                          size={'icon'}
+                        >
+                          <Edit className='h-4 w-4' />
+                        </Button>
+                      )}
+
+                      {onDelete && (
+                        <Button
+                          variant='ghost'
+                          size='icon'
+                          onClick={() => onDelete(item)}
+                          className='h-8 w-8 text-destructive bg-destructive/10 hover:text-destructive'
+                        >
+                          <Trash2 className='h-4 w-4' />
+                        </Button>
+                      )}
+                    </div>
                   </TableCell>
                 </TableRow>
               ))

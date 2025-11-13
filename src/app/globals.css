@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 /* Theme preset styles: these override CSS variables based on the selected data-theme-preset */
 /* @import '../styles/presets/brutalist.css';
@@ -179,35 +179,35 @@
   --shadow-2xl: var(--shadow-2xl);
 }
 @layer utilities {
-  [data-theme-preset]:not([data-theme-preset="default"]) .shadow-2xs {
+  [data-theme-preset]:not([data-theme-preset='default']) .shadow-2xs {
     box-shadow: var(--shadow-2xs);
   }
 
-  [data-theme-preset]:not([data-theme-preset="default"]) .shadow-xs {
+  [data-theme-preset]:not([data-theme-preset='default']) .shadow-xs {
     box-shadow: var(--shadow-xs);
   }
 
-  [data-theme-preset]:not([data-theme-preset="default"]) .shadow-sm {
+  [data-theme-preset]:not([data-theme-preset='default']) .shadow-sm {
     box-shadow: var(--shadow-sm);
   }
 
-  [data-theme-preset]:not([data-theme-preset="default"]) .shadow {
+  [data-theme-preset]:not([data-theme-preset='default']) .shadow {
     box-shadow: var(--shadow);
   }
 
-  [data-theme-preset]:not([data-theme-preset="default"]) .shadow-md {
+  [data-theme-preset]:not([data-theme-preset='default']) .shadow-md {
     box-shadow: var(--shadow-md);
   }
 
-  [data-theme-preset]:not([data-theme-preset="default"]) .shadow-lg {
+  [data-theme-preset]:not([data-theme-preset='default']) .shadow-lg {
     box-shadow: var(--shadow-lg);
   }
 
-  [data-theme-preset]:not([data-theme-preset="default"]) .shadow-xl {
+  [data-theme-preset]:not([data-theme-preset='default']) .shadow-xl {
     box-shadow: var(--shadow-xl);
   }
 
-  [data-theme-preset]:not([data-theme-preset="default"]) .shadow-2xl {
+  [data-theme-preset]:not([data-theme-preset='default']) .shadow-2xl {
     box-shadow: var(--shadow-2xl);
   }
 }
@@ -244,18 +244,18 @@
   padding: 12px 14px;
   border-radius: 12px;
   box-shadow: 0 8px 22px rgba(12, 12, 12, 0.12);
-  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto;
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto;
 }
 
 /* Success */
 .my-toast--success {
-  background: linear-gradient(0deg, #0f5132 0%, #145a3a 100%);
+  background: linear-gradient(0deg, #599700 0%, #599700 100%);
   color: #ffffff;
 }
 
 /* Error */
 .my-toast--error {
-  background: linear-gradient(0deg, #7b1d1d 0%, #6a1414 100%);
+  background: linear-gradient(0deg, #971700 0%, #971700 100%);
   color: #ffffff;
 }
 
