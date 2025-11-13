@@ -1,3 +1,4 @@
+export * from './CitiesDTO';
 export * from './FunctionalitiesDTO';
 export * from './LogsDTO';
 export * from './PositionsDTO';

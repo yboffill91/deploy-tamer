@@ -161,7 +161,6 @@ export const AdminSidebarItems: NavGroup[] = [
         title: 'Cities Locator',
         url: '/admin/cities',
         icon: Earth,
-        comingSoon: true,
       },
     ]
   },

@@ -12,7 +12,9 @@ export const usersApi = apistudio + 'users';
 export const teamsApi = apistudio + 'teams';
 export const functionalitiesApi = apistudio + 'functionalities';
 
-export const secureUserGenerateOtp = apistudio + 'users/2fa/generate'
-export const verifyUserOtp = usersApi + '/2fa/verify'
+export const secureUserGenerateOtp = apistudio + 'users/2fa/generate';
+export const verifyUserOtp = usersApi + '/2fa/verify';
 
 export const logsApi = apistudio + 'auditlogs';
+
+export const countriesApi = apistudio + 'cities';

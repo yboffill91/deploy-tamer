@@ -15,7 +15,6 @@ import {
   ChevronRight,
   FilterX,
   Eye,
-  Search,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -55,19 +54,13 @@ import {
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import {
-  Badge,
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupInput,
-} from './ui';
-import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
+import { Badge } from '@/components/ui';
 
 interface GenericDataTableProps<TData extends Record<string, any>> {
   data: TData[];
@@ -82,7 +75,7 @@ interface GenericDataTableProps<TData extends Record<string, any>> {
   >;
 }
 
-export function GenericDataTable<TData extends Record<string, any>>({
+export function CitiesDataTable<TData extends Record<string, any>>({
   data,
   onEdit,
   onDelete,
@@ -257,14 +250,14 @@ export function GenericDataTable<TData extends Record<string, any>>({
       .replace(/^./, (str) => str.toUpperCase())
       .trim();
 
-  // const getItemDisplayText = (item: TData) => {
-  //   if (!filterColumn) return '';
-  //   const value = item[filterColumn];
-  //   if (value == null) return '';
-  //   if (Array.isArray(value)) return value.join(', ');
-  //   if (typeof value === 'object') return JSON.stringify(value);
-  //   return String(value);
-  // };
+  const getItemDisplayText = (item: TData) => {
+    if (!filterColumn) return '';
+    const value = item[filterColumn];
+    if (value == null) return '';
+    if (Array.isArray(value)) return value.join(', ');
+    if (typeof value === 'object') return JSON.stringify(value);
+    return String(value);
+  };
 
   const [selectedItem, setSelectedItem] = React.useState<TData | null>(null);
   const [viewOpen, setViewOpen] = React.useState(false);
@@ -272,7 +265,7 @@ export function GenericDataTable<TData extends Record<string, any>>({
   return (
     <div className='w-full space-y-4 relative'>
       <div className='flex flex-col-reverse sm:flex-row gap-2'>
-        {/* {data.length > 10 && (
+        {data.length > 10 && (
           <Popover open={open} onOpenChange={setOpen}>
             <div className='flex items-center gap-2'>
               <PopoverTrigger asChild>
@@ -368,24 +361,7 @@ export function GenericDataTable<TData extends Record<string, any>>({
               </Command>
             </PopoverContent>
           </Popover>
-        )} */}
-
-        <InputGroup className='max-w-sm'>
-          <InputGroupInput
-            placeholder={`Search by ${formatColumnHeader(filterColumn)}...`}
-            onChange={(event) => {
-              setGlobalFilter(event.target.value);
-              setCurrentPage(0);
-            }}
-          />
-          <InputGroupAddon>
-            <Search />
-          </InputGroupAddon>
-          <InputGroupButton onClick={() => setGlobalFilter('')}>
-            <FilterX />
-          </InputGroupButton>
-        </InputGroup>
-
+        )}
         <div className='flex items-end justify-end  gap-2  w-full '>
           <DropdownMenu>
             <DropdownMenuTrigger asChild className='w-[180px]'>
