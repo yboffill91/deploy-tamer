@@ -375,13 +375,20 @@ export function GenericDataTable<TData extends Record<string, any>>({
             placeholder={`Search by ${formatColumnHeader(filterColumn)}...`}
             onChange={(event) => {
               setGlobalFilter(event.target.value);
+
               setCurrentPage(0);
             }}
+            value={globalFilter}
           />
           <InputGroupAddon>
             <Search />
           </InputGroupAddon>
-          <InputGroupButton onClick={() => setGlobalFilter('')}>
+          <InputGroupButton
+            onClick={() => {
+              setGlobalFilter('');
+            }}
+            disabled={globalFilter.length === 0}
+          >
             <FilterX />
           </InputGroupButton>
         </InputGroup>
