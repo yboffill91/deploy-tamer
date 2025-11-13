@@ -94,10 +94,11 @@ export default function RolesPage() {
     setFormData({
       name: role.name!,
       feature: role.roleFunctionality!.map((f) => ({
-        functionalityId: f.id!,
+        functionalityId: f.functionalityId!,
         mode: f.mode!,
       })),
     });
+
     setIsDialogOpen(true);
   };
 
@@ -214,6 +215,7 @@ export default function RolesPage() {
                   onEdit={(role) => handleEditRole(role)}
                   onDelete={(role) => handleDelete(role)}
                   onAdd={handleAddRole}
+                  functionalities={functionalities!}
                 />
               </CardContent>
             </Card>

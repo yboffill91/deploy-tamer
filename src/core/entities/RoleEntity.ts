@@ -1,6 +1,6 @@
 
 class RoleFunctionalityVO {
-    readonly id?: number
+    readonly functionalityId?: number
     readonly mode?: ('READ' | 'WRITE' | 'FULL_ACCESS')[]
 }
 

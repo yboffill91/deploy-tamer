@@ -91,7 +91,7 @@ export function FeaturesManager({
 
     const newFeatureMode: ["READ" | "WRITE" | "FULL_ACCESS"] = ["READ"];
 
-    console.log(newFeatureName);
+    console.log(newFeature);
     const newFeatureToShow: RoleFeature = {
       functionalityId: newFeatureId,
       mode: newFeatureMode,
@@ -183,7 +183,6 @@ export function FeaturesManager({
         <Button
           onClick={handleAddExistingFeature}
           disabled={!selectedExistingFeature}
-          size="sm"
         >
           <Plus className="h-4 w-4 mr-1" />
           Add
@@ -221,7 +220,6 @@ export function FeaturesManager({
           <Button
             onClick={handleAddNewFeature}
             disabled={!isNewFeatureNameValid(newFeatureName)}
-            size="sm"
           >
             Add
           </Button>
@@ -231,7 +229,6 @@ export function FeaturesManager({
               setShowNewFeatureForm(false);
               setNewFeatureName("");
             }}
-            size="sm"
           >
             Cancel
           </Button>
@@ -270,7 +267,8 @@ export function FeaturesManager({
               {selectedFeatures.map((feature) => (
                 <TableRow key={feature.functionalityId}>
                   <TableCell className="font-medium">
-                    {getFeatureName(feature.functionalityId)}
+                    {getFeatureName(feature.functionalityId)}{" "}
+                    {feature.functionalityId}
                   </TableCell>
                   <TableCell>
                     <Checkbox

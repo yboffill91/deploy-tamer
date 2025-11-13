@@ -69,7 +69,7 @@ export function DeviceWarningModal() {
 
         <div className="flex gap-3 pt-4">
           <Button
-            variant="outline"
+            variant="ghost"
             onClick={() => setOpen(false)}
             className="flex-1"
           >
