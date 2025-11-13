@@ -213,7 +213,7 @@ export default function PositionsPage() {
             desc={"Manage your organization positions and assigned roles"}
           />
 
-          <Card className="mt-4 container">
+          <Card>
             <CardContent>
               <PositionsDataTable
                 data={positions!}

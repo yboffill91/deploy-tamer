@@ -14,6 +14,9 @@ import {
   ChevronLeft,
   ChevronRight,
   FilterX,
+  Eye,
+  ArrowDownRightSquareIcon,
+  MoreHorizontal,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -21,6 +24,7 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -53,6 +57,13 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { Badge } from "./ui";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 interface GenericDataTableProps<TData extends Record<string, any>> {
   data: TData[];
@@ -100,7 +111,7 @@ export function GenericDataTable<TData extends Record<string, any>>({
   >(() => {
     const initial: Record<string, boolean> = {};
     columns.forEach((col) => {
-      initial[col] = col !== "id"; // Hide 'id' column by default
+      initial[col] = col !== "id";
     });
     return initial;
   });
@@ -117,8 +128,6 @@ export function GenericDataTable<TData extends Record<string, any>>({
       return String(value).toLowerCase().includes(globalFilter.toLowerCase());
     });
   }, [data, globalFilter, filterColumn]);
-
-  // const hasNoResults = globalFilter && filteredData.length === 0;
 
   const sortedData = React.useMemo(() => {
     if (!sortColumn) return filteredData;
@@ -238,12 +247,11 @@ export function GenericDataTable<TData extends Record<string, any>>({
     return <span className="text-sm">{String(value)}</span>;
   };
 
-  const formatColumnHeader = (column: string) => {
-    return column
+  const formatColumnHeader = (column: string) =>
+    column
       .replace(/([A-Z])/g, " $1")
       .replace(/^./, (str) => str.toUpperCase())
       .trim();
-  };
 
   const getItemDisplayText = (item: TData) => {
     if (!filterColumn) return "";
@@ -254,25 +262,40 @@ export function GenericDataTable<TData extends Record<string, any>>({
     return String(value);
   };
 
+  const [selectedItem, setSelectedItem] = React.useState<TData | null>(null);
+  const [viewOpen, setViewOpen] = React.useState(false);
+
   return (
     <div className="w-full space-y-4 relative">
-      <div className="flex  flex-col-reverse items-center gap-2 md:flex-row">
+      <div className="flex flex-col-reverse items-center gap-2 md:flex-row">
         <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger asChild>
-            <div className="flex items-center gap-2  w-full">
-              <Button
-                variant="outline"
-                role="combobox"
-                aria-expanded={open}
-                className="w-full justify-between bg-transparent"
-              >
-                {globalFilter
-                  ? `Filtering: ${globalFilter}`
-                  : `Search by ${formatColumnHeader(filterColumn)}...`}
-                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-              </Button>
-            </div>
-          </PopoverTrigger>
+          <div className="flex items-center gap-2 w-full">
+            <PopoverTrigger asChild>
+              <div className="flex items-center gap-2 w-full">
+                <div className="w-full  flex justify-between gap-2 ">
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={open}
+                    className="w-full justify-between bg-transparent"
+                  >
+                    {globalFilter
+                      ? `Filtering: ${globalFilter}`
+                      : `Search by ${formatColumnHeader(filterColumn)}...`}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </div>
+              </div>
+            </PopoverTrigger>
+            <Button
+              variant={"ghost"}
+              size={"icon"}
+              onClick={() => setGlobalFilter("")}
+              disabled={globalFilter.length === 0}
+            >
+              <FilterX />
+            </Button>
+          </div>
           <PopoverContent>
             <Command className="w-full">
               <CommandInput
@@ -317,7 +340,7 @@ export function GenericDataTable<TData extends Record<string, any>>({
                     </div>
                   )}
                 </CommandGroup>
-                <div className="border-t  flex w-full items-center justify-center">
+                <div className="border-t flex w-full items-center justify-center">
                   {showAddButton && onAdd && globalFilter && (
                     <Button
                       size="sm"
@@ -331,23 +354,14 @@ export function GenericDataTable<TData extends Record<string, any>>({
                       <Plus className="h-4 w-4" />
                     </Button>
                   )}
-                  {globalFilter.length > 0 && (
-                    <Button
-                      variant={"ghost"}
-                      onClick={() => setGlobalFilter("")}
-                      className={cn(!showAddButton ? "w-full" : "w-1/2")}
-                    >
-                      <FilterX /> <span>Clear</span>
-                    </Button>
-                  )}
                 </div>
               </CommandList>
             </Command>
           </PopoverContent>
         </Popover>
-        <div className="flex sm:flex-row flex-col-reverse sm:items-center sm:justify-end items-end justify-end gap-2  w-full ">
+        <div className="flex sm:flex-row flex-col-reverse sm:items-center sm:justify-end items-end justify-end gap-2 w-full ">
           <DropdownMenu>
-            <DropdownMenuTrigger asChild className=" sm:max-w-52 w-full">
+            <DropdownMenuTrigger asChild className="sm:max-w-52 w-full">
               <Button variant="outline">
                 Columns <ChevronDown className="ml-2 h-4 w-4" />
               </Button>
@@ -358,23 +372,21 @@ export function GenericDataTable<TData extends Record<string, any>>({
             >
               {columns
                 .filter((col) => col !== "id")
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column}
-                      className="capitalize"
-                      checked={columnVisibility[column]}
-                      onCheckedChange={(value) =>
-                        setColumnVisibility((prev) => ({
-                          ...prev,
-                          [column]: !!value,
-                        }))
-                      }
-                    >
-                      {formatColumnHeader(column)}
-                    </DropdownMenuCheckboxItem>
-                  );
-                })}
+                .map((column) => (
+                  <DropdownMenuCheckboxItem
+                    key={column}
+                    className="capitalize"
+                    checked={columnVisibility[column]}
+                    onCheckedChange={(value) =>
+                      setColumnVisibility((prev) => ({
+                        ...prev,
+                        [column]: !!value,
+                      }))
+                    }
+                  >
+                    {formatColumnHeader(column)}
+                  </DropdownMenuCheckboxItem>
+                ))}
             </DropdownMenuContent>
           </DropdownMenu>
           {showAddButton && onAdd && (
@@ -383,7 +395,6 @@ export function GenericDataTable<TData extends Record<string, any>>({
                 onAdd(globalFilter);
                 setOpen(false);
               }}
-              className=""
             >
               Add
               <Plus />
@@ -391,6 +402,7 @@ export function GenericDataTable<TData extends Record<string, any>>({
           )}
         </div>
       </div>
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -400,20 +412,14 @@ export function GenericDataTable<TData extends Record<string, any>>({
                   <Button
                     variant="ghost"
                     onClick={() => handleSort(column)}
-                    className="-ml-4 h-8 data-[state=open]:bg-accent"
+                    className="-ml-4 h-8"
                   >
                     {formatColumnHeader(column)}
-                    <ArrowUpDown
-                      className={cn(
-                        "size-4 text-foreground/50 transition-all duration-200 ease-in-out"
-                      )}
-                    />
+                    <ArrowUpDown className="ml-2 size-4 text-foreground/50" />
                   </Button>
                 </TableHead>
               ))}
-              {(onEdit || onDelete) && onAdd && showAddButton && (
-                <TableHead className="text-right">Actions</TableHead>
-              )}
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -425,40 +431,56 @@ export function GenericDataTable<TData extends Record<string, any>>({
                       {renderCellValue(column, item[column], item)}
                     </TableCell>
                   ))}
-                  {(onEdit || onDelete) && onAdd && showAddButton && (
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <MoreHorizontal />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuItem>
+                          <Button
+                            variant="ghost"
+                            onClick={() => {
+                              setSelectedItem(item);
+                              setViewOpen(true);
+                            }}
+                            className="w-full justify-start"
+                          >
+                            <Eye className="h-4 w-4" /> View
+                          </Button>
+                        </DropdownMenuItem>
                         {onEdit && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => onEdit(item)}
-                            className="h-8 w-8"
-                          >
-                            <Edit className="h-4 w-4" />
-                            <span className="sr-only">Edit</span>
-                          </Button>
+                          <DropdownMenuItem>
+                            <Button
+                              variant="ghost"
+                              onClick={() => onEdit(item!)}
+                              className="w-full justify-start "
+                            >
+                              <Edit className="h-4 w-4" /> Edit
+                            </Button>
+                          </DropdownMenuItem>
                         )}
-                        {onDelete && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={async () => onDelete(item)}
-                            className="h-8 w-8 text-destructive bg-destructive/10 hover:text-destructive"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                            <span className="sr-only">Delete</span>
-                          </Button>
-                        )}
-                      </div>
-                    </TableCell>
-                  )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                    {onDelete && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => onDelete(item)}
+                        className="h-8 w-8 text-destructive bg-destructive/10 hover:text-destructive"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={visibleColumns.length + (onEdit || onDelete ? 1 : 0)}
+                  colSpan={visibleColumns.length + 1}
                   className="h-24 text-center"
                 >
                   No results.
@@ -468,7 +490,47 @@ export function GenericDataTable<TData extends Record<string, any>>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-between ">
+
+      <Dialog open={viewOpen} onOpenChange={setViewOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Registry Details</DialogTitle>
+            <DialogDescription>
+              Complete information of the selected row.
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedItem ? (
+            <div className="space-y-2 max-h-[70vh] overflow-y-auto">
+              {Object.entries(selectedItem).map(([key, value]) => (
+                <div
+                  key={key}
+                  className={cn(
+                    "border-b py-2",
+                    value === undefined || !value ? "hidden" : "block",
+                    key === "id" && "hidden"
+                  )}
+                >
+                  <span className="font-medium capitalize">{key}</span>
+                  <div className="mt-1 text-sm text-muted-foreground">
+                    {typeof value === "object" ? (
+                      <pre className="bg-secondary p-2 rounded-md overflow-x-auto text-xs whitespace-pre-wrap">
+                        {JSON.stringify(value, null, 2)}
+                      </pre>
+                    ) : (
+                      <span>{String(value)}</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p>No data</p>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <p className="text-sm text-muted-foreground">
             <span className="hidden sm:block">Rows/Page</span>{" "}
@@ -492,10 +554,7 @@ export function GenericDataTable<TData extends Record<string, any>>({
             </SelectContent>
           </Select>
         </div>
-        <div className="flex items-center gap-4 ">
-          <div className="text-sm text-muted-foreground">
-            {pageSize === "all" ? `Showing all  row(s)` : ``}
-          </div>
+        <div className="flex items-center gap-4">
           {pageSize !== "all" && (
             <div className="flex items-center gap-2">
               <Button

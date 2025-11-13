@@ -210,7 +210,7 @@ export default function TeamsPage() {
               title="Teams Management"
               desc="Manage your organization teams and assigned users"
             />
-            <Card className="container">
+            <Card>
               <CardContent>
                 <TeamsDataTable
                   data={teams}

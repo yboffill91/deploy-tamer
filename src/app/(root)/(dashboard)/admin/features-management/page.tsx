@@ -191,7 +191,7 @@ export default function FunctionalitiesPage() {
               />
             </div>
 
-            <Card className="container">
+            <Card>
               <CardHeader>
                 <CardTitle>All Functionalities</CardTitle>
                 <CardDescription>

@@ -2,9 +2,9 @@ import { bodyFont } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
 import "./globals.css";
-import { Toaster } from "sonner";
 import { AuthProvider } from "@/modules/auth";
 import { ThemeProvider } from "@/providers/ThemeProvider";
+import { Toaster } from "sonner";
 
 const layout = ({ children }: { children: Readonly<ReactNode> }) => {
   return (
@@ -23,8 +23,8 @@ const layout = ({ children }: { children: Readonly<ReactNode> }) => {
             disableTransitionOnChange={false}
           >
             {children}
-            <Toaster position="top-center" toastOptions={{ duration: 5000 }} />
           </ThemeProvider>
+          <Toaster position="bottom-right" duration={6000} />
         </AuthProvider>
       </body>
     </html>

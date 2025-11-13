@@ -164,7 +164,7 @@ export default function AuditLogsTable() {
             title="Audit Logs"
             desc="View and manage audit logs for your application."
           />
-          <Card className="container">
+          <Card>
             <CardContent>
               <div className="w-full space-y-4">
                 <div className=" flex gap-2 w-full flex-wrap flex-col md:flex-row  ">

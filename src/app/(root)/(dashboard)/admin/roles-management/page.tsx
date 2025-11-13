@@ -199,7 +199,7 @@ export default function RolesPage() {
       )}
       {!isLoading && roles && roles.length > 0 && (
         <div>
-          <div className="space-y-6 container ">
+          <div className="space-y-6">
             <div className="flex items-center justify-between">
               <CommonHeader
                 icon={ShieldCheck}

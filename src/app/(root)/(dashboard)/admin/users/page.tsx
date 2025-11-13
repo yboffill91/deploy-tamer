@@ -201,7 +201,7 @@ export default function UsersPage() {
               desc={"Manage your organization users and their positions"}
             />
 
-            <Card className="container">
+            <Card>
               <CardContent>
                 <UsersDataTable
                   data={users}

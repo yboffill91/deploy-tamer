@@ -238,8 +238,6 @@
 /* Custom Toast */
 
 .my-toast {
-  width: 365px;
-  width: 100%;
   display: flex;
   gap: 12px;
   align-items: center;
