@@ -267,8 +267,7 @@ export function FeaturesManager({
               {selectedFeatures.map((feature) => (
                 <TableRow key={feature.functionalityId}>
                   <TableCell className="font-medium">
-                    {getFeatureName(feature.functionalityId)}{" "}
-                    {feature.functionalityId}
+                    {getFeatureName(feature.functionalityId)}
                   </TableCell>
                   <TableCell>
                     <Checkbox
