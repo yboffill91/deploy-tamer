@@ -84,7 +84,7 @@ export function Breadcrumb({
             className={`${
               isLastItem
                 ? ' pointer-events-none '
-                : 'pointer-events-auto text-foreground/50 font-thin hidden lg:flex '
+                : 'pointer-events-auto font-light hidden lg:flex '
             }`}
           >
             {name} {!isLastItem && separator}
