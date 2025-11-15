@@ -8,6 +8,7 @@ export class CountriesEntity extends BaseCitiesEntity {
   readonly iso3?: string;
   readonly region?: string;
   readonly subregion?: string;
+  readonly capital?: string;
 }
 
 export class StatesEntity extends BaseCitiesEntity {

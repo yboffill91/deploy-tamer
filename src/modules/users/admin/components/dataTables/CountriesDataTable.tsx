@@ -1,40 +1,74 @@
+import { useState, useMemo } from "react";
+import { Button } from "@/components/ui/button";
 import {
-  InputGroup,
-  InputGroupInput,
-  InputGroupAddon,
-  InputGroupButton,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import {
+  Dialog,
   DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  Button,
-  Dialog,
+} from "@/components/ui/dialog";
+import {
+  Eye,
+  ArrowUpDown,
+  FilterX,
+  Search,
+  ArrowRightCircle,
+} from "lucide-react";
+import { CountriesEntity } from "@/core/entities";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
   Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui";
 import { cn } from "@/lib/utils";
-import { Search, FilterX, ArrowUpDown, Eye } from "lucide-react";
-import { useState, useMemo } from "react";
-import { CitiesEntity } from "@/core/entities";
 
-export function CitiesDataTable({ data }: { data: CitiesEntity[] }) {
+export function CountriesDataTable({
+  data,
+  onIso2Select,
+}: {
+  data: CountriesEntity[];
+  onIso2Select: (iso2: string) => void;
+}) {
   const [sortNameAsc, setSortNameAsc] = useState(true);
-  const [selectedCity, setSelectedCity] = useState<CitiesEntity | null>(null);
-  const [globalFilter, setGlobalFilter] = useState("");
+  const [regionFilter, setRegionFilter] = useState("all");
+  const [selectedCountry, setSelectedCountry] =
+    useState<CountriesEntity | null>(null);
+
+  const regions = useMemo(() => {
+    const set = new Set(data.map((el) => el.region));
+    return [...Array.from(set), "all"];
+  }, [data]);
+
+  const filteredData = useMemo(() => {
+    if (regionFilter === "all") return data;
+    return data.filter((el) => el.region === regionFilter);
+  }, [data, regionFilter]);
 
   const sortedData = useMemo(() => {
-    return [...data].sort((a, b) => {
+    return [...filteredData].sort((a, b) => {
       if (a.name! < b.name!) return sortNameAsc ? -1 : 1;
       if (a.name! > b.name!) return sortNameAsc ? 1 : -1;
       return 0;
     });
-  }, [data, sortNameAsc]);
+  }, [filteredData, sortNameAsc]);
 
-  const filteredData = useMemo(() => {
+  const [globalFilter, setGlobalFilter] = useState("");
+
+  const filteredData2 = useMemo(() => {
     return sortedData.filter((el) =>
       el.name!.toLowerCase().includes(globalFilter.toLowerCase())
     );
@@ -43,17 +77,36 @@ export function CitiesDataTable({ data }: { data: CitiesEntity[] }) {
   return (
     <>
       <div className="flex gap-4 mb-4">
+        <Select onValueChange={setRegionFilter} value={regionFilter}>
+          <SelectTrigger className="w-48">
+            <SelectValue placeholder="Region" />
+          </SelectTrigger>
+          <SelectContent>
+            {regions.map(
+              (r, i) =>
+                r?.length !== 0 && (
+                  <SelectItem key={i} value={r!}>
+                    <span className="capitalize">{" " + r!}</span>
+                  </SelectItem>
+                )
+            )}
+          </SelectContent>
+        </Select>
         <InputGroup className="w-48">
           <InputGroupInput
             placeholder={`Search by Name...`}
-            onChange={(event) => setGlobalFilter(event.target.value)}
+            onChange={(event) => {
+              setGlobalFilter(event.target.value);
+            }}
             value={globalFilter}
           />
           <InputGroupAddon>
             <Search />
           </InputGroupAddon>
           <InputGroupButton
-            onClick={() => setGlobalFilter("")}
+            onClick={() => {
+              setGlobalFilter("");
+            }}
             disabled={globalFilter.length === 0}
           >
             <FilterX />
@@ -61,7 +114,7 @@ export function CitiesDataTable({ data }: { data: CitiesEntity[] }) {
         </InputGroup>
       </div>
 
-      <Table className="text-left w-96">
+      <Table className=" text-left w-96">
         <TableHeader>
           <TableRow className="border-b">
             <TableHead className="p-2 w-72">
@@ -77,8 +130,8 @@ export function CitiesDataTable({ data }: { data: CitiesEntity[] }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredData.map((el) => (
-            <TableRow key={el.id}>
+          {filteredData2.map((el) => (
+            <TableRow key={el.iso2}>
               <TableCell className="p-2">{el.name}</TableCell>
               <TableCell className="p-2 flex gap-2 items-center">
                 <Dialog>
@@ -86,23 +139,28 @@ export function CitiesDataTable({ data }: { data: CitiesEntity[] }) {
                     <Button
                       size="sm"
                       variant="ghost"
-                      onClick={() => setSelectedCity(el)}
+                      onClick={() => setSelectedCountry(el)}
                     >
                       <Eye />
                     </Button>
                   </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
-                      <DialogTitle>City Info</DialogTitle>
+                      <DialogTitle>Country Info</DialogTitle>
                     </DialogHeader>
-                    {selectedCity ? (
+                    {selectedCountry ? (
                       <div className="space-y-2 max-h-[70vh] overflow-y-auto">
-                        {Object.entries(selectedCity).map(([key, value]) => (
+                        {Object.entries(selectedCountry).map(([key, value]) => (
                           <div
                             key={key}
                             className={cn(
                               "border-b py-2",
-                              value === undefined || !value ? "hidden" : "block"
+                              value === undefined ||
+                                !value ||
+                                (value.isArray && value.length === 0)
+                                ? "hidden"
+                                : "block",
+                              key === "id" && "hidden"
                             )}
                           >
                             <span className="font-medium capitalize">
@@ -113,6 +171,10 @@ export function CitiesDataTable({ data }: { data: CitiesEntity[] }) {
                                 <pre className="bg-secondary p-2 rounded-md overflow-x-auto text-xs whitespace-pre-wrap">
                                   {JSON.stringify(value, null, 2)}
                                 </pre>
+                              ) : key === "createdAt" ||
+                                key === "updatedAt" ||
+                                key === "deletedAt" ? (
+                                <span>{value}</span>
                               ) : (
                                 <span>{String(value)}</span>
                               )}
@@ -125,6 +187,14 @@ export function CitiesDataTable({ data }: { data: CitiesEntity[] }) {
                     )}
                   </DialogContent>
                 </Dialog>
+
+                <Button
+                  size="icon"
+                  variant={"outline"}
+                  onClick={() => onIso2Select(el.iso2!)}
+                >
+                  <ArrowRightCircle />
+                </Button>
               </TableCell>
             </TableRow>
           ))}

@@ -370,7 +370,7 @@ export function GenericDataTable<TData extends Record<string, any>>({
           </Popover>
         )} */}
 
-        <InputGroup className='max-w-sm'>
+        <InputGroup className='w-sm'>
           <InputGroupInput
             placeholder={`Search by ${formatColumnHeader(filterColumn)}...`}
             onChange={(event) => {

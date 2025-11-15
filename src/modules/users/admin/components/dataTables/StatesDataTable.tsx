@@ -1,29 +1,50 @@
+import { useState, useMemo } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 import {
   InputGroup,
   InputGroupInput,
   InputGroupAddon,
   InputGroupButton,
-  TableHeader,
-  TableRow,
-  TableHead,
+  Table,
   TableBody,
   TableCell,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  Button,
-  Dialog,
-  Table,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui";
+import {
+  Eye,
+  ArrowUpDown,
+  ArrowRightCircleIcon,
+  FilterX,
+  Search,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Search, FilterX, ArrowUpDown, Eye } from "lucide-react";
-import { useState, useMemo } from "react";
-import { CitiesEntity } from "@/core/entities";
+import { StatesEntity } from "@/core/entities";
 
-export function CitiesDataTable({ data }: { data: CitiesEntity[] }) {
+export function StatesDataTable({
+  data,
+  onStateSelect,
+}: {
+  data: StatesEntity[];
+  onStateSelect: (iso2: string) => void;
+}) {
   const [sortNameAsc, setSortNameAsc] = useState(true);
-  const [selectedCity, setSelectedCity] = useState<CitiesEntity | null>(null);
+  const [selectedState, setSelectedState] = useState<StatesEntity | null>(null);
   const [globalFilter, setGlobalFilter] = useState("");
 
   const sortedData = useMemo(() => {
@@ -45,7 +66,7 @@ export function CitiesDataTable({ data }: { data: CitiesEntity[] }) {
       <div className="flex gap-4 mb-4">
         <InputGroup className="w-48">
           <InputGroupInput
-            placeholder={`Search by Name...`}
+            placeholder={`Search by State...`}
             onChange={(event) => setGlobalFilter(event.target.value)}
             value={globalFilter}
           />
@@ -69,7 +90,7 @@ export function CitiesDataTable({ data }: { data: CitiesEntity[] }) {
                 onClick={() => setSortNameAsc(!sortNameAsc)}
                 className="flex items-center gap-2 cursor-pointer"
               >
-                Name
+                State Name
                 <ArrowUpDown className="w-4 h-4" />
               </span>
             </TableHead>
@@ -86,18 +107,18 @@ export function CitiesDataTable({ data }: { data: CitiesEntity[] }) {
                     <Button
                       size="sm"
                       variant="ghost"
-                      onClick={() => setSelectedCity(el)}
+                      onClick={() => setSelectedState(el!)}
                     >
                       <Eye />
                     </Button>
                   </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
-                      <DialogTitle>City Info</DialogTitle>
+                      <DialogTitle>State Info</DialogTitle>
                     </DialogHeader>
-                    {selectedCity ? (
+                    {selectedState ? (
                       <div className="space-y-2 max-h-[70vh] overflow-y-auto">
-                        {Object.entries(selectedCity).map(([key, value]) => (
+                        {Object.entries(selectedState).map(([key, value]) => (
                           <div
                             key={key}
                             className={cn(
@@ -125,6 +146,16 @@ export function CitiesDataTable({ data }: { data: CitiesEntity[] }) {
                     )}
                   </DialogContent>
                 </Dialog>
+
+                <Button
+                  size="icon"
+                  variant={"outline"}
+                  onClick={() => {
+                    onStateSelect(el.iso2!);
+                  }}
+                >
+                  <ArrowRightCircleIcon />
+                </Button>
               </TableCell>
             </TableRow>
           ))}
