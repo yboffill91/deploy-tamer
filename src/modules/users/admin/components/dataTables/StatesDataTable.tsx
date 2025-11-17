@@ -1,3 +1,4 @@
+"use client";
 import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -7,13 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
+
 import {
   InputGroup,
   InputGroupInput,

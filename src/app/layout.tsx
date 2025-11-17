@@ -5,6 +5,28 @@ import "./globals.css";
 import { AuthProvider } from "@/modules/auth";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { Toaster } from "sonner";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "TAMERStudio",
+  description: "A Tamer Digital Tool",
+  icons: {
+    icon: [
+      {
+        rel: "icon",
+        type: "image/png",
+        media: "(prefers-color-scheme: light)",
+        url: "/favicons/favicon-light.ico",
+      },
+      {
+        rel: "icon",
+        type: "image/png",
+        media: "(prefers-color-scheme: dark)",
+        url: "/favicons/favicon-dark.ico",
+      },
+    ],
+  },
+};
 
 const layout = ({ children }: { children: Readonly<ReactNode> }) => {
   return (

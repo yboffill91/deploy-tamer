@@ -14,16 +14,25 @@ import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
 import { AdminSidebarItems, APP_CONFIG } from "../utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui";
+import { useTheme } from "next-themes";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const theme = useTheme();
+
   return (
     <Sidebar {...props} variant="inset" collapsible="icon">
-      <SidebarHeader className="">
+      <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton className=" hover:bg-transparent! min-w-12">
               <Avatar className="rounded-lg size-8">
-                <AvatarImage src={"/brand/blue-t.webp"} />
+                <AvatarImage
+                  src={
+                    theme.theme === "dark"
+                      ? "/brand/light-t_transparent.webp"
+                      : "/brand/dark-t_transparent.webp"
+                  }
+                />
                 <AvatarFallback>TD</AvatarFallback>
               </Avatar>
 

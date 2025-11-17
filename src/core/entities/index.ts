@@ -1,4 +1,5 @@
 export * from './CitiesEntity';
+export * from './DocumentsEntity';
 export * from './EmailEntity';
 export * from './FunctionalitiesEntity';
 export * from './LogsEntity';

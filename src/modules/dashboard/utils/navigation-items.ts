@@ -53,23 +53,7 @@ export const AdminSidebarItems: NavGroup[] = [
         url: '/admin/dashboard',
         icon: LayoutDashboard,
       },
-      // {
-      //   title: 'CRM',
-      //   url: '/admin/crm',
-      //   icon: ChartBar,
-      // }
-      /*
-      {
-        title: "Finance",
-        url: "/admin/finance",
-        icon: Banknote,
-      }, */
-      // {
-      //   title: 'Users',
-      //   url: '/admin/users',
-      //   icon: User,
-      //   comingSoon: false,
-      // },
+
     ],
   },
   {
@@ -173,9 +157,8 @@ export const AdminSidebarItems: NavGroup[] = [
         subItems: [
           {
             title: 'Documents',
-            url: '/admin/documents',
+            url: '/admin/documents/users',
             icon: CloudCheck,
-            comingSoon: true,
           },
         ]
       },
@@ -186,9 +169,8 @@ export const AdminSidebarItems: NavGroup[] = [
         subItems: [
           {
             title: 'Documents',
-            url: '/admin/documents',
+            url: '/admin/documents/clients',
             icon: CloudCheck,
-            comingSoon: true,
           },
         ]
       }

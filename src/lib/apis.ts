@@ -18,3 +18,4 @@ export const verifyUserOtp = usersApi + '/2fa/verify';
 export const logsApi = apistudio + 'auditlogs';
 
 export const countriesApi = apistudio + 'cities';
+export const documentsApi = apistudio + 'documents';
