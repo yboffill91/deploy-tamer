@@ -1,21 +1,20 @@
 export const route = process.env.NEXT_PUBLIC_API_URL;
+//  Local endpoints route handler
+export const mailingApi = route + "email";
+export const sessionApi = route + "session";
+export const getTokenApi = route + "session/get_token";
 
-export const mailingApi = route + 'email';
-export const sessionApi = route + 'session';
-
+//  API Studio endpoints
 export const apistudio = process.env.NEXT_PUBLIC_APISTUDIO;
-
-export const apiFunctionalities = apistudio + 'functionalities';
-export const rolesApi = apistudio + 'roles';
-export const positionsApi = apistudio + 'positions';
-export const usersApi = apistudio + 'users';
-export const teamsApi = apistudio + 'teams';
-export const functionalitiesApi = apistudio + 'functionalities';
-
-export const secureUserGenerateOtp = apistudio + 'users/2fa/generate';
-export const verifyUserOtp = usersApi + '/2fa/verify';
-
-export const logsApi = apistudio + 'auditlogs';
-
-export const countriesApi = apistudio + 'cities';
-export const documentsApi = apistudio + 'documents';
+export const apiFunctionalities = apistudio + "functionalities";
+export const rolesApi = apistudio + "roles";
+export const positionsApi = apistudio + "positions";
+export const usersApi = apistudio + "users";
+export const teamsApi = apistudio + "teams";
+export const functionalitiesApi = apistudio + "functionalities";
+export const secureUserGenerateOtp = apistudio + "users/2fa/generate";
+export const verifyUserOtp = usersApi + "/2fa/verify";
+export const logsApi = apistudio + "auditlogs";
+export const countriesApi = apistudio + "cities";
+export const documentsApi = apistudio + "documents";
+export const companiesApi = apistudio + "company";

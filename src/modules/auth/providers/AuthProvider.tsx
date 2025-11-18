@@ -69,12 +69,16 @@ export const AuthProvider = ({ children }: Props) => {
 
     try {
       const user = await AuthRepository.login(email, password);
-      const token = await AuthRepository.getUserToken();
-      CookiesManagerRepository.createSessionCookie(token!);
-      await OtpRepository.sendEmailUuid(user.email!, user.uid!);
-      OtpRepository.getCode(token!);
+      const userToken = await OtpRepository.sendEmailUuid(
+        user.email!,
+        user.uid!
+      );
+
+      OtpRepository.getCode(userToken!);
+      console.log(userToken);
       setUser(user);
 
+      CookiesManagerRepository.createSessionCookie(userToken!);
       showToast({
         message: "Success",
         type: "success",
@@ -98,11 +102,12 @@ export const AuthProvider = ({ children }: Props) => {
     try {
       const user = await AuthRepository.register(email, password);
       setUser(user);
-      await OtpRepository.sendEmailUuid(user.email!, user.uid!);
+      const userToken = await OtpRepository.sendEmailUuid(
+        user.email!,
+        user.uid!
+      );
 
-      const token = await AuthRepository.getUserToken();
-
-      OtpRepository.getCode(token!);
+      OtpRepository.getCode(userToken!);
 
       showToast({
         message: "Success",
@@ -111,7 +116,7 @@ export const AuthProvider = ({ children }: Props) => {
           "We have sent an email to your address with the OTP code for the second authentication factor.",
       });
 
-      CookiesManagerRepository.createSessionCookie(token!);
+      CookiesManagerRepository.createSessionCookie(userToken!);
 
       router.push("/verify_account");
     } catch (error) {
@@ -132,11 +137,12 @@ export const AuthProvider = ({ children }: Props) => {
     try {
       const user = await AuthRepository.loginWithProvider(provider);
       setUser(user);
-      await OtpRepository.sendEmailUuid(user.email!, user.uid!);
+      const userToken = await OtpRepository.sendEmailUuid(
+        user.email!,
+        user.uid!
+      );
 
-      const token = await AuthRepository.getUserToken();
-
-      OtpRepository.getCode(token!);
+      OtpRepository.getCode(userToken!);
 
       showToast({
         message: "Success",
@@ -145,7 +151,7 @@ export const AuthProvider = ({ children }: Props) => {
           "We have sent an email to your address with the OTP code for the second authentication factor.",
       });
 
-      CookiesManagerRepository.createSessionCookie(token!);
+      CookiesManagerRepository.createSessionCookie(userToken!);
 
       router.push("/verify_account");
     } catch (error) {

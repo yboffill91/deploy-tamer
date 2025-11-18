@@ -1,5 +1,6 @@
 import {
   Briefcase,
+  Building,
   ClipboardList,
   Cloud,
   CloudCheck,
@@ -14,7 +15,7 @@ import {
   ShieldCheck,
   Sliders,
   Users,
-} from 'lucide-react';
+} from "lucide-react";
 
 export interface NavSubItem {
   title: string;
@@ -46,14 +47,13 @@ export interface NavGroup {
 export const AdminSidebarItems: NavGroup[] = [
   {
     id: 1,
-    label: 'Dashboards',
+    label: "Dashboards",
     items: [
       {
-        title: 'Home',
-        url: '/admin/dashboard',
+        title: "Home",
+        url: "/admin/dashboard",
         icon: LayoutDashboard,
       },
-
     ],
   },
   {
@@ -61,13 +61,13 @@ export const AdminSidebarItems: NavGroup[] = [
     label: "Tools",
     items: [
       {
-        title: 'SEO',
-        url: '/admin/seo',
+        title: "SEO",
+        url: "/admin/seo",
         icon: SearchIcon,
         subItems: [
           {
-            title: 'Keyword Research',
-            url: '/admin/seo/key_research',
+            title: "Keyword Research",
+            url: "/admin/seo/key_research",
             icon: KeyIcon,
           },
         ],
@@ -77,90 +77,92 @@ export const AdminSidebarItems: NavGroup[] = [
   },
   {
     id: 3,
-    label: 'HR',
+    label: "HR",
     items: [
       {
         title: "User Management",
-        url: '/admin',
+        url: "/admin",
         icon: Users,
         subItems: [
           {
-            title: 'Teams',
-            url: '/admin/teams',
+            title: "Teams",
+            url: "/admin/teams",
             icon: ClipboardList,
           },
           {
-            title: 'Users',
-            url: '/admin/users',
+            title: "Users",
+            url: "/admin/users",
             icon: Users,
           },
           {
-            title: 'Position',
-            url: '/admin/positions-management',
+            title: "Position",
+            url: "/admin/positions-management",
             icon: LayoutList,
           },
           {
-            title: 'Roles',
-            url: '/admin/roles-management',
+            title: "Roles",
+            url: "/admin/roles-management",
             icon: ShieldCheck,
             comingSoon: false,
           },
           {
-            title: 'Functionalities',
-            url: '/admin/features-management',
+            title: "Functionalities",
+            url: "/admin/features-management",
             icon: Sliders,
           },
-
-        ]
+        ],
       },
       {
         title: "Client Management",
-        url: '/admin/client-management',
+        url: "/admin/client-management",
         icon: Briefcase,
         subItems: [
           {
-            title: 'Clients',
-            url: '/admin/clients',
+            title: "Clients",
+            url: "/admin/clients",
             icon: Users,
-            comingSoon: true
+            comingSoon: true,
           },
-        ]
-      }
-
+          {
+            title: "Companies",
+            url: "/admin/companies",
+            icon: Building,
+          },
+        ],
+      },
     ],
   },
   {
     id: 4,
     label: "Administration",
     items: [
-
-
-
       {
-        title: 'Audit Logs',
-        url: '/admin/logs',
+        title: "Audit Logs",
+        url: "/admin/logs",
         icon: Logs,
       },
       {
-        title: 'Cities Locator',
-        url: '/admin/cities',
+        title: "Cities Locator",
+        url: "/admin/cities",
         icon: Earth,
       },
-    ]
+    ],
   },
   {
-    id: 5, label: "Documents", items: [
+    id: 5,
+    label: "Documents",
+    items: [
       {
         title: "Users",
         url: "/documents/users",
         icon: MonitorCloud,
         subItems: [
           {
-            title: 'Documents',
-            url: '/admin/documents/users',
+            title: "Documents",
+            url: "/admin/documents/users",
             icon: CloudCheck,
           },
-        ]
+        ],
       },
       {
         title: "Clients",
@@ -168,24 +170,24 @@ export const AdminSidebarItems: NavGroup[] = [
         icon: Cloud,
         subItems: [
           {
-            title: 'Documents',
-            url: '/admin/documents/clients',
+            title: "Documents",
+            url: "/admin/documents/clients",
             icon: CloudCheck,
           },
-        ]
-      }
-    ]
-  }
+        ],
+      },
+    ],
+  },
 ];
 
 export const sidebarItems: NavGroup[] = [
   {
     id: 1,
-    label: 'Dashboards',
+    label: "Dashboards",
     items: [
       {
-        title: 'Default',
-        url: '/dashboard/default',
+        title: "Default",
+        url: "/dashboard/default",
         icon: LayoutDashboard,
       },
     ],

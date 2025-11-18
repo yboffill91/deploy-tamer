@@ -52,6 +52,16 @@ export const UploadDocument = () => {
   const [isLoadingTeam, setIsLoadingTeam] = useState(false);
   const [inputTags, setInputTags] = useState<string[] | null>(null);
   const [inputTag, setInputTag] = useState<string>("");
+  const [formError, setFormError] = useState<Pick<
+    DocumentsDTO,
+    "name" | "teamId" | "info"
+  > | null>({
+    name: "",
+    teamId: "",
+    info: {
+      description: "",
+    },
+  });
 
   const [formData, setFormData] = useState<DocumentsDTO>({
     name: "",
@@ -116,10 +126,6 @@ export const UploadDocument = () => {
     GetData();
   }, []);
 
-  //  TODO: logs
-
-  console.log(formData);
-
   const onFileValidate = useCallback(
     (file: File): string | null => {
       if (files.length >= 1) {
@@ -160,7 +166,9 @@ export const UploadDocument = () => {
     }
 
     if (!formData.name) {
-      setIsError("Please enter a name");
+      setFormError({
+        name: "Please enter a name",
+      });
       return;
     }
 
@@ -175,12 +183,18 @@ export const UploadDocument = () => {
     }
 
     if (!formData.teamId) {
-      setIsError("Please select a team");
+      setFormError({
+        teamId: "Please select a team",
+      });
       return;
     }
 
     if (!formData.info?.description) {
-      setIsError("Please enter a description");
+      setFormError({
+        info: {
+          description: "Please enter a description",
+        },
+      });
       return;
     }
 
@@ -361,6 +375,11 @@ export const UploadDocument = () => {
                     }
                   />
                 </InputGroup>
+                {formError?.name && (
+                  <p className="text-destructive text-xs mt-1">
+                    {formError.name}
+                  </p>
+                )}
               </div>
 
               {/* TYPE OF DOCUMENT */}
@@ -440,6 +459,11 @@ export const UploadDocument = () => {
                     ))}
                   </SelectContent>
                 </Select>
+                {formError?.teamId && (
+                  <p className="text-destructive text-xs mt-1">
+                    {formError.teamId}
+                  </p>
+                )}
               </div>
 
               {/* DESCRIPTION */}
@@ -465,6 +489,11 @@ export const UploadDocument = () => {
                     }}
                   />
                 </InputGroup>
+                {formError?.info?.description && (
+                  <p className="text-destructive text-xs mt-1">
+                    {formError.info?.description}
+                  </p>
+                )}
               </div>
 
               {/* TAGS */}

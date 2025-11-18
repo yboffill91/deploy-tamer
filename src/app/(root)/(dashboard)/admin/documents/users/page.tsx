@@ -18,9 +18,9 @@ const UsersDocumentsPage = () => {
         icon={CloudCheck}
         title="Documents"
       />
-      <Card className="w-full">
+      <Card>
         <Tabs defaultValue="documents">
-          <CardHeader className="w-full">
+          <CardHeader>
             <TabsList className="min-w-64 ">
               <TabsTrigger value="documents">
                 <FileText />

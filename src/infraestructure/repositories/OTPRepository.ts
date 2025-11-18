@@ -1,56 +1,64 @@
-
 import { AuthError } from "@/core";
 import { secureUserGenerateOtp, usersApi, verifyUserOtp } from "@/lib/apis";
 import { fetchHelper } from "@/lib/fetch-helper";
 
-
 interface IOtpRepository {
-    sendEmailUuid(email: string, uuid: string): Promise<void>;
-    getCode(token: string): Promise<void>;
-    verifyCode(code: string, token: string): Promise<void>;
+  sendEmailUuid(email: string, uuid: string): Promise<string>;
+  getCode(token: string): Promise<void>;
+  verifyCode(code: string, token: string): Promise<void>;
 }
 
-
 export class SessionVerificationRepository implements IOtpRepository {
-
-    async sendEmailUuid(email: string, uuid: string): Promise<void> {
-        try {
-            await fetchHelper(`${usersApi}/${email}/${uuid}`)
-        } catch (error) {
-            throw new AuthError(error instanceof Error ? error.message : "Error sending email uuid")
-        }
+  async sendEmailUuid(email: string, uuid: string): Promise<string> {
+    try {
+      const response = await fetchHelper<{
+        access_token: string;
+        user: string;
+      }>(`${usersApi}/${email}/${uuid}`);
+      if (!response) {
+        throw new AuthError("Error sending email uuid");
+      }
+      return response.access_token;
+    } catch (error) {
+      throw new AuthError(
+        error instanceof Error ? error.message : "Error sending email uuid"
+      );
     }
+  }
 
-    async getCode(token: string): Promise<void> {
-        try {
-            await fetchHelper(secureUserGenerateOtp, {
-                method: "PATCH",
-                headers: {
-                    "Authorization": "Bearer " + token
-                }
-            })
-
-        } catch (error) {
-            throw new Error(error instanceof Error ? error.message : "Error generating 2nd Factor Authentication Code")
-        }
-
-
+  async getCode(token: string): Promise<void> {
+    try {
+      await fetchHelper(secureUserGenerateOtp, {
+        method: "PATCH",
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
+    } catch (error) {
+      throw new Error(
+        error instanceof Error
+          ? error.message
+          : "Error generating 2nd Factor Authentication Code"
+      );
     }
-    async verifyCode(code: string, token: string): Promise<void> {
-        try {
-            const response = await fetchHelper(`${verifyUserOtp}/${code}`, {
-                headers: {
-                    "Authorization": "Bearer " + token
-                }
-            })
+  }
+  async verifyCode(code: string, token: string): Promise<void> {
+    try {
+      const response = await fetchHelper(`${verifyUserOtp}/${code}`, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
 
-
-            if (!response) {
-                throw new Error("Error verifying 2nd Factor Authentication Code")
-            }
-
-        } catch (error) {
-            throw new Error(error instanceof Error ? error.message : "Error verifying 2nd Factor Authentication Code")
-        }
+      if (!response) {
+        throw new Error("Error verifying 2nd Factor Authentication Code");
+      }
+    } catch (error) {
+      throw new Error(
+        error instanceof Error
+          ? error.message
+          : "Error verifying 2nd Factor Authentication Code"
+      );
     }
+  }
 }

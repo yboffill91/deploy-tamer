@@ -13,14 +13,12 @@ import { CustomLoading } from "@/components/CustomLoading";
 import { ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { otpSchema, otpType } from "../models";
 import { useAuth } from "../providers/AuthProvider";
-import {
-  FirebaseAuthRepository,
-  SessionVerificationRepository,
-} from "@/infraestructure/repositories";
+import { SessionVerificationRepository } from "@/infraestructure/repositories";
 import { showToast } from "@/components/CustomToaster";
+import { useGetTokens } from "@/hooks/useGetToken";
 
 export const OTPForm = () => {
   const {
@@ -39,7 +37,17 @@ export const OTPForm = () => {
   const { user } = useAuth();
 
   const OtpRepository = new SessionVerificationRepository();
-  const AuthRepository = new FirebaseAuthRepository();
+  const { token, tokenError } = useGetTokens();
+
+  useEffect(() => {
+    if (tokenError) {
+      showToast({
+        message: "Error",
+        description: tokenError,
+        type: "error",
+      });
+    }
+  }, [tokenError]);
 
   const onSubmit = async (data: otpType) => {
     setLoading(true);
@@ -53,9 +61,8 @@ export const OTPForm = () => {
       return;
     }
 
-    const token = await AuthRepository.getUserToken();
-
     try {
+      console.log(token);
       await OtpRepository.verifyCode(data.otp, token!);
       showToast({
         message: "Success",
