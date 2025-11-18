@@ -18,7 +18,7 @@ import { CustomInput } from "@/components/CustomInput";
 import { CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 
-import { FirebaseAuthRepository } from "@/infraestructure/repositories";
+import { FirebaseAuthRepository } from "@/infrastructure/repositories";
 import { showToast } from "@/components/CustomToaster";
 
 const resetPasswordSchema = z

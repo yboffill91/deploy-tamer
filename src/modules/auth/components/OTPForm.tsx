@@ -16,7 +16,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { otpSchema, otpType } from "../models";
 import { useAuth } from "../providers/AuthProvider";
-import { SessionVerificationRepository } from "@/infraestructure/repositories";
+import { SessionVerificationRepository } from "@/infrastructure/repositories";
 import { showToast } from "@/components/CustomToaster";
 import { useGetTokens } from "@/hooks/useGetToken";
 
@@ -62,7 +62,6 @@ export const OTPForm = () => {
     }
 
     try {
-      console.log(token);
       await OtpRepository.verifyCode(data.otp, token!);
       showToast({
         message: "Success",

@@ -24,7 +24,7 @@ import {
 import { RoleFeature } from "./models";
 import { FunctionalitiesEntity } from "@/core/entities";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui";
-import { FunctionalitiesApiRepository } from "@/infraestructure/repositories";
+import { FunctionalitiesApiRepository } from "@/infrastructure/repositories";
 
 interface FeaturesManagerProps {
   availableFeatures: FunctionalitiesEntity[];

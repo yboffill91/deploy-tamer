@@ -13,8 +13,8 @@ import {
   FirebaseAuthRepository,
   SessionRepository,
   SessionVerificationRepository,
-} from "@/infraestructure/repositories";
-import { FirebaseUserMapper } from "@/infraestructure/dto";
+} from "@/infrastructure/repositories";
+import { FirebaseUserMapper } from "@/infrastructure/dto";
 import { useRouter } from "next/navigation";
 import { showToast } from "@/components/CustomToaster";
 
@@ -74,11 +74,14 @@ export const AuthProvider = ({ children }: Props) => {
         user.uid!
       );
 
-      OtpRepository.getCode(userToken!);
-      console.log(userToken);
+      const { access_token, usuario: UserCookie } = JSON.parse(userToken);
+
+      console.log("Usuario: ", UserCookie);
+      OtpRepository.getCode(access_token!);
       setUser(user);
 
-      CookiesManagerRepository.createSessionCookie(userToken!);
+      CookiesManagerRepository.createSessionCookie(access_token!, "TS_SESSION");
+      CookiesManagerRepository.createSessionCookie(UserCookie!, "TS_USER");
       showToast({
         message: "Success",
         type: "success",
@@ -108,6 +111,7 @@ export const AuthProvider = ({ children }: Props) => {
       );
 
       OtpRepository.getCode(userToken!);
+      const { access_token, usuario: UserCookie } = JSON.parse(userToken);
 
       showToast({
         message: "Success",
@@ -116,7 +120,8 @@ export const AuthProvider = ({ children }: Props) => {
           "We have sent an email to your address with the OTP code for the second authentication factor.",
       });
 
-      CookiesManagerRepository.createSessionCookie(userToken!);
+      CookiesManagerRepository.createSessionCookie(access_token!, "TS_SESSION");
+      CookiesManagerRepository.createSessionCookie(UserCookie!, "TS_USER");
 
       router.push("/verify_account");
     } catch (error) {
@@ -143,6 +148,7 @@ export const AuthProvider = ({ children }: Props) => {
       );
 
       OtpRepository.getCode(userToken!);
+      const { access_token, usuario: UserCookie } = JSON.parse(userToken);
 
       showToast({
         message: "Success",
@@ -151,7 +157,8 @@ export const AuthProvider = ({ children }: Props) => {
           "We have sent an email to your address with the OTP code for the second authentication factor.",
       });
 
-      CookiesManagerRepository.createSessionCookie(userToken!);
+      CookiesManagerRepository.createSessionCookie(access_token!, "TS_SESSION");
+      CookiesManagerRepository.createSessionCookie(UserCookie!, "TS_USER");
 
       router.push("/verify_account");
     } catch (error) {

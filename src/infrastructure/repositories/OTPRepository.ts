@@ -13,12 +13,12 @@ export class SessionVerificationRepository implements IOtpRepository {
     try {
       const response = await fetchHelper<{
         access_token: string;
-        user: string;
+        usuario: Record<string, string>;
       }>(`${usersApi}/${email}/${uuid}`);
       if (!response) {
         throw new AuthError("Error sending email uuid");
       }
-      return response.access_token;
+      return JSON.stringify(response);
     } catch (error) {
       throw new AuthError(
         error instanceof Error ? error.message : "Error sending email uuid"

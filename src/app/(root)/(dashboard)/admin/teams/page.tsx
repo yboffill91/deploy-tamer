@@ -11,13 +11,13 @@ import {
   UsersSelector,
 } from "@/modules/users/admin/components";
 import { TeamsEntity, UsersEntity } from "@/core/entities";
-import { TeamsApiRepository } from "@/infraestructure/repositories/TeamsApiRepository";
+import { TeamsApiRepository } from "@/infrastructure/repositories/TeamsApiRepository";
 import { CustomLoading } from "@/components/CustomLoading";
 import { CustomEmpty } from "@/components/CustomEmpty";
 import { CircleAlert, ClipboardList } from "lucide-react";
 import { Card, CardContent } from "@/components/ui";
 import { ControlledDialog } from "@/components/ControlledDialog";
-import { UsersApiRepository } from "@/infraestructure/repositories";
+import { UsersApiRepository } from "@/infrastructure/repositories";
 import { requestCreateTeamDTO } from "@/core/dto";
 import { CommonHeader } from "@/modules/users/admin";
 import { CustomPageLoader } from "@/components/CustomPageLoader";

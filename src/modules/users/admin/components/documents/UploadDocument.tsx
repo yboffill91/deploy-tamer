@@ -31,8 +31,8 @@ import {
 import { TeamsEntity } from "@/core";
 import { DocumentsDTO } from "@/core/dto/DocumentsDTO";
 import { DocumentsAccessType, DocumentsType } from "@/core/entities";
-import { TeamsApiRepository } from "@/infraestructure/repositories";
-import { DocumentsApiRepository } from "@/infraestructure/repositories/DocumentsApiRepository";
+import { TeamsApiRepository } from "@/infrastructure/repositories";
+import { DocumentsApiRepository } from "@/infrastructure/repositories/DocumentsApiRepository";
 import { cn } from "@/lib/utils";
 import {
   ClipboardList,
@@ -62,6 +62,8 @@ export const UploadDocument = () => {
       description: "",
     },
   });
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState<DocumentsDTO>({
     name: "",
@@ -203,7 +205,7 @@ export const UploadDocument = () => {
       return;
     }
 
-    setFormData({
+    const payload = {
       ...formData,
       info: {
         ...formData.info,
@@ -216,43 +218,45 @@ export const UploadDocument = () => {
         },
         tags: inputTags?.length ? inputTags : ["Uncategorized"],
       },
-    });
+      file: files[0],
+    };
 
     try {
-      await documents_repo.create(formData);
+      setIsLoading(true);
+      await documents_repo.create(payload);
       showToast({
         description: "Document uploaded successfully",
         type: "success",
         message: "Success",
       });
+      setFiles([]);
+      setFormData({
+        name: "",
+        type: DocumentsType.REPORT,
+        accessType: DocumentsAccessType.PUBLIC,
+        teamId: "",
+        info: {
+          description: "",
+          tags: ["Uncategorized"],
+          metadata: {
+            size: "",
+            type: "",
+            lastModified: "",
+            name: " ",
+          },
+        },
+      });
+      setInputTag("");
+      setInputTags(null);
     } catch (error) {
       setIsError(
         error instanceof Error
           ? error.message
           : `Error uploading document: ${error}`
       );
+    } finally {
+      setIsLoading(false);
     }
-
-    setFiles([]);
-    setFormData({
-      name: "",
-      type: DocumentsType.REPORT,
-      accessType: DocumentsAccessType.PUBLIC,
-      teamId: "",
-      info: {
-        description: "",
-        tags: ["Uncategorized"],
-        metadata: {
-          size: "",
-          type: "",
-          lastModified: "",
-          name: " ",
-        },
-      },
-      file: files[0],
-    });
-    setInputTag("");
-    setInputTags(null);
   };
 
   const docsType: DocumentsType[] = [
@@ -297,258 +301,281 @@ export const UploadDocument = () => {
 
   return (
     <>
-      <Card className=" max-w-3xl">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-xl font-semibold">
-            Upload PDF Document
-          </CardTitle>
-        </CardHeader>
+      {isLoading && (
+        <div className="flex items-center justify-center w-full min-h-[96dvh]">
+          <CustomLoading message="Uploading Document" />
+        </div>
+      )}
+      {!isLoading && (
+        <>
+          <Card className=" max-w-3xl">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-xl font-semibold">
+                Upload PDF Document
+              </CardTitle>
+            </CardHeader>
 
-        <CardContent className="space-y-8">
-          <form onSubmit={submitHandler}>
-            <div className="space-y-4 flex flex-col w-full mb-12">
-              <FileUpload
-                value={files}
-                onValueChange={setFiles}
-                onFileValidate={onFileValidate}
-                onFileReject={onFileReject}
-                accept="application/pdf"
-                maxFiles={1}
-                multiple={false}
-                disabled={files.length >= 1}
-                className="w-full"
-              >
-                <FileUploadDropzone className="cursor-pointer py-6">
-                  <div className="flex flex-col items-center gap-2">
-                    <div className="border rounded-lg p-2">
-                      <CloudUpload className="size-6 text-muted-foreground" />
-                    </div>
-                    <p className="text-sm font-medium">
-                      Drag & drop your PDF file here
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      Or click to browse from your computer
-                    </p>
+            <CardContent className="space-y-8">
+              <form onSubmit={submitHandler}>
+                <div className="space-y-4 flex flex-col w-full mb-12">
+                  <FileUpload
+                    value={files}
+                    onValueChange={setFiles}
+                    onFileValidate={onFileValidate}
+                    onFileReject={onFileReject}
+                    accept="application/pdf"
+                    maxFiles={1}
+                    multiple={false}
+                    disabled={files.length >= 1}
+                    className="w-full"
+                  >
+                    <FileUploadDropzone className="cursor-pointer py-6">
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="border rounded-lg p-2">
+                          <CloudUpload className="size-6 text-muted-foreground" />
+                        </div>
+                        <p className="text-sm font-medium">
+                          Drag & drop your PDF file here
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Or click to browse from your computer
+                        </p>
+                      </div>
+
+                      <FileUploadTrigger asChild>
+                        <Button variant="outline" size="sm" className="mt-3">
+                          Browse files
+                        </Button>
+                      </FileUploadTrigger>
+                    </FileUploadDropzone>
+
+                    {/* Files List */}
+                    <FileUploadList className="mt-4">
+                      {files.map((file) => (
+                        <FileUploadItem key={file.name} value={file}>
+                          <FileUploadItemPreview />
+                          <FileUploadItemMetadata />
+                          <FileUploadItemDelete asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="size-7"
+                            >
+                              <X />
+                            </Button>
+                          </FileUploadItemDelete>
+                        </FileUploadItem>
+                      ))}
+                    </FileUploadList>
+                  </FileUpload>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* NAME */}
+                  <div className="flex flex-col gap-1 col-span-1 md:col-span-2">
+                    <Label htmlFor="name" className="flex items-center gap-1">
+                      Name
+                    </Label>
+                    <InputGroup>
+                      <InputGroupAddon>
+                        <FileText />
+                      </InputGroupAddon>
+                      <InputGroupInput
+                        placeholder="Document Name"
+                        id="name"
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            name: e.target.value,
+                          })
+                        }
+                      />
+                    </InputGroup>
+                    {formError?.name && (
+                      <p className="text-destructive text-xs mt-1">
+                        {formError.name}
+                      </p>
+                    )}
                   </div>
 
-                  <FileUploadTrigger asChild>
-                    <Button variant="outline" size="sm" className="mt-3">
-                      Browse files
-                    </Button>
-                  </FileUploadTrigger>
-                </FileUploadDropzone>
-
-                {/* Files List */}
-                <FileUploadList className="mt-4">
-                  {files.map((file) => (
-                    <FileUploadItem key={file.name} value={file}>
-                      <FileUploadItemPreview />
-                      <FileUploadItemMetadata />
-                      <FileUploadItemDelete asChild>
-                        <Button variant="ghost" size="icon" className="size-7">
-                          <X />
-                        </Button>
-                      </FileUploadItemDelete>
-                    </FileUploadItem>
-                  ))}
-                </FileUploadList>
-              </FileUpload>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* NAME */}
-              <div className="flex flex-col gap-1 col-span-1 md:col-span-2">
-                <Label htmlFor="name" className="flex items-center gap-1">
-                  Name
-                </Label>
-                <InputGroup>
-                  <InputGroupAddon>
-                    <FileText />
-                  </InputGroupAddon>
-                  <InputGroupInput
-                    placeholder="Document Name"
-                    id="name"
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        name: e.target.value,
-                      })
-                    }
-                  />
-                </InputGroup>
-                {formError?.name && (
-                  <p className="text-destructive text-xs mt-1">
-                    {formError.name}
-                  </p>
-                )}
-              </div>
-
-              {/* TYPE OF DOCUMENT */}
-              <div className="flex flex-col gap-1">
-                <Label className="flex items-center gap-1">Document Type</Label>
-                <Select
-                  onValueChange={(value) =>
-                    setFormData({
-                      ...formData,
-                      type: value as DocumentsType,
-                    })
-                  }
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {docsType.map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {type.charAt(0).toUpperCase() +
-                          type.slice(1).toLowerCase()}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* ACCESS TYPE */}
-              <div className="flex flex-col gap-1">
-                <Label className="flex items-center gap-1">Access Type</Label>
-                <Select
-                  onValueChange={(value) =>
-                    setFormData({
-                      ...formData,
-                      accessType: value as DocumentsAccessType,
-                    })
-                  }
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select access" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {docsAccessType.map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {type.charAt(0).toUpperCase() +
-                          type.slice(1).toLowerCase()}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* TEAM */}
-              <div className="flex flex-col gap-1">
-                <Label className="flex items-center gap-1">Team</Label>
-                <Select
-                  onValueChange={(value) =>
-                    setFormData({ ...formData, teamId: value })
-                  }
-                >
-                  <SelectTrigger className="w-full" disabled={isLoadingTeam}>
-                    <SelectValue
-                      placeholder={
-                        isLoadingTeam ? (
-                          <CustomLoading message="Loading Teams Data" />
-                        ) : (
-                          "Select team"
-                        )
+                  {/* TYPE OF DOCUMENT */}
+                  <div className="flex flex-col gap-1">
+                    <Label className="flex items-center gap-1">
+                      Document Type
+                    </Label>
+                    <Select
+                      onValueChange={(value) =>
+                        setFormData({
+                          ...formData,
+                          type: value as DocumentsType,
+                        })
                       }
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {teams?.map((team) => (
-                      <SelectItem key={team.id} value={team.id!.toString()}>
-                        {team.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {formError?.teamId && (
-                  <p className="text-destructive text-xs mt-1">
-                    {formError.teamId}
-                  </p>
-                )}
-              </div>
-
-              {/* DESCRIPTION */}
-              <div className="flex flex-col gap-1 col-span-1 md:col-span-2">
-                <Label
-                  htmlFor="description"
-                  className="flex items-center gap-1"
-                >
-                  Description
-                </Label>
-                <InputGroup>
-                  <InputGroupAddon>
-                    <ClipboardList />
-                  </InputGroupAddon>
-                  <InputGroupTextarea
-                    placeholder="Description"
-                    id="description"
-                    onChange={(e) => {
-                      setFormData({
-                        ...formData,
-                        info: { ...formData.info, description: e.target.value },
-                      });
-                    }}
-                  />
-                </InputGroup>
-                {formError?.info?.description && (
-                  <p className="text-destructive text-xs mt-1">
-                    {formError.info?.description}
-                  </p>
-                )}
-              </div>
-
-              {/* TAGS */}
-              <div className="flex flex-col gap-1 col-span-1 md:col-span-1">
-                <Label htmlFor="tags" className="flex items-center gap-1">
-                  Tags
-                </Label>
-                <InputGroup>
-                  <InputGroupAddon>
-                    <Tag />
-                  </InputGroupAddon>
-                  <InputGroupInput
-                    placeholder="Example: finance, report"
-                    id="tags"
-                    onChange={(e) => setInputTag(e.target.value)}
-                  />
-                  <InputGroupButton asChild>
-                    <Button
-                      size={"sm"}
-                      variant={"outline"}
-                      className="mx-2"
-                      onClick={() => handleAddTag(inputTag)}
                     >
-                      <Tags /> <Plus />
-                    </Button>
-                  </InputGroupButton>
-                </InputGroup>
-                <div
-                  className={cn(
-                    "flex flex-wrap gap-2 bg-accent p-2 rounded-lg",
-                    inputTags?.length ? "flex" : "hidden"
-                  )}
-                >
-                  {inputTags?.map((tag) => (
-                    <Badge key={tag}>
-                      <Tag /> {tag}{" "}
-                      <span
-                        onClick={() => handleRemoveTag(tag)}
-                        className="border   size-3 flex items-center border-destructive/50 rounded-sm bg-destructive text-destructive-foreground justify-center cursor-pointer"
-                      >
-                        <X />
-                      </span>
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            </div>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {docsType.map((type) => (
+                          <SelectItem key={type} value={type}>
+                            {type.charAt(0).toUpperCase() +
+                              type.slice(1).toLowerCase()}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-            <Button type="submit" className="w-full mt-12">
-              {" "}
-              Upload
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+                  {/* ACCESS TYPE */}
+                  <div className="flex flex-col gap-1">
+                    <Label className="flex items-center gap-1">
+                      Access Type
+                    </Label>
+                    <Select
+                      onValueChange={(value) =>
+                        setFormData({
+                          ...formData,
+                          accessType: value as DocumentsAccessType,
+                        })
+                      }
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select access" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {docsAccessType.map((type) => (
+                          <SelectItem key={type} value={type}>
+                            {type.charAt(0).toUpperCase() +
+                              type.slice(1).toLowerCase()}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* TEAM */}
+                  <div className="flex flex-col gap-1">
+                    <Label className="flex items-center gap-1">Team</Label>
+                    <Select
+                      onValueChange={(value) =>
+                        setFormData({ ...formData, teamId: value })
+                      }
+                    >
+                      <SelectTrigger
+                        className="w-full"
+                        disabled={isLoadingTeam}
+                      >
+                        <SelectValue
+                          placeholder={
+                            isLoadingTeam ? (
+                              <CustomLoading message="Loading Teams Data" />
+                            ) : (
+                              "Select team"
+                            )
+                          }
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {teams?.map((team) => (
+                          <SelectItem key={team.id} value={team.id!.toString()}>
+                            {team.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {formError?.teamId && (
+                      <p className="text-destructive text-xs mt-1">
+                        {formError.teamId}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* DESCRIPTION */}
+                  <div className="flex flex-col gap-1 col-span-1 md:col-span-2">
+                    <Label
+                      htmlFor="description"
+                      className="flex items-center gap-1"
+                    >
+                      Description
+                    </Label>
+                    <InputGroup>
+                      <InputGroupAddon>
+                        <ClipboardList />
+                      </InputGroupAddon>
+                      <InputGroupTextarea
+                        placeholder="Description"
+                        id="description"
+                        onChange={(e) => {
+                          setFormData({
+                            ...formData,
+                            info: {
+                              ...formData.info,
+                              description: e.target.value,
+                            },
+                          });
+                        }}
+                      />
+                    </InputGroup>
+                    {formError?.info?.description && (
+                      <p className="text-destructive text-xs mt-1">
+                        {formError.info?.description}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* TAGS */}
+                  <div className="flex flex-col gap-1 col-span-1 md:col-span-1">
+                    <Label htmlFor="tags" className="flex items-center gap-1">
+                      Tags
+                    </Label>
+                    <InputGroup>
+                      <InputGroupAddon>
+                        <Tag />
+                      </InputGroupAddon>
+                      <InputGroupInput
+                        placeholder="Example: finance, report"
+                        id="tags"
+                        onChange={(e) => setInputTag(e.target.value)}
+                      />
+                      <InputGroupButton asChild>
+                        <Button
+                          size={"sm"}
+                          variant={"outline"}
+                          className="mx-2"
+                          onClick={() => handleAddTag(inputTag)}
+                        >
+                          <Tags /> <Plus />
+                        </Button>
+                      </InputGroupButton>
+                    </InputGroup>
+                    <div
+                      className={cn(
+                        "flex flex-wrap gap-2 bg-accent p-2 rounded-lg",
+                        inputTags?.length ? "flex" : "hidden"
+                      )}
+                    >
+                      {inputTags?.map((tag) => (
+                        <Badge key={tag}>
+                          <Tag /> {tag}{" "}
+                          <span
+                            onClick={() => handleRemoveTag(tag)}
+                            className="border   size-3 flex items-center border-destructive/50 rounded-sm bg-destructive text-destructive-foreground justify-center cursor-pointer"
+                          >
+                            <X />
+                          </span>
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <Button type="submit" className="w-full mt-12">
+                  {" "}
+                  Upload
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </>
+      )}
     </>
   );
 };

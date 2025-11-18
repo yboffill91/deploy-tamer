@@ -21,7 +21,7 @@ import {
 import {
   FunctionalitiesApiRepository,
   RolesApiRepository,
-} from "@/infraestructure/repositories";
+} from "@/infrastructure/repositories";
 import { CustomLoading } from "@/components/CustomLoading";
 import { CustomEmpty } from "@/components/CustomEmpty";
 import { ControlledDialog } from "@/components/ControlledDialog";

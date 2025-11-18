@@ -3,15 +3,15 @@
 import { CustomPageLoader } from "@/components/CustomPageLoader";
 import { showToast } from "@/components/CustomToaster";
 import {
-    Alert,
-    AlertDescription,
-    AlertTitle, Button,
-    Card,
-    CardContent,
-
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Button,
+  Card,
+  CardContent,
 } from "@/components/ui";
 import { CountriesEntity, StatesEntity, CitiesEntity } from "@/core/entities";
-import { CitiesRepository } from "@/infraestructure/repositories";
+import { CitiesRepository } from "@/infrastructure/repositories";
 
 import { CountriesDataTable } from "@/modules/users/admin/components/dataTables/CountriesDataTable";
 import { StatesDataTable } from "@/modules/users/admin/components/dataTables/StatesDataTable";
@@ -136,43 +136,53 @@ const CitiesPage = () => {
             </CardContent>
           </Card>
         )}
-          {states && states.length === 0 && (
-                <NotFounded title={"No State Founded"} description = {'It appears that there are no states, provinces, departments, or dependencies in the selected country. '} />
-          )}
+        {states && states.length === 0 && (
+          <NotFounded
+            title={"No State Founded"}
+            description={
+              "It appears that there are no states, provinces, departments, or dependencies in the selected country. "
+            }
+          />
+        )}
 
         {isLoadingCities && <CustomPageLoader message="Loading Cities Data" />}
 
-        {cities && !isLoadingCities && !isLoadingStates  && cities.length > 0 && (
-          <Card>
-            <CardContent>
-              <CitiesDataTable data={cities} />
-            </CardContent>
-          </Card>
-        )}
-          {cities && cities.length === 0 && (
-            <NotFounded title={"No City Founded"} description={"It appears that there are no cities in the selected province, state, department, or dependency."}/>
+        {cities &&
+          !isLoadingCities &&
+          !isLoadingStates &&
+          cities.length > 0 && (
+            <Card>
+              <CardContent>
+                <CitiesDataTable data={cities} />
+              </CardContent>
+            </Card>
           )}
-
+        {cities && cities.length === 0 && (
+          <NotFounded
+            title={"No City Founded"}
+            description={
+              "It appears that there are no cities in the selected province, state, department, or dependency."
+            }
+          />
+        )}
       </div>
-
-
     </>
   );
 };
 
 export default CitiesPage;
 
-const NotFounded = ({title, description}: {title: string, description: string})    => {
-
-    return(
-
-    <Alert variant={'destructive'} className={'max-w-sm'}>
-        <AlertTitle>
-            {title}
-        </AlertTitle>
-        <AlertDescription>
-            {description}
-        </AlertDescription>
+const NotFounded = ({
+  title,
+  description,
+}: {
+  title: string;
+  description: string;
+}) => {
+  return (
+    <Alert variant={"destructive"} className={"max-w-sm"}>
+      <AlertTitle>{title}</AlertTitle>
+      <AlertDescription>{description}</AlertDescription>
     </Alert>
-        )
-}
+  );
+};

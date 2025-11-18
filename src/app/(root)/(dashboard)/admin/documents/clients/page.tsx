@@ -7,7 +7,11 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui";
-import { CommonHeader, UploadDocument } from "@/modules/users/admin";
+import {
+  CommonHeader,
+  DocumentsView,
+  UploadDocument,
+} from "@/modules/users/admin";
 import { CloudCheck, CloudUploadIcon, FileText } from "lucide-react";
 
 const ClientsDocumentsPage = () => {
@@ -37,7 +41,7 @@ const ClientsDocumentsPage = () => {
               <UploadDocument />
             </TabsContent>
             <TabsContent value="documents">
-              <h3>Documents View</h3>
+              <DocumentsView />
             </TabsContent>
           </CardContent>
         </Tabs>

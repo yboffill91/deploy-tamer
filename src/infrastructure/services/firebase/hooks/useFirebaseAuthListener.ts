@@ -1,8 +1,8 @@
-'use client';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { useState, useEffect } from 'react';
-import { UsersEntity } from '@/core';
-import { FirebaseUserMapper } from '@/infraestructure/dto';
+"use client";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useState, useEffect } from "react";
+import { UsersEntity } from "@/core";
+import { FirebaseUserMapper } from "@/infrastructure/dto";
 
 export function useFirebaseAuthListener() {
   const [user, setUser] = useState<UsersEntity | null>(null);

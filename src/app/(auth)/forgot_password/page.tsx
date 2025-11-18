@@ -16,7 +16,7 @@ import { CustomLoading } from "@/components/CustomLoading";
 import { CustomInput } from "@/components/CustomInput";
 import { MailCheck, ArrowLeft, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
-import { FirebaseAuthRepository } from "@/infraestructure/repositories";
+import { FirebaseAuthRepository } from "@/infrastructure/repositories";
 import { Email } from "@/core";
 import { showToast } from "@/components/CustomToaster";
 

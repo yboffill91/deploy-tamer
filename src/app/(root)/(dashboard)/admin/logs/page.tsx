@@ -33,7 +33,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { LogsEntity } from "@/core/entities";
-import { LogsApiRepository } from "@/infraestructure/repositories/LogsApiRepository";
+import { LogsApiRepository } from "@/infrastructure/repositories/LogsApiRepository";
 import { useEffect, useMemo, useState } from "react";
 import {
   Card,

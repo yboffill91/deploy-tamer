@@ -13,7 +13,7 @@ import {
 import {
   PositionsApiRepository,
   UsersApiRepository,
-} from "@/infraestructure/repositories";
+} from "@/infrastructure/repositories";
 import { CustomLoading } from "@/components/CustomLoading";
 import { CustomEmpty } from "@/components/CustomEmpty";
 import { AlertTriangle, Users } from "lucide-react";

@@ -2,7 +2,7 @@
 
 import { showToast } from "@/components/CustomToaster";
 import { TeamsEntity } from "@/core";
-import { TeamsApiRepository } from "@/infraestructure/repositories";
+import { TeamsApiRepository } from "@/infrastructure/repositories";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";

@@ -17,7 +17,7 @@ import { PositionsDTO, PositionsEntity, RolesEntity } from "@/core";
 import {
   PositionsApiRepository,
   RolesApiRepository,
-} from "@/infraestructure/repositories";
+} from "@/infrastructure/repositories";
 import { CustomLoading } from "@/components/CustomLoading";
 import { CustomEmpty } from "@/components/CustomEmpty";
 import { AlertTriangle, LayoutList } from "lucide-react";
