@@ -53,7 +53,7 @@ const REGEX_CACHE = {
 
 function getCachedFormatter(
   locale: string | undefined,
-  opts: Intl.NumberFormatOptions,
+  opts: Intl.NumberFormatOptions
 ): Intl.NumberFormat {
   const {
     currency,
@@ -71,7 +71,7 @@ function getCachedFormatter(
           style: "currency",
           currency,
           ...opts,
-        }),
+        })
       );
     } catch {
       formattersCache.set(
@@ -80,7 +80,7 @@ function getCachedFormatter(
           style: "currency",
           currency: DEFAULT_CURRENCY,
           ...opts,
-        }),
+        })
       );
     }
   }
@@ -185,7 +185,7 @@ interface MaskPattern {
   validate?: (value: string, opts?: ValidateOptions) => boolean;
 }
 
-type MaskPatternKey =
+export type MaskPatternKey =
   | "phone"
   | "ssn"
   | "date"
@@ -241,7 +241,7 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
         month === 2 &&
         ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0)
           ? 29
-          : (daysInMonthCache[month - 1] ?? 31);
+          : daysInMonthCache[month - 1] ?? 31;
 
       return day <= maxDays;
     },
@@ -326,14 +326,14 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
     transform: (value) => value.replace(REGEX_CACHE.nonDigits, ""),
     validate: (value) =>
       REGEX_CACHE.zipCodeExtended.test(
-        value.replace(REGEX_CACHE.nonDigits, ""),
+        value.replace(REGEX_CACHE.nonDigits, "")
       ),
   },
   currency: {
     pattern: "$###,###.##",
     transform: (
       value,
-      { currency = DEFAULT_CURRENCY, locale = DEFAULT_LOCALE } = {},
+      { currency = DEFAULT_CURRENCY, locale = DEFAULT_LOCALE } = {}
     ) => {
       let localeDecimalSeparator = ".";
 
@@ -578,9 +578,9 @@ function applyCurrencyMask(opts: {
     .replace(
       new RegExp(
         `\\${groupSeparator.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`,
-        "g",
+        "g"
       ),
-      "",
+      ""
     )
     .replace(decimalSeparator, ".");
 
@@ -619,7 +619,7 @@ function applyCurrencyMask(opts: {
       } else {
         const finalResult = result.replace(
           /(\d)(\s*)([^\d\s]+)$/,
-          `$1${decimalSeparator}$2$3`,
+          `$1${decimalSeparator}$2$3`
         );
         return finalResult;
       }
@@ -629,7 +629,7 @@ function applyCurrencyMask(opts: {
   } catch {
     const formattedInt = intValue.replace(
       /\B(?=(\d{3})+(?!\d))/g,
-      groupSeparator,
+      groupSeparator
     );
     let result = `${currencySymbol}${formattedInt}`;
     if (hasExplicitDecimal) {
@@ -792,7 +792,7 @@ function getPatternCaretPosition(opts: {
     if (oldCursorPosition < oldValue.length) {
       const targetUnmaskedIndex = Math.min(
         oldUnmaskedIndex,
-        currentUnmasked.length,
+        currentUnmasked.length
       );
 
       for (
@@ -896,7 +896,7 @@ function MaskInput(props: MaskInputProps) {
       currency,
       locale,
     }),
-    [currency, locale],
+    [currency, locale]
   );
 
   const placeholderValue = React.useMemo(() => {
@@ -971,7 +971,7 @@ function MaskInput(props: MaskInputProps) {
           return trigger === "change";
       }
     },
-    [onValidate, maskPattern, validationMode, touched],
+    [onValidate, maskPattern, validationMode, touched]
   );
 
   const validationOpts = React.useMemo(
@@ -979,7 +979,7 @@ function MaskInput(props: MaskInputProps) {
       min: typeof min === "string" ? parseFloat(min) : min,
       max: typeof max === "string" ? parseFloat(max) : max,
     }),
-    [min, max],
+    [min, max]
   );
 
   const onInputValidate = React.useCallback(
@@ -989,7 +989,7 @@ function MaskInput(props: MaskInputProps) {
         onValidate(isValid, unmaskedValue);
       }
     },
-    [onValidate, maskPattern?.validate, validationOpts],
+    [onValidate, maskPattern?.validate, validationOpts]
   );
 
   const onValueChange = React.useCallback(
@@ -1077,7 +1077,7 @@ function MaskInput(props: MaskInputProps) {
           } else if (maskPattern.pattern.includes("%")) {
             newCursorPosition = Math.min(
               newValue.length - 1,
-              newCursorPosition,
+              newCursorPosition
             );
           }
 
@@ -1109,7 +1109,7 @@ function MaskInput(props: MaskInputProps) {
       transformOpts,
       mask,
       value,
-    ],
+    ]
   );
 
   const onFocus = React.useCallback(
@@ -1119,7 +1119,7 @@ function MaskInput(props: MaskInputProps) {
 
       setFocused(true);
     },
-    [onFocusProp],
+    [onFocusProp]
   );
 
   const onBlur = React.useCallback(
@@ -1152,7 +1152,7 @@ function MaskInput(props: MaskInputProps) {
       onInputValidate,
       maskPattern,
       transformOpts,
-    ],
+    ]
   );
 
   const onCompositionStart = React.useCallback(
@@ -1162,7 +1162,7 @@ function MaskInput(props: MaskInputProps) {
 
       setComposing(true);
     },
-    [onCompositionStartProp],
+    [onCompositionStartProp]
   );
 
   const onCompositionEnd = React.useCallback(
@@ -1211,7 +1211,7 @@ function MaskInput(props: MaskInputProps) {
       transformOpts,
       mask,
       onInputValidate,
-    ],
+    ]
   );
 
   const onPaste = React.useCallback(
@@ -1265,7 +1265,7 @@ function MaskInput(props: MaskInputProps) {
       if (maskPattern.pattern.includes("%")) {
         target.setSelectionRange(
           newMaskedValue.length - 1,
-          newMaskedValue.length - 1,
+          newMaskedValue.length - 1
         );
         return;
       }
@@ -1309,7 +1309,7 @@ function MaskInput(props: MaskInputProps) {
       shouldValidate,
       onInputValidate,
       onValueChangeProp,
-    ],
+    ]
   );
 
   const onKeyDown = React.useCallback(
@@ -1459,7 +1459,7 @@ function MaskInput(props: MaskInputProps) {
       transformOpts,
       mask,
       withoutMask,
-    ],
+    ]
   );
 
   const InputPrimitive = asChild ? Slot : "input";
@@ -1477,7 +1477,7 @@ function MaskInput(props: MaskInputProps) {
         "flex h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs outline-none transition-[color,box-shadow] selection:bg-primary selection:text-primary-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-sm placeholder:text-muted-foreground disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-input/30",
         "focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
         "aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
-        className,
+        className
       )}
       placeholder={placeholderValue}
       ref={composedRef}

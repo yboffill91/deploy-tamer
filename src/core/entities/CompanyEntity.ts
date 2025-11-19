@@ -1,4 +1,5 @@
 export class CompanyEntity {
+  readonly id?: number;
   readonly name?: string;
   readonly status?: string;
   readonly website?: string;

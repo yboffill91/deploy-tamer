@@ -32,38 +32,38 @@ export class CompanyApiRepository implements IRepository {
       );
     }
   }
-  async create(company: CompanyEntity): Promise<CompanyEntity> {
+  async create(company: CompanyDTO): Promise<void> {
+    const payload = { ...company, ownerId: Number(company.ownerId) };
     try {
       const response = await fetchHelper<CompanyDTO>(companiesApi, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(company),
+        body: JSON.stringify(payload),
       });
       if (!response) {
         throw new Error("Error creating Company Data");
       }
-      return Object.assign(new CompanyEntity(), response);
     } catch (error) {
       throw new Error(
         error instanceof Error ? error.message : "Error creating Company Data"
       );
     }
   }
-  async update(id: string, company: CompanyEntity): Promise<CompanyEntity> {
+  async update(id: string, company: CompanyDTO): Promise<void> {
+    const payload = { ...company, ownerId: Number(company.ownerId) };
     try {
       const response = await fetchHelper<CompanyDTO>(`${companiesApi}/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(company),
+        body: JSON.stringify(payload),
       });
       if (!response) {
         throw new Error("Error updating Company Data");
       }
-      return Object.assign(new CompanyEntity(), response);
     } catch (error) {
       throw new Error(
         error instanceof Error ? error.message : "Error updating Company Data"
