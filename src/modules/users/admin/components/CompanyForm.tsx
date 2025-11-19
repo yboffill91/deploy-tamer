@@ -1,3 +1,4 @@
+"use client";
 import { CustomControllerInput } from "@/components/CustomControllerInput";
 import { MaskControllerInput } from "@/components/CustomControllerMaskInput";
 import { CustomLoading } from "@/components/CustomLoading";

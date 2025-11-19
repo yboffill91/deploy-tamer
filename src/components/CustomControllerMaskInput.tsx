@@ -1,10 +1,5 @@
-import {
-  FieldValues,
-  Path,
-  FieldError,
-  Control,
-  Controller,
-} from "react-hook-form";
+import type { FieldValues, Path, FieldError, Control } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { MaskPatternKey, MaskInput } from "./ui/mask-input";
 import { Label } from "./ui";
 

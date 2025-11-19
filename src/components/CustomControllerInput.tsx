@@ -1,13 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import type {
-  Control,
-  FieldError,
-  FieldValues,
-  Path,
-  ControllerRenderProps,
-} from "react-hook-form";
+import type { Control, FieldError, FieldValues, Path } from "react-hook-form";
+import { Controller } from "react-hook-form";
 
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -26,7 +21,6 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "./ui/input-group";
-import { Controller } from "react-hook-form";
 
 interface Props<TFieldValues extends FieldValues> {
   name: Path<TFieldValues>;
