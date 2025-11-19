@@ -112,7 +112,6 @@ export const CompanyForm = ({
         type: "error",
       });
     } finally {
-      console.log(data);
     }
   };
 

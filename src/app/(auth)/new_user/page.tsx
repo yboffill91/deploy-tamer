@@ -47,7 +47,6 @@ const NewUserPage = () => {
   const { login } = useAuth();
 
   const onSubmit = async (data: newUserForm) => {
-    console.log(data);
     try {
       const USERS_REPO = new UsersApiRepository();
       const newUser = await USERS_REPO.create({
@@ -58,14 +57,9 @@ const NewUserPage = () => {
         throw new Error("User not created");
       }
       await login(newUser.email!, data.password!);
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
-  console.log(email, uid);
-  /* const email = searchParams.get("email");
-  const uid = searchParams.get("uid"); */
   return (
     <div className="flex h-screen items-center justify-center">
       <Card className="space-y-2 container max-w-md">

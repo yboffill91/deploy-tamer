@@ -169,7 +169,6 @@ export const AuthProvider = ({ children }: Props) => {
       const user = await AuthRepository.loginWithProvider(provider);
       try {
         const ManageNextStep = await ManageAuthAndToken(user);
-        console.log("Router: -->", ManageNextStep);
         router.push(ManageNextStep);
       } catch (error) {
         setError(
