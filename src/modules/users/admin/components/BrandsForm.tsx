@@ -12,7 +12,9 @@ import {
 import { BrandsEntity, CompanyEntity } from "@/core/entities";
 import { BrandApiRepository } from "@/infrastructure/repositories";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
+
+import { Controller } from "react-hook-form";
 import { z } from "zod";
 
 const BrandScheme = z.object({
