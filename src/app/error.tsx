@@ -1,14 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  AlertCircle,
-  ChevronDown,
-  ChevronLeft,
-  Home,
-  RefreshCcw,
-} from "lucide-react";
+import { AlertCircle, ChevronLeft, RefreshCcw } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function Error({

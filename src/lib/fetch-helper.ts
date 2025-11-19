@@ -39,7 +39,6 @@
 //   }
 // }
 
-
 export interface FetchOptions extends RequestInit {
   signal?: AbortSignal;
 }

@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { otpSchema, otpType } from "../models";
-import { useAuth } from "../providers/AuthProvider";
+import { useAuth } from "../";
 import { SessionVerificationRepository } from "@/infrastructure/repositories";
 import { showToast } from "@/components/CustomToaster";
 import { useGetTokens } from "@/hooks/useGetToken";

@@ -31,7 +31,6 @@ export class LogsApiRepository implements ILogsRepository {
       if (!response) {
         throw new Error("Failed to fetch logs");
       }
-      console.log("🛜 response", response.count);
       return response.count;
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : "Something went wrong")

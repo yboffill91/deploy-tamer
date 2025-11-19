@@ -86,10 +86,8 @@ export const SignInForm = () => {
           </div>
         </div>
         <Button
-          className={cn(
-            "w-full",
-            loading && "bg-muted text-muted-foreground/50 pointer-events-none"
-          )}
+          className={cn("w-full")}
+          disabled={loading}
           size="lg"
           type="submit"
           tabIndex={4}

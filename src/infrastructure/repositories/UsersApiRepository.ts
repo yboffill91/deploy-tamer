@@ -1,13 +1,13 @@
-import { requestUsersDTO, UsersDTO } from '@/core/dto';
-import { UsersEntity } from '@/core/entities';
-import { IRepository } from '@/core/interfaces';
-import { usersApi } from '@/lib/apis';
-import { fetchHelper } from '@/lib/fetch-helper';
+import { requestUsersDTO, UsersDTO } from "@/core/dto";
+import { UsersEntity } from "@/core/entities";
+import { IRepository } from "@/core/interfaces";
+import { usersApi } from "@/lib/apis";
+import { fetchHelper } from "@/lib/fetch-helper";
 
 export class UsersApiRepository implements IRepository {
   private commonHeader = {
-    'Content-Type': 'application/json',
-    accept: '*/*',
+    "Content-Type": "application/json",
+    accept: "*/*",
   };
   async findAll(): Promise<UsersEntity[]> {
     try {
@@ -18,7 +18,7 @@ export class UsersApiRepository implements IRepository {
       return users.map((u) => Object.assign(new UsersEntity(), u));
     } catch (error) {
       throw new Error(
-        error instanceof Error ? error.message : 'Error fetching users'
+        error instanceof Error ? error.message : "Error fetching users"
       );
     }
   }
@@ -27,26 +27,30 @@ export class UsersApiRepository implements IRepository {
     try {
       const user = await fetchHelper<UsersDTO>(`${usersApi}/${id}`);
       if (!user) {
-        throw new Error('User not found');
+        throw new Error("User not found");
       }
       return Object.assign(new UsersEntity(), user);
     } catch (error) {
       throw new Error(
-        error instanceof Error ? error.message : 'Error fetching user'
+        error instanceof Error ? error.message : "Error fetching user"
       );
     }
   }
 
-  async create(data: requestUsersDTO): Promise<void> {
+  async create(data: requestUsersDTO): Promise<UsersEntity | void> {
     try {
-      await fetchHelper<void>(usersApi, {
-        method: 'POST',
+      const user = await fetchHelper<UsersEntity>(usersApi, {
+        method: "POST",
         headers: this.commonHeader,
         body: JSON.stringify(data),
       });
+      if (!user) {
+        throw new Error("User not created");
+      }
+      return Object.assign(new UsersEntity(), user);
     } catch (error) {
       throw new Error(
-        error instanceof Error ? error.message : 'Error creating user'
+        error instanceof Error ? error.message : "Error creating user"
       );
     }
   }
@@ -54,13 +58,13 @@ export class UsersApiRepository implements IRepository {
   async update(id: string, data: requestUsersDTO): Promise<void> {
     try {
       await fetchHelper(`${usersApi}/${id}`, {
-        method: 'PATCH',
+        method: "PATCH",
         headers: this.commonHeader,
         body: JSON.stringify(data),
       });
     } catch (error) {
       throw new Error(
-        error instanceof Error ? error.message : 'Error updating user'
+        error instanceof Error ? error.message : "Error updating user"
       );
     }
   }
@@ -68,15 +72,13 @@ export class UsersApiRepository implements IRepository {
   async delete(id: string): Promise<void> {
     try {
       await fetchHelper(`${usersApi}/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
         headers: this.commonHeader,
       });
     } catch (error) {
       throw new Error(
-        error instanceof Error ? error.message : 'Error deleting user'
+        error instanceof Error ? error.message : "Error deleting user"
       );
     }
   }
-
-
 }

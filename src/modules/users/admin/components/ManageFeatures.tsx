@@ -91,7 +91,6 @@ export function FeaturesManager({
 
     const newFeatureMode: ["READ" | "WRITE" | "FULL_ACCESS"] = ["READ"];
 
-    console.log(newFeature);
     const newFeatureToShow: RoleFeature = {
       functionalityId: newFeatureId,
       mode: newFeatureMode,

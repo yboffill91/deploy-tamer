@@ -8,17 +8,45 @@ interface IOtpRepository {
   verifyCode(code: string, token: string): Promise<void>;
 }
 
+interface Success {
+  access_token: string;
+  usuario: Record<string, string>;
+}
+
+interface NoFoundedUser {
+  statusCode: number;
+}
+
 export class SessionVerificationRepository implements IOtpRepository {
   async sendEmailUuid(email: string, uuid: string): Promise<string> {
-    try {
-      const response = await fetchHelper<{
-        access_token: string;
-        usuario: Record<string, string>;
-      }>(`${usersApi}/${email}/${uuid}`);
+    /* try {
+      const response = await fetchHelper<Success | NoFoundedUser>(
+        `${usersApi}/${email}/${uuid}`
+      );
+      console.log(response);
+
       if (!response) {
         throw new AuthError("Error sending email uuid");
       }
+      if (response.hasOwnProperty("statusCode")) {
+        return "User Not Found";
+      }
       return JSON.stringify(response);
+    } catch (error) {
+      throw new AuthError(
+        error instanceof Error ? error.message : "Error sending email uuid"
+      );
+    } */
+    try {
+      const response = await fetch(`${usersApi}/${email}/${uuid}`);
+      console.log(response);
+
+      if (response.status === 400 || response.status === 404) {
+        return "User Not Found";
+      }
+
+      const data = await response.json();
+      return JSON.stringify(data);
     } catch (error) {
       throw new AuthError(
         error instanceof Error ? error.message : "Error sending email uuid"

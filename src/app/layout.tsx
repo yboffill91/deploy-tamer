@@ -2,7 +2,7 @@ import { bodyFont } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
 import "./globals.css";
-import { AuthProvider } from "@/modules/auth";
+import { AuthProvider } from "@/modules/auth/providers/AuthProvider";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { Toaster } from "sonner";
 import { Metadata } from "next";

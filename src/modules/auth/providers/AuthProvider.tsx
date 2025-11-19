@@ -1,22 +1,25 @@
 "use client";
-
-import { onAuthStateChanged, getAuth } from "firebase/auth";
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { showToast } from "@/components/CustomToaster";
 import { AuthError, UsersEntity } from "@/core";
+import { FirebaseUserMapper } from "@/infrastructure/dto";
 import {
   FirebaseAuthRepository,
   SessionRepository,
   SessionVerificationRepository,
 } from "@/infrastructure/repositories";
-import { FirebaseUserMapper } from "@/infrastructure/dto";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { showToast } from "@/components/CustomToaster";
+import {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+
+interface Props {
+  children: ReactNode;
+}
 
 interface AuthContextType {
   user: UsersEntity | null;
@@ -31,9 +34,46 @@ interface AuthContextType {
   logout: () => Promise<void>;
 }
 
-interface Props {
-  children: ReactNode;
-}
+const ManageAuthAndToken = async (user: UsersEntity) => {
+  const SESSION_REPOSITORY = new SessionVerificationRepository();
+  const COOKIES_MANAGER_REPOSITORY = new SessionRepository();
+  try {
+    const userToken = await SESSION_REPOSITORY.sendEmailUuid(
+      user.email!,
+      user.uid!
+    );
+    if (userToken === "User Not Found") {
+      showToast({
+        type: "error",
+        message: "Auth Error",
+        description:
+          "You cannot authenticate at this time. Please contact our support team.Error: User Disabled",
+      });
+      return `/sign_in`;
+    } else if (!userToken) {
+      throw new AuthError(
+        "This error should not have occurred. Please try again, and if the problem persists, contact the Support team."
+      );
+    } else {
+      const { access_token, usuario } = JSON.parse(userToken);
+      SESSION_REPOSITORY.getCode(access_token!);
+      await COOKIES_MANAGER_REPOSITORY.createSessionCookie(
+        access_token!,
+        "TS_SESSION"
+      );
+      await COOKIES_MANAGER_REPOSITORY.createSessionCookie(usuario!, "TS_USER");
+      showToast({
+        type: "success",
+        message: "Success",
+        description:
+          "We have sent an email to your address with the OTP code for the second authentication factor.",
+      });
+      return "/verify_account";
+    }
+  } catch (error) {
+    throw new Error(`Error getting user ${user.email} auth: ${error}`);
+  }
+};
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -45,8 +85,7 @@ export const AuthProvider = ({ children }: Props) => {
   const router = useRouter();
 
   const AuthRepository = new FirebaseAuthRepository();
-  const OtpRepository = new SessionVerificationRepository();
-  const CookiesManagerRepository = new SessionRepository();
+  const CookiesRepository = new SessionRepository();
 
   useEffect(() => {
     const auth = getAuth();
@@ -58,123 +97,100 @@ export const AuthProvider = ({ children }: Props) => {
         setUser(domainUser);
       } else {
         setUser(null);
+        setLoading(false);
       }
-      setLoading(false);
     });
     return () => unsubscribe();
   }, []);
 
-  const login = async (email: string, password: string) => {
-    setLoading(true);
-
-    try {
-      const user = await AuthRepository.login(email, password);
-      const userToken = await OtpRepository.sendEmailUuid(
-        user.email!,
-        user.uid!
-      );
-
-      const { access_token, usuario: UserCookie } = JSON.parse(userToken);
-
-      console.log("Usuario: ", UserCookie);
-      OtpRepository.getCode(access_token!);
-      setUser(user);
-
-      CookiesManagerRepository.createSessionCookie(access_token!, "TS_SESSION");
-      CookiesManagerRepository.createSessionCookie(UserCookie!, "TS_USER");
+  useEffect(() => {
+    if (error) {
       showToast({
-        message: "Success",
-        type: "success",
-        description:
-          "We have sent an email to your address with the OTP code for the second authentication factor.",
+        type: "error",
+        message: "Error",
+        description: error,
       });
-      router.push("/verify_account");
+    }
+  }, [error]);
+
+  const login = async (email: string, uid: string) => {
+    try {
+      const user = await AuthRepository.login(email, uid);
+      try {
+        setLoading(true);
+        const ManageNextStep = await ManageAuthAndToken(user);
+        router.push(ManageNextStep);
+      } catch (error) {
+        setError(
+          error instanceof Error
+            ? error.message
+            : "Error managing user auth next step"
+        );
+      } finally {
+        setLoading(false);
+      }
     } catch (error) {
       setError(
-        error instanceof Error
-          ? error.message
-          : `Error logging in User: ${error}`
+        error instanceof Error ? error.message : "Error logging in User"
       );
     } finally {
       setLoading(false);
     }
   };
-
   const register = async (email: string, password: string) => {
-    setLoading(true);
     try {
+      setLoading(true);
       const user = await AuthRepository.register(email, password);
-      setUser(user);
-      const userToken = await OtpRepository.sendEmailUuid(
-        user.email!,
-        user.uid!
-      );
-
-      OtpRepository.getCode(userToken!);
-      const { access_token, usuario: UserCookie } = JSON.parse(userToken);
-
-      showToast({
-        message: "Success",
-        type: "success",
-        description:
-          "We have sent an email to your address with the OTP code for the second authentication factor.",
-      });
-
-      CookiesManagerRepository.createSessionCookie(access_token!, "TS_SESSION");
-      CookiesManagerRepository.createSessionCookie(UserCookie!, "TS_USER");
-
-      router.push("/verify_account");
+      try {
+        const ManageNextStep = await ManageAuthAndToken(user);
+        router.push(ManageNextStep);
+      } catch (error) {
+        setError(
+          error instanceof Error
+            ? error.message
+            : "Error managing user auth next step"
+        );
+      } finally {
+        setLoading(false);
+      }
     } catch (error) {
       setError(
-        error instanceof Error
-          ? error.message
-          : `Error registering User: ${error}`
+        error instanceof Error ? error.message : "Error logging in User"
       );
     } finally {
       setLoading(false);
     }
   };
-
   const loginWithProvider = async (
     provider: "google" | "github" | "facebook"
   ) => {
-    setLoading(true);
     try {
+      setLoading(true);
       const user = await AuthRepository.loginWithProvider(provider);
-      setUser(user);
-      const userToken = await OtpRepository.sendEmailUuid(
-        user.email!,
-        user.uid!
-      );
-
-      OtpRepository.getCode(userToken!);
-      const { access_token, usuario: UserCookie } = JSON.parse(userToken);
-
-      showToast({
-        message: "Success",
-        type: "success",
-        description:
-          "We have sent an email to your address with the OTP code for the second authentication factor.",
-      });
-
-      CookiesManagerRepository.createSessionCookie(access_token!, "TS_SESSION");
-      CookiesManagerRepository.createSessionCookie(UserCookie!, "TS_USER");
-
-      router.push("/verify_account");
+      try {
+        const ManageNextStep = await ManageAuthAndToken(user);
+        console.log("Router: -->", ManageNextStep);
+        router.push(ManageNextStep);
+      } catch (error) {
+        setError(
+          error instanceof Error
+            ? error.message
+            : "Error managing user auth next step"
+        );
+      } finally {
+        setLoading(false);
+      }
     } catch (error) {
       setError(
-        error instanceof Error
-          ? error.message
-          : `Error logging in User: ${error}`
+        error instanceof Error ? error.message : "Error logging in User"
       );
     } finally {
       setLoading(false);
     }
   };
-
   const logout = async () => {
-    setLoading(true);
     try {
+      setLoading(true);
       await AuthRepository.logout();
       showToast({
         message: "Success",
@@ -182,7 +198,7 @@ export const AuthProvider = ({ children }: Props) => {
         description: "Session successfully closed",
       });
 
-      CookiesManagerRepository.deleteSessionCookie();
+      CookiesRepository.deleteSessionCookie();
 
       setUser(null);
     } catch (error) {

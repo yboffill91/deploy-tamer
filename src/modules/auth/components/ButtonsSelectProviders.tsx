@@ -3,8 +3,7 @@ import { CustomLoading } from "@/components/CustomLoading";
 import { Button } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useAuth } from "../providers/AuthProvider";
+import { useAuth } from "../";
 import { showToast } from "@/components/CustomToaster";
 
 export const ButtonsSelectProviders = ({
@@ -12,13 +11,10 @@ export const ButtonsSelectProviders = ({
 }: {
   loadingMessage: string;
 }) => {
-  const router = useRouter();
-
   const { loginWithProvider, error, loading } = useAuth();
 
   const onClickloginWithProvider = async (provider: "google" | "facebook") => {
     await loginWithProvider(provider);
-    router.push("/verify_account");
   };
   return (
     <>

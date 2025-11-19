@@ -1,12 +1,12 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
     const cookieName: string = await req.json();
 
-    if (!cookieName || typeof cookieName !== 'string') {
+    if (!cookieName || typeof cookieName !== "string") {
       return NextResponse.json(
-        { success: false, error: 'Missing or invalid cookie name' },
+        { success: false, error: "Missing or invalid cookie name" },
         { status: 400 }
       );
     }
@@ -18,10 +18,9 @@ export async function POST(req: Request) {
 
     response.cookies.delete(cookieName);
 
-    console.log(`Cookie ${cookieName} deleted`);
     return response;
   } catch (error) {
-    console.error('Error deleting cookie:', error);
+    console.error("Error deleting cookie:", error);
     return NextResponse.json(
       { success: false, error: `Error ${error}` },
       { status: 500 }

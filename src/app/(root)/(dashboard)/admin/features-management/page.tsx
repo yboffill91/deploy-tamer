@@ -52,7 +52,6 @@ export default function FunctionalitiesPage() {
       try {
         setIsLoading(true);
         const data = await func_repo.findAll();
-        console.log(data);
         setFunctionalities(data);
       } catch (error) {
         setIsError(
