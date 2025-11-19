@@ -25,7 +25,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton className=" hover:bg-transparent! min-w-12">
-              <Avatar className="rounded-lg size-8">
+              <Avatar className="rounded-lg size-6">
                 <AvatarImage
                   src={
                     theme.theme === "dark"
