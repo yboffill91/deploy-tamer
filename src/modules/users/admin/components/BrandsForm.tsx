@@ -1,3 +1,4 @@
+"use client";
 import { CustomControllerInput } from "@/components/CustomControllerInput";
 import { CustomLoading } from "@/components/CustomLoading";
 import { showToast } from "@/components/CustomToaster";
