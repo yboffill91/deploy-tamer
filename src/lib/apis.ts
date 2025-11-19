@@ -18,3 +18,4 @@ export const logsApi = apistudio + "auditlogs";
 export const countriesApi = apistudio + "cities";
 export const documentsApi = apistudio + "documents";
 export const companiesApi = apistudio + "company";
+export const brandsApi = apistudio + "brands";

@@ -1,4 +1,5 @@
 export * from "./components/AuditLogModal";
+export * from "./components/BrandsForm";
 export * from "./components/CommonHeader";
 export * from "./components/CompanyForm";
 export * from "./components/ManageFeatures";
@@ -7,6 +8,7 @@ export * from "./components/PositionsSelect";
 export * from "./components/RolesSelector";
 export * from "./components/UsersSelector";
 export * from "./components/content-section";
+export * from "./components/dataTables/BrandsDataTable";
 export * from "./components/dataTables/CitiesDataTable";
 export * from "./components/dataTables/CompaniesDataTable";
 export * from "./components/dataTables/CountriesDataTable";

@@ -14,6 +14,7 @@ import {
   SearchIcon,
   ShieldCheck,
   Sliders,
+  Tags,
   Users,
 } from "lucide-react";
 
@@ -127,6 +128,11 @@ export const AdminSidebarItems: NavGroup[] = [
             title: "Companies",
             url: "/admin/companies",
             icon: Building,
+          },
+          {
+            title: "Brands",
+            url: "/admin/brands",
+            icon: Tags,
           },
         ],
       },

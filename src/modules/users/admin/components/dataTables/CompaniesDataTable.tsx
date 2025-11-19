@@ -1,20 +1,13 @@
 "use client";
 import { GenericDataTable } from "@/components/GenericDataTable";
 import { Badge, Button } from "@/components/ui";
-import {
-  DocumentsAccessType,
-  DocumentsEntity,
-  DocumentsType,
-  TeamsEntity,
-  UsersEntity,
-} from "@/core/entities";
+import { CompanyEntity, UsersEntity } from "@/core/entities";
 import { cn } from "@/lib/utils";
-import { Globe, Key, Lock, Share2, Users } from "lucide-react";
 
 interface CompaniesDataTableProps {
-  data: DocumentsEntity[];
-  onEdit?: (position: DocumentsEntity) => void;
-  onDelete?: (position: DocumentsEntity) => void;
+  data: CompanyEntity[];
+  onEdit?: (company: CompanyEntity) => void;
+  onDelete?: (company: CompanyEntity) => void;
   onAdd?: () => void;
   users: UsersEntity[];
 }
@@ -57,7 +50,7 @@ export function CompaniesDataTable({
   };
 
   return (
-    <GenericDataTable<DocumentsEntity>
+    <GenericDataTable<CompanyEntity>
       data={data}
       onEdit={onEdit}
       onDelete={onDelete}
