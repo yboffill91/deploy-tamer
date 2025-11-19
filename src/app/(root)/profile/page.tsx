@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogOut } from "lucide-react";
-import { useAuth } from "@/modules/auth/providers/OldAuthProvider";
+import { useAuth } from "@/modules/auth";
 import { useRouter } from "next/navigation";
 
 export default function ProfilePage() {
