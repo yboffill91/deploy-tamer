@@ -79,7 +79,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: Props) => {
   const [user, setUser] = useState<UsersEntity | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const router = useRouter();
@@ -97,7 +97,7 @@ export const AuthProvider = ({ children }: Props) => {
         setUser(domainUser);
       } else {
         setUser(null);
-        setLoading(false);
+        // setLoading(false);
       }
     });
     return () => unsubscribe();
