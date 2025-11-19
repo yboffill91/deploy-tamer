@@ -1,6 +1,6 @@
 "use client";
 import { GenericDataTable } from "@/components/GenericDataTable";
-import { Badge } from "@/components/ui";
+import { Badge, Button } from "@/components/ui";
 import {
   DocumentsAccessType,
   DocumentsEntity,
@@ -46,6 +46,16 @@ export function CompaniesDataTable({
     );
   };
 
+  const renderUrl = (url: string) => {
+    return (
+      <Button asChild variant={"link"}>
+        <a href={"https://" + url} target="_blank" rel="noopener noreferrer">
+          {url}
+        </a>
+      </Button>
+    );
+  };
+
   return (
     <GenericDataTable<DocumentsEntity>
       data={data}
@@ -56,8 +66,9 @@ export function CompaniesDataTable({
       customRenderers={{
         ownerId: (value) => renderUserEmail(value),
         status: (value) => renderStatus(value),
+        website: (value) => renderUrl(value),
       }}
-      excludeColumns={["hashAccess"]}
+      excludeColumns={["notes"]}
     />
   );
 }

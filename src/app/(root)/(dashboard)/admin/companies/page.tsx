@@ -16,6 +16,8 @@ import {
 import { Button } from "@/components/ui";
 import { Building2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { CustomEmpty } from "@/components/CustomEmpty";
+import { CustomLoading } from "@/components/CustomLoading";
 
 const CompaniesPage = () => {
   const [companiesData, setCompaniesData] = useState<CompanyEntity[] | null>(
@@ -33,10 +35,10 @@ const CompaniesPage = () => {
 
   useEffect(() => {
     const getData = async () => {
+      setIsLoading(true);
       const COMPANIES_REPO = new CompanyApiRepository();
       const USERS_REPO = new UsersApiRepository();
       try {
-        setIsLoading(true);
         const companies_data = await COMPANIES_REPO.findAll();
         const users_data = await USERS_REPO.findAll();
         setCompaniesData(companies_data);
@@ -128,9 +130,7 @@ const CompaniesPage = () => {
         desc="Manage all companies and partners data"
         icon={Building2}
       />
-      {isLoading && companiesData?.length === 0 && (
-        <CustomPageLoader message="Getting Companies Data" />
-      )}
+      {isLoading && <CustomPageLoader message="Getting Companies Data" />}
       {!isLoading &&
         companiesData &&
         companiesData.length > 0 &&
@@ -151,7 +151,7 @@ const CompaniesPage = () => {
       <ControlledDialog
         onOpenChange={setIsDialogOpen}
         open={isDialogOpen}
-        title="Add Company"
+        title={editingCompany ? "Edit Company" : "Add Company"}
       >
         {usersData && (
           <CompanyForm
@@ -174,14 +174,21 @@ const CompaniesPage = () => {
             <Button
               onClick={confirmDeleteCompany}
               disabled={isDeleting}
-              className="w-24"
               variant="destructive"
             >
-              {isDeleting ? "Deleting..." : "Delete"}
+              {isDeleting ? <CustomLoading message="Deleting ..." /> : "Delete"}
             </Button>
           </div>
         </div>
       </ControlledDialog>
+      {!isLoading && companiesData?.length === 0 && (
+        <CustomEmpty
+          description="No companies created yet, you can add the first by clicking on the create button"
+          title="No companies created yet"
+          icon={Building2}
+          onClick={handleAddCompany}
+        />
+      )}
     </>
   );
 };

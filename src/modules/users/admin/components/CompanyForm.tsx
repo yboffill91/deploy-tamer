@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
   Button,
+  Textarea,
 } from "@/components/ui";
 import { UsersEntity } from "@/core/entities";
 import { CompanyEntity } from "@/core/entities/CompanyEntity";
@@ -20,12 +21,19 @@ import { z } from "zod";
 
 const CompanyFormSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters long"),
-  website: z.string().url("Invalid URL").optional(),
-  email: z.string().email("Invalid email").optional(),
-  phone: z.string().optional(),
-  address: z.string().optional(),
-  representative: z.string().optional(),
-  notes: z.string().optional(),
+
+  website: z
+    .string()
+    .regex(/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Invalid website format")
+    .optional()
+    .or(z.literal("")),
+
+  email: z.string().email("Invalid email").optional().or(z.literal("")),
+
+  phone: z.string().optional().or(z.literal("")),
+  address: z.string().optional().or(z.literal("")),
+  representative: z.string().optional().or(z.literal("")),
+  notes: z.string().optional().or(z.literal("")),
   ownerId: z.string().min(1, "Owner is required"),
 });
 
@@ -108,68 +116,102 @@ export const CompanyForm = ({
   };
 
   return (
-    <>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-1">
-        <CustomControllerInput
-          name="name"
-          label="Name"
-          placeholder="Company Name"
-          control={control}
-          error={errors.name}
-        />
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+      {/* GRID PRINCIPAL */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* FULL WIDTH */}
+        <div className="col-span-full">
+          <CustomControllerInput
+            name="name"
+            label="Name"
+            placeholder="Company Name"
+            control={control}
+            error={errors.name}
+          />
+        </div>
+
+        {/* 2 COLUMNAS */}
         <CustomControllerInput
           name="website"
           label="Website"
-          placeholder="Company Website"
+          placeholder="example.com"
           control={control}
           error={errors.website}
         />
+
         <CustomControllerInput
           name="email"
-          label="Company Email"
+          label="Email"
           placeholder="company@example.com"
           control={control}
           error={errors.email}
         />
+
         <MaskControllerInput
           name="phone"
-          label="Company Phone"
-          placeholder="Company Phone"
+          label="Phone"
+          placeholder="(000) 000-0000"
           control={control}
           mask="phone"
           error={errors.phone}
         />
-        <CustomControllerInput
-          name="address"
-          label="Company Address"
-          placeholder=""
-          control={control}
-          error={errors.address}
-          type="textarea"
-        />
+
         <CustomControllerInput
           name="representative"
-          label="Company Representative"
-          placeholder=""
+          label="Representative"
+          placeholder="Company Representative"
           control={control}
           error={errors.representative}
-          type="text"
         />
-        <CustomControllerInput
-          name="notes"
-          label="Company Notes"
-          placeholder=""
-          control={control}
-          error={errors.notes}
-          type="textarea"
-        />
-        <Controller
-          name="ownerId"
-          control={control}
-          render={({ field }) => (
-            <div className="flex flex-col gap-1">
-              <Label htmlFor="ownerId">Owner</Label>
-              <Select value={field.value} onValueChange={field.onChange}>
+
+        {/* TEXTAREA FULL WIDTH */}
+        <div className="col-span-full flex flex-col gap-1">
+          <Label htmlFor="address">Address</Label>
+          <Controller
+            name="address"
+            control={control}
+            render={({ field }) => (
+              <Textarea
+                {...field}
+                placeholder="Address"
+                className="min-h-[70px]"
+              />
+            )}
+          />
+          {errors.address && (
+            <p className="text-destructive text-xs">{errors.address.message}</p>
+          )}
+        </div>
+
+        <div className="col-span-full flex flex-col gap-1">
+          <Label htmlFor="notes">Notes</Label>
+          <Controller
+            name="notes"
+            control={control}
+            render={({ field }) => (
+              <Textarea
+                {...field}
+                placeholder="Additional notes..."
+                className="min-h-[70px]"
+              />
+            )}
+          />
+          {errors.notes && (
+            <p className="text-destructive text-xs">{errors.notes.message}</p>
+          )}
+        </div>
+
+        {/* OWNER → FULL WIDTH */}
+        <div className="col-span-full flex flex-col gap-1">
+          <Label htmlFor="ownerId">Owner</Label>
+          <Controller
+            name="ownerId"
+            control={control}
+            render={({ field }) => (
+              <Select
+                value={field.value}
+                onValueChange={(v) => field.onChange(v)}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select a user" />
                 </SelectTrigger>
@@ -181,13 +223,18 @@ export const CompanyForm = ({
                   ))}
                 </SelectContent>
               </Select>
-            </div>
+            )}
+          />
+          {errors.ownerId && (
+            <p className="text-destructive text-xs">{errors.ownerId.message}</p>
           )}
-        />
-        <Button type="submit" className="w-full mt-8" disabled={isSubmitting}>
-          {isSubmitting ? <CustomLoading message="Submitting ..." /> : "Save"}
-        </Button>
-      </form>
-    </>
+        </div>
+      </div>
+
+      {/* SUBMIT BUTTON */}
+      <Button type="submit" className="w-full" disabled={isSubmitting}>
+        {isSubmitting ? <CustomLoading message="Submitting..." /> : "Save"}
+      </Button>
+    </form>
   );
 };
