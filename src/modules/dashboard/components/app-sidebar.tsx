@@ -15,6 +15,7 @@ import { NavUser } from "./nav-user";
 import { AdminSidebarItems, APP_CONFIG } from "../utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui";
 import { useTheme } from "next-themes";
+import Image from "next/image";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const theme = useTheme();
@@ -24,19 +25,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton className=" hover:bg-transparent! min-w-12">
-              <Avatar className="rounded-lg size-6">
-                <AvatarImage
-                  src={
-                    theme.theme === "dark"
-                      ? "/brand/light-t_transparent.webp"
-                      : "/brand/dark-t_transparent.webp"
-                  }
-                />
-                <AvatarFallback>TD</AvatarFallback>
-              </Avatar>
+            <SidebarMenuButton className="min-w-12 pointer-events-none">
+              <Image
+                src={
+                  theme.theme === "dark"
+                    ? "/brand/light-t_transparent.webp"
+                    : "/brand/dark-t_transparent.webp"
+                }
+                alt="Logo"
+                width={24}
+                height={24}
+                className="p-1"
+              />
 
-              <span className="text-base font-semibold">{APP_CONFIG.name}</span>
+              <span className="text-base font-semibold w-full">
+                {APP_CONFIG.name}
+              </span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

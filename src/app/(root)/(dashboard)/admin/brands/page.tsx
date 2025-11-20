@@ -181,7 +181,11 @@ const BrandsPage = () => {
       >
         <p>Are you sure you want to delete this brand?</p>
         <div className="mt-8 flex items-center justify-end gap-4">
-          <Button variant="outline" disabled={isDeleting}>
+          <Button
+            variant="outline"
+            disabled={isDeleting}
+            onClick={() => setConfirmDelete(false)}
+          >
             Cancel
           </Button>
           <Button
