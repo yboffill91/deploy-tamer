@@ -152,7 +152,7 @@ export const KeywordResearchComponent = () => {
           </div>
         </div>
       </CustomCard>
-      <CustomCard title="Extra POsitive Keywords" icon={Target}>
+      <CustomCard title="Extra Positive Keywords" icon={Target}>
         <div className="flex flex-col gap-6 w-full">
           <InputGroup>
             <InputGroupInput placeholder="Enter extra keywords" />
