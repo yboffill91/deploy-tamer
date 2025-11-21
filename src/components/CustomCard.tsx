@@ -1,13 +1,12 @@
 import { LucideIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui";
 import { cn } from "@/lib/utils";
-
-type NewType = ReactNode;
+import { ReactNode } from "react";
 
 interface Props {
   title: string;
   icon: LucideIcon;
-  children: NewType;
+  children: ReactNode;
   variant?: "default" | "banner";
 }
 
