@@ -63,12 +63,12 @@ export const AdminSidebarItems: NavGroup[] = [
     items: [
       {
         title: "SEO",
-        url: "/admin/seo",
+        url: "/tools/seo",
         icon: SearchIcon,
         subItems: [
           {
             title: "Keyword Research",
-            url: "/admin/seo/key_research",
+            url: "/tools/seo/keyword-research",
             icon: KeyIcon,
           },
         ],

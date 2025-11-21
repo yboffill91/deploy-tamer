@@ -1,0 +1,38 @@
+import { LucideIcon } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui";
+import { cn } from "@/lib/utils";
+
+type NewType = ReactNode;
+
+interface Props {
+  title: string;
+  icon: LucideIcon;
+  children: NewType;
+  variant?: "default" | "banner";
+}
+
+export const CustomCard = ({
+  title,
+  icon: Icon,
+  children,
+  variant = "default",
+}: Props) => {
+  return (
+    <Card
+      className={cn(
+        "w-full",
+        variant === "banner" && "bg-foreground text-background"
+      )}
+    >
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Icon className="size-5" />{" "}
+          <h2 className="text-[clamp(0.8rem,5vw,1.2rem)] font-semibold">
+            {title}
+          </h2>
+        </CardTitle>
+      </CardHeader>
+      <CardContent>{children}</CardContent>
+    </Card>
+  );
+};
