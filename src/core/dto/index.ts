@@ -3,6 +3,7 @@ export * from "./CitiesDTO";
 export * from "./CompanyDTO";
 export * from "./DocumentsDTO";
 export * from "./FunctionalitiesDTO";
+export * from "./KeywordResearchDTO";
 export * from "./LogsDTO";
 export * from "./PositionsDTO";
 export * from "./RoleDTO";

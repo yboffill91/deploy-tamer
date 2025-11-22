@@ -184,10 +184,12 @@ export const KeywordResearchComponent = () => {
               </div>
             </RadioGroup>
           </div>
-          <Button size={"sm"} variant={"secondary"} className="max-w-64 p-4">
-            <Send />
-            Run Keyword Research
-          </Button>
+          <div className="w-full flex items-center justify-center">
+            <Button size={"sm"} variant={"secondary"} className="max-w-64 p-4">
+              <Send />
+              Run Keyword Research
+            </Button>
+          </div>
         </div>
       </CustomCard>
     </div>

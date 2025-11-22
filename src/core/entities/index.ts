@@ -4,6 +4,7 @@ export * from "./CompanyEntity";
 export * from "./DocumentsEntity";
 export * from "./EmailEntity";
 export * from "./FunctionalitiesEntity";
+export * from "./KeywordResearchsEntity";
 export * from "./LogsEntity";
 export * from "./PositionsEntity";
 export * from "./RoleEntity";
