@@ -227,7 +227,7 @@ export const KeyWordResearchComponents = () => {
     getData();
   }, [codes]);
 
-  const onSubmitHandler = async (data: KeywordResearchDTO) => {
+  const onSubmitHandler = async (data: KeywordResearchFormInput) => {
     console.log(data);
   };
 

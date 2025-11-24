@@ -1,3 +1,4 @@
+"use client";
 import {
   Button,
   InputGroup,
@@ -51,11 +52,10 @@ export const CustomKeywordInputComponent = <TForm extends FieldValues>({
 
       <Controller
         control={controlHandler}
-        name={name} // Usamos el nombre del campo como prop
+        name={name}
         render={({ field }) => (
           <WordsContainer
             message={emptyMessageWorldsContainer}
-            // field.value es un array de palabras (string[])
             list={field.value as string[]}
             onDelete={onDeleteWorldsContainer}
             onClear={onClearWorldsContainer}

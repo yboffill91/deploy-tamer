@@ -77,7 +77,7 @@ export function CountriesDataTable({
   }, [filteredData, sortNameAsc]);
   const [globalFilter, setGlobalFilter] = useState("");
   const filteredData2 = useMemo(() => {
-    return sortedData.filter((el) =>
+    return sortedData.filter((el: CountriesEntity) =>
       el.name!.toLowerCase().includes(globalFilter.toLowerCase())
     );
   }, [sortedData, globalFilter]);
