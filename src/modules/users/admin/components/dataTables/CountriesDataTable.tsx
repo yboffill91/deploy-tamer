@@ -57,9 +57,9 @@ export function CountriesDataTable({
   const [regionFilter, setRegionFilter] = useState("all");
   const [selectedCountry, setSelectedCountry] =
     useState<CountriesEntity | null>(null);
-  const [selectedCountries, setSelectedCountries] = useState<
-    CountriesEntity[] | []
-  >([]);
+  const [selectedCountries, setSelectedCountries] = useState<CountriesEntity[]>(
+    []
+  );
   const regions = useMemo(() => {
     const set = new Set(data.map((el) => el.subregion));
     return ["all", ...Array.from(set).sort()];
