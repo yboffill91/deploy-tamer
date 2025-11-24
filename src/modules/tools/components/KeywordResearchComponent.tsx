@@ -42,6 +42,7 @@ import { Controller, useForm } from "react-hook-form";
 import {
   KeywordResearchSchema,
   KeywordResearchFormType,
+  KeywordResearchFormInput,
 } from "../utils/models";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
@@ -98,7 +99,6 @@ export const KeyWordResearchComponents = () => {
   });
 
   //  -----------------------------------------------------------------------tipos
-  type KeywordResearchFormInput = z.input<typeof KeywordResearchSchema>;
 
   // ------------------------------------------------inicializacion de formulario
 
@@ -290,7 +290,6 @@ export const KeyWordResearchComponents = () => {
                     <SelectTrigger
                       value={field.value}
                       className="w-28 bg-primary! text-primary-foreground"
-                      size="sm"
                     >
                       <Languages className="text-primary-foreground" />
                       <SelectValue placeholder="Select Language" />
@@ -304,7 +303,7 @@ export const KeyWordResearchComponents = () => {
               )}
             />
             <Sheet>
-              <Button asChild size={"sm"}>
+              <Button asChild>
                 <SheetTrigger>
                   <Globe2 />
                   Region
@@ -329,7 +328,7 @@ export const KeyWordResearchComponents = () => {
                 )}
               </SheetContent>
             </Sheet>
-            <Button onClick={() => setIsDialogOpen(!isDialogOpen)} size={"sm"}>
+            <Button onClick={() => setIsDialogOpen(!isDialogOpen)}>
               <Tags /> Brands{" "}
             </Button>
             <ControlledDialog
@@ -366,7 +365,7 @@ export const KeyWordResearchComponents = () => {
                 )}
               </>
             </ControlledDialog>
-            <Button size={"sm"}>
+            <Button>
               <Bell />
             </Button>
           </div>
@@ -454,9 +453,6 @@ export const KeyWordResearchComponents = () => {
                 <span className="text-[0.6rem]">Use All Cities</span>
               </span>
             </div>
-            <Button size="sm" className="text-xs font-medium">
-              Submit
-            </Button>
           </div>
           <WordsContainer
             message="No Cities Added"

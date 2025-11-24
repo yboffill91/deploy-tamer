@@ -65,3 +65,5 @@ export const KeywordResearchSchema = z.object({
 });
 
 export type KeywordResearchFormType = z.infer<typeof KeywordResearchSchema>;
+
+export type KeywordResearchFormInput = z.input<typeof KeywordResearchSchema>;
