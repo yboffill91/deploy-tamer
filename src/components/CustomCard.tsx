@@ -8,6 +8,7 @@ interface Props {
   icon: LucideIcon;
   children: ReactNode;
   variant?: "default" | "banner";
+  disabled?: boolean;
 }
 
 export const CustomCard = ({
@@ -15,12 +16,14 @@ export const CustomCard = ({
   icon: Icon,
   children,
   variant = "default",
+  disabled = false,
 }: Props) => {
   return (
     <Card
       className={cn(
         "w-full",
-        variant === "banner" && "bg-primary text-primary-foreground"
+        variant === "banner" && "bg-primary text-primary-foreground",
+        disabled && "bg-muted text-muted-foreground pointer-events-none"
       )}
     >
       <CardHeader>

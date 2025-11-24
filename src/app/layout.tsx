@@ -33,7 +33,7 @@ const layout = ({ children }: { children: Readonly<ReactNode> }) => {
     <html lang="en">
       <body
         className={cn(
-          "antialiased bg-background text-foreground transition-all duration-300",
+          "antialiased bg-background text-foreground transition-all duration-300 ",
           bodyFont.className
         )}
       >

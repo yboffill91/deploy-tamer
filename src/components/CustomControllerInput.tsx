@@ -24,7 +24,7 @@ import {
 
 interface Props<TFieldValues extends FieldValues> {
   name: Path<TFieldValues>;
-  label: string;
+  label?: string;
   placeholder: string;
   control: Control<TFieldValues>;
   error?: FieldError;
@@ -53,16 +53,23 @@ export const CustomControllerInput = <TFieldValues extends FieldValues>({
   const inputType = isPasswordField && showPassword ? "text" : type;
 
   return (
-    <div className="p-1 flex items-start gap-1 flex-col w-full min-h-[5.2rem]">
-      <Label
-        htmlFor={name}
-        className={cn(
-          "font-semibold text-foreground",
-          error && "text-destructive"
-        )}
-      >
-        {label}:
-      </Label>
+    <div
+      className={cn(
+        " flex items-start gap-1 flex-col w-full ",
+        label ? "min-h-18" : "min-h-14"
+      )}
+    >
+      {label && (
+        <Label
+          htmlFor={name}
+          className={cn(
+            "font-semibold text-foreground",
+            error && "text-destructive"
+          )}
+        >
+          {label}:
+        </Label>
+      )}
 
       <Controller
         control={control}
@@ -167,10 +174,10 @@ export const CustomControllerInput = <TFieldValues extends FieldValues>({
         )}
       />
 
-      <div className="w-full">
+      <div className="w-full ">
         {error && (
-          <div className="flex text-xs item-center gap-1 text-destructive line-clamp-2 font-semibold">
-            <AlertCircle className="w-3 h-4" />
+          <div className="flex text-[0.6rem] item-center gap-1 text-destructive line-clamp-2 font-semibold">
+            <Asterisk className="w-2 h-3" />
             {error.message}
           </div>
         )}

@@ -7,7 +7,7 @@ import {
   Search,
 } from "lucide-react";
 import { ReactNode } from "react";
-import { KeywordResearchComponent } from "../components";
+import { KeyWordResearchComponents } from "../components";
 
 interface TabsLists {
   tab_name: string;
@@ -22,7 +22,7 @@ export const TabsLists: TabsLists[] = [
     tab_value: "keyword_research",
     icon: Search,
     name: "keyword_research",
-    component: <KeywordResearchComponent />,
+    component: <KeyWordResearchComponents />,
   },
   {
     tab_name: "All Request",

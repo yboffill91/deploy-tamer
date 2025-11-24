@@ -6,7 +6,7 @@ enum KeywordResearchType {
 export class KeywordResearchEntity {
   readonly title?: string;
   readonly searchVolume?: number;
-  readonly positiveKeywords?: string[];
+  readonly?: string[];
   readonly extraPositiveKeywords?: string[];
   readonly negativeKeywords?: string[];
   readonly generatedPositiveKeywords?: string[];
