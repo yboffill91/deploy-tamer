@@ -17,13 +17,12 @@ import { CustomCard } from '@/components/CustomCard';
 
 export const KeywordResearchForm = () => {
   const [countryCode, setcountryCode] = useState<string>('US');
+
   // --> Inicializacion del formulario
   const {
     control,
     setValue,
-    getValues,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<KeywordResearchFormInput>({
     resolver: zodResolver(KeywordResearchSchema),
@@ -75,10 +74,10 @@ export const KeywordResearchForm = () => {
         onSetPositive={(words) => setValue('positiveKeywords', words)}
       />
 
-      <KeywordResearchCityComponent />
       <KeywordExtraPositive
         onSetExtraPositive={(value) => setValue('extraPositiveKeywords', value)}
       />
+      {/* <KeywordResearchCityComponent /> */}
 
       <CustomCard title='Search Intent' icon={Focus} variant='banner'>
         <div className='grid grid-cols-2 gap-2'>

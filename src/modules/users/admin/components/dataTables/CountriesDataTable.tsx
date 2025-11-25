@@ -83,15 +83,20 @@ export function CountriesDataTable({
     <>
       <div className='flex gap-4 mb-4'>
         <Select onValueChange={setRegionFilter} value={regionFilter}>
-          <SelectTrigger className='w-48'>
+          <SelectTrigger
+            className={cn(
+              'w-48',
+              showSelect && 'bg-primary! text-primary-foreground'
+            )}
+          >
             <SelectValue placeholder='Region' />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className={cn('w-48')}>
             {regions.map(
               (r, i) =>
                 r?.length !== 0 && (
                   <SelectItem key={i} value={r!}>
-                    <span className='capitalize'>{' ' + r!}</span>
+                    <span className={cn('capitalize')}>{' ' + r!}</span>
                   </SelectItem>
                 )
             )}
@@ -119,10 +124,10 @@ export function CountriesDataTable({
         </InputGroup>
       </div>
 
-      <Table className=' text-left w-72'>
+      <Table className={cn('text-left ', showSelect && 'w-72')}>
         <TableHeader>
-          <TableRow className='border-b'>
-            <TableHead className='p-2 w-48'>
+          <TableRow>
+            <TableHead className='p-2 '>
               <span
                 onClick={() => setSortNameAsc(!sortNameAsc)}
                 className='flex items-center gap-2 cursor-pointer'

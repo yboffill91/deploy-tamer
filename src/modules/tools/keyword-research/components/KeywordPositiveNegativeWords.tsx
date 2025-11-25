@@ -17,7 +17,7 @@ export const KeywordPositiveNegativeWords = ({
       <CustomCard title='Positive Keywords' icon={CheckCircle}>
         <KeyWordResearchComponents
           onSetWords={(words) => onSetPositive(words)}
-          emptyMessage='No POsitive Words Added'
+          emptyMessage='No Positive Words Added'
         />
         <div className='w-full mt-3'>
           <Button disabled className='w-full' variant={'outline'} type='button'>

@@ -6,7 +6,6 @@ import {
   Switch,
 } from '@/components/ui';
 import { Globe, MapPin, Search } from 'lucide-react';
-import React from 'react';
 import { WordsContainer } from './WordsContainer';
 
 export const KeywordResearchCityComponent = () => {

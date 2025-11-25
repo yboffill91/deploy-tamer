@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { CustomPageLoader } from "@/components/CustomPageLoader";
-import { showToast } from "@/components/CustomToaster";
+import { CustomPageLoader } from '@/components/CustomPageLoader';
+import { showToast } from '@/components/CustomToaster';
 import {
   Alert,
   AlertDescription,
@@ -9,15 +9,15 @@ import {
   Button,
   Card,
   CardContent,
-} from "@/components/ui";
-import { CountriesEntity, StatesEntity, CitiesEntity } from "@/core/entities";
-import { CitiesRepository } from "@/infrastructure/repositories";
+} from '@/components/ui';
+import { CountriesEntity, StatesEntity, CitiesEntity } from '@/core/entities';
+import { CitiesRepository } from '@/infrastructure/repositories';
 
-import { CountriesDataTable } from "@/modules/users/admin/components/dataTables/CountriesDataTable";
-import { StatesDataTable } from "@/modules/users/admin/components/dataTables/StatesDataTable";
-import { CitiesDataTable } from "@/modules/users/admin/components/dataTables/CitiesDataTable";
+import { CountriesDataTable } from '@/modules/users/admin/components/dataTables/CountriesDataTable';
+import { StatesDataTable } from '@/modules/users/admin/components/dataTables/StatesDataTable';
+import { CitiesDataTable } from '@/modules/users/admin/components/dataTables/CitiesDataTable';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 const CitiesPage = () => {
   const [countries, setCountries] = useState<CountriesEntity[] | null>(null);
@@ -44,7 +44,7 @@ const CitiesPage = () => {
         setCountries(countriesData);
       } catch (error) {
         setIsError(
-          error instanceof Error ? error.message : "Error getting Data"
+          error instanceof Error ? error.message : 'Error getting Data'
         );
       } finally {
         setIsLoadingCountries(false);
@@ -65,7 +65,7 @@ const CitiesPage = () => {
         setStateCode(null);
       } catch (error) {
         setIsError(
-          error instanceof Error ? error.message : "Error getting States"
+          error instanceof Error ? error.message : 'Error getting States'
         );
       } finally {
         setIsLoadingStates(false);
@@ -84,7 +84,7 @@ const CitiesPage = () => {
         setCities(citiesData);
       } catch (error) {
         setIsError(
-          error instanceof Error ? error.message : "Error getting Cities"
+          error instanceof Error ? error.message : 'Error getting Cities'
         );
       } finally {
         setIsLoadingCities(false);
@@ -97,9 +97,9 @@ const CitiesPage = () => {
   useEffect(() => {
     if (isError) {
       showToast({
-        message: "Error",
+        message: 'Error',
         description: isError,
-        type: "error",
+        type: 'error',
       });
     }
   }, [isError]);
@@ -108,10 +108,10 @@ const CitiesPage = () => {
     <>
       {/* COUNTRIES */}
       {isLoadingCountries && (
-        <CustomPageLoader message="Loading Countries Data" />
+        <CustomPageLoader message='Loading Countries Data' />
       )}
 
-      <div className="flex items-start gap-6 justify-start w-full">
+      <div className='flex items-start gap-6 justify-start w-full'>
         {countries && (
           <Card>
             <CardContent>
@@ -124,7 +124,7 @@ const CitiesPage = () => {
         )}
 
         {/* STATES */}
-        {isLoadingStates && <CustomPageLoader message="Loading States Data" />}
+        {isLoadingStates && <CustomPageLoader message='Loading States Data' />}
 
         {states && !isLoadingStates && states.length > 0 && (
           <Card>
@@ -138,14 +138,14 @@ const CitiesPage = () => {
         )}
         {states && states.length === 0 && (
           <NotFounded
-            title={"No State Founded"}
+            title={'No State Founded'}
             description={
-              "It appears that there are no states, provinces, departments, or dependencies in the selected country. "
+              'It appears that there are no states, provinces, departments, or dependencies in the selected country. '
             }
           />
         )}
 
-        {isLoadingCities && <CustomPageLoader message="Loading Cities Data" />}
+        {isLoadingCities && <CustomPageLoader message='Loading Cities Data' />}
 
         {cities &&
           !isLoadingCities &&
@@ -159,9 +159,9 @@ const CitiesPage = () => {
           )}
         {cities && cities.length === 0 && (
           <NotFounded
-            title={"No City Founded"}
+            title={'No City Founded'}
             description={
-              "It appears that there are no cities in the selected province, state, department, or dependency."
+              'It appears that there are no cities in the selected province, state, department, or dependency.'
             }
           />
         )}
@@ -180,7 +180,7 @@ const NotFounded = ({
   description: string;
 }) => {
   return (
-    <Alert variant={"destructive"} className={"max-w-sm"}>
+    <Alert variant={'destructive'} className={'max-w-sm'}>
       <AlertTitle>{title}</AlertTitle>
       <AlertDescription>{description}</AlertDescription>
     </Alert>

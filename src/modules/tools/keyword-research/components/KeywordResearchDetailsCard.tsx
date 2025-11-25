@@ -20,7 +20,6 @@ import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-  Badge,
 } from '@/components/ui';
 import { useEffect, useState } from 'react';
 import { BrandsEntity, CountriesEntity } from '@/core/entities';
@@ -115,7 +114,7 @@ export const KeywordResearchDetailsCard = ({
             />
           </div>
         </div>
-        <div className='flex items-start justify-start gap-2'>
+        <div className='grid grid-cols-3 w-full lg:max-w-sm  gap-2'>
           <Controller
             control={control}
             name='requestLanguage'
@@ -124,13 +123,13 @@ export const KeywordResearchDetailsCard = ({
                 <Select {...field} onValueChange={field.onChange}>
                   <SelectTrigger
                     value={field.value}
-                    className='cursor-pointer w-32 bg-primary! text-primary-foreground'
+                    className='cursor-pointer w-full bg-secondary! text-secondary-foreground'
                     type='button'
                   >
-                    <Languages className='text-primary-foreground' />
+                    <Languages className='text-secondary-foreground' />
                     <SelectValue placeholder='Select Language' />
                   </SelectTrigger>
-                  <SelectContent className='bg-primary text-primary-foreground'>
+                  <SelectContent className='bg-secondary text-secondary-foreground'>
                     <SelectItem value='EN'>English</SelectItem>
                     <SelectItem value='ES'>Spanish</SelectItem>
                   </SelectContent>
@@ -141,7 +140,12 @@ export const KeywordResearchDetailsCard = ({
           <Sheet>
             <Tooltip>
               <TooltipTrigger asChild type='button'>
-                <Button asChild type='button' disabled={isLoadingRegions}>
+                <Button
+                  asChild
+                  type='button'
+                  variant={'secondary'}
+                  disabled={isLoadingRegions}
+                >
                   <SheetTrigger>
                     {isLoadingRegions ? (
                       <CustomLoading message='Regions' />
@@ -187,6 +191,7 @@ export const KeywordResearchDetailsCard = ({
                 type='button'
                 onClick={() => setShowDialog(!showDialog)}
                 disabled={isBrandsLoading}
+                variant={'secondary'}
               >
                 {isBrandsLoading ? (
                   <CustomLoading message='Brands' />
