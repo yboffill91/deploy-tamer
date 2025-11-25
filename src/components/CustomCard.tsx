@@ -22,7 +22,7 @@ export const CustomCard = ({
     <Card
       className={cn(
         'w-full',
-        variant === 'banner' && 'bg-background text-background-foreground',
+        variant === 'banner' && 'bg-secondary text-secondary-foreground',
         disabled && 'bg-muted text-muted-foreground pointer-events-none'
       )}
     >
