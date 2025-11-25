@@ -20,37 +20,54 @@ import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
+  Badge,
 } from '@/components/ui';
 import { useEffect, useState } from 'react';
-import { CountriesEntity } from '@/core/entities';
-import { CitiesRepository } from '@/infrastructure/repositories';
+import { BrandsEntity, CountriesEntity } from '@/core/entities';
+import {
+  BrandApiRepository,
+  CitiesRepository,
+} from '@/infrastructure/repositories';
 import { CustomLoading } from '@/components/CustomLoading';
 import { showToast } from '@/components/CustomToaster';
 import { CustomRegionSelector } from './CustomRegionSelector';
+import { ControlledDialog } from '@/components/ControlledDialog';
+import { CustomBrandsSelector } from './CustomBrandsSelector';
 
 interface Props {
   control: Control<KeywordResearchFormInput>;
   errors: FieldErrors<KeywordResearchFormInput>;
   onSelectedRegion(region: CountriesEntity): void;
+  onSelectedBrands(brands: BrandsEntity[]): void;
 }
 
 export const KeywordResearchDetailsCard = ({
   control,
   errors,
   onSelectedRegion,
+  onSelectedBrands,
 }: Props) => {
   const [regions, setRegions] = useState<CountriesEntity[]>([]);
   const [isLoadingRegions, setIsLoadingRegions] = useState(false);
   const [isError, setIsError] = useState<string | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<CountriesEntity>();
+  const [showDialog, setShowDialog] = useState(false);
+  const [brands, setBrands] = useState<BrandsEntity[]>([]);
+  const [isBrandsLoading, setIsBrandsLoading] = useState(false);
+  const [selectedBrands, setSelectedBrands] = useState<BrandsEntity[]>([]);
 
   useEffect(() => {
     const getData = async () => {
       const REGIONS_REPO = new CitiesRepository();
+      const BRANDS_REPO = new BrandApiRepository();
       try {
         setIsLoadingRegions(true);
+        setIsBrandsLoading(true);
         const fetched_regions = await REGIONS_REPO.findCuntries();
+        const fetched_brands = await BRANDS_REPO.findAll();
+
         setRegions(fetched_regions);
+        setBrands(fetched_brands);
       } catch (error) {
         setIsError(
           error instanceof Error
@@ -59,6 +76,7 @@ export const KeywordResearchDetailsCard = ({
         );
       } finally {
         setIsLoadingRegions(false);
+        setIsBrandsLoading(false);
       }
     };
     getData();
@@ -126,10 +144,10 @@ export const KeywordResearchDetailsCard = ({
                 <Button asChild type='button' disabled={isLoadingRegions}>
                   <SheetTrigger>
                     {isLoadingRegions ? (
-                      <CustomLoading message='Getting Regions' />
+                      <CustomLoading message='Regions' />
                     ) : (
                       <>
-                        <Globe2 /> Regions{' '}
+                        <Globe2 /> Region{' '}
                       </>
                     )}
                   </SheetTrigger>
@@ -163,9 +181,49 @@ export const KeywordResearchDetailsCard = ({
               </SheetClose>
             </SheetContent>
           </Sheet>
-          <Button type='button'>
-            <Tags /> Brands
-          </Button>
+          <Tooltip>
+            <TooltipTrigger type='button' asChild>
+              <Button
+                type='button'
+                onClick={() => setShowDialog(!showDialog)}
+                disabled={isBrandsLoading}
+              >
+                {isBrandsLoading ? (
+                  <CustomLoading message='Brands' />
+                ) : (
+                  <>
+                    <Tags /> Brands{' '}
+                    {selectedBrands.length > 0 && `(${selectedBrands.length})`}
+                  </>
+                )}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent className='flex items-center justify-center gap-2'>
+              {selectedBrands.length === 0 && 'No Brands Selected'}
+              {selectedBrands.length > 0 &&
+                selectedBrands.map((brand, index) => (
+                  <span key={brand.id}>
+                    {brand.name!} {index !== selectedBrands.length - 1 && '|'}
+                  </span>
+                ))}
+            </TooltipContent>
+          </Tooltip>
+          <ControlledDialog
+            title='Select Brand'
+            description='Pick registred brands to include in the keyword research'
+            onOpenChange={setShowDialog}
+            open={showDialog}
+          >
+            <CustomBrandsSelector
+              brands={brands}
+              preSelectedBrands={selectedBrands}
+              onFinishSelection={(newSelectedBrands) => {
+                setSelectedBrands(newSelectedBrands);
+                onSelectedBrands(newSelectedBrands);
+                setShowDialog(false);
+              }}
+            />
+          </ControlledDialog>
         </div>
       </div>
     </CustomCard>
