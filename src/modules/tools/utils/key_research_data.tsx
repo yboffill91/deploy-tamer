@@ -5,9 +5,9 @@ import {
   LucideIcon,
   MapPin,
   Search,
-} from "lucide-react";
-import { ReactNode } from "react";
-import { KeyWordResearchComponents } from "../components";
+} from 'lucide-react';
+import { ReactNode } from 'react';
+import { KeywordResearchForm } from '../keyword-research/KeywordResearchForm';
 
 interface TabsLists {
   tab_name: string;
@@ -18,38 +18,38 @@ interface TabsLists {
 }
 export const TabsLists: TabsLists[] = [
   {
-    tab_name: "Keyword Research",
-    tab_value: "keyword_research",
+    tab_name: 'Keyword Research',
+    tab_value: 'keyword_research',
     icon: Search,
-    name: "keyword_research",
-    component: <KeyWordResearchComponents />,
+    name: 'keyword_research',
+    component: <KeywordResearchForm />,
   },
   {
-    tab_name: "All Request",
-    tab_value: "all_request",
+    tab_name: 'All Request',
+    tab_value: 'all_request',
     icon: List,
-    name: "all_request",
+    name: 'all_request',
     component: <h1>All Request</h1>,
   },
   {
-    tab_name: "Company List",
-    tab_value: "company_list",
+    tab_name: 'Company List',
+    tab_value: 'company_list',
     icon: Building2,
-    name: "company_list",
+    name: 'company_list',
     component: <h1>Company List</h1>,
   },
   {
-    tab_name: "City List",
-    tab_value: "city_list",
+    tab_name: 'City List',
+    tab_value: 'city_list',
     icon: MapPin,
-    name: "city_list",
+    name: 'city_list',
     component: <h1>City List</h1>,
   },
   {
-    tab_name: "Negative Search Intent",
-    tab_value: "negative_keywords_search_intent",
+    tab_name: 'Negative Search Intent',
+    tab_value: 'negative_keywords_search_intent',
     icon: AlertTriangle,
-    name: "negative_keywords_search_intent",
+    name: 'negative_keywords_search_intent',
     component: <h1>Negative keywords Search Intent</h1>,
   },
 ];

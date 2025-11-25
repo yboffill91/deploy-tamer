@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import {
   Badge,
   Button,
@@ -18,7 +18,7 @@ import {
   SheetTitle,
   SheetTrigger,
   Switch,
-} from "@/components/ui";
+} from '@/components/ui';
 import {
   Bell,
   Bot,
@@ -34,43 +34,43 @@ import {
   Tags,
   Target,
   Video,
-} from "lucide-react";
-import { RadioGroup, RadioGroupItem } from "@/components/ui";
-import { CustomCard } from "@/components/CustomCard";
-import { WordsContainer } from "./WordsContainer";
-import { Controller, useForm } from "react-hook-form";
+} from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from '@/components/ui';
+import { CustomCard } from '@/components/CustomCard';
+import { WordsContainer } from './WordsContainer';
+import { Controller, useForm } from 'react-hook-form';
 import {
   KeywordResearchSchema,
   KeywordResearchFormType,
   KeywordResearchFormInput,
-} from "../utils/models";
-import { zodResolver } from "@hookform/resolvers/zod";
-import z from "zod";
-import { KeywordResearchDTO } from "@/core/dto";
-import { CustomControllerInput } from "@/components/CustomControllerInput";
-import { useEffect, useState } from "react";
-import { ControlledDialog } from "@/components/ControlledDialog";
-import { BrandsEntity, CitiesEntity, CountriesEntity } from "@/core/entities";
-import { showToast } from "@/components/CustomToaster";
+} from '../utils/models';
+import { zodResolver } from '@hookform/resolvers/zod';
+import z from 'zod';
+import { KeywordResearchDTO } from '@/core/dto';
+import { CustomControllerInput } from '@/components/CustomControllerInput';
+import { useEffect, useState } from 'react';
+import { ControlledDialog } from '@/components/ControlledDialog';
+import { BrandsEntity, CitiesEntity, CountriesEntity } from '@/core/entities';
+import { showToast } from '@/components/CustomToaster';
 import {
   BrandApiRepository,
   CitiesRepository,
-} from "@/infrastructure/repositories";
-import { CustomLoading } from "@/components/CustomLoading";
-import { CustomEmpty } from "@/components/CustomEmpty";
-import { CustomKeywordInputComponent } from "./CustomKeywordInputComponent";
-import { RegionSelector } from "./CustomRegionSelector";
+} from '@/infrastructure/repositories';
+import { CustomLoading } from '@/components/CustomLoading';
+import { CustomEmpty } from '@/components/CustomEmpty';
+import { CustomKeywordInputComponent } from './CustomKeywordInputComponent';
+import { RegionSelector } from '../keyword-research/components/CustomRegionSelector';
 
 type fieldsType = Pick<
   KeywordResearchDTO,
-  | "brand"
-  | "city"
-  | "negativeKeywords"
-  | "extraPositiveKeywords"
-  | "generatedNegativeKeywords"
-  | "generatedPositiveKeywords"
-  | "region"
-  | "positiveKeywords"
+  | 'brand'
+  | 'city'
+  | 'negativeKeywords'
+  | 'extraPositiveKeywords'
+  | 'generatedNegativeKeywords'
+  | 'generatedPositiveKeywords'
+  | 'region'
+  | 'positiveKeywords'
 >;
 export const KeyWordResearchComponents = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -93,9 +93,9 @@ export const KeyWordResearchComponents = () => {
     negative: string;
     extraPositive: string;
   }>({
-    positive: "",
-    negative: "",
-    extraPositive: "",
+    positive: '',
+    negative: '',
+    extraPositive: '',
   });
 
   //  -----------------------------------------------------------------------tipos
@@ -111,10 +111,10 @@ export const KeyWordResearchComponents = () => {
     formState: { errors },
   } = useForm<KeywordResearchFormInput>({
     resolver: zodResolver(KeywordResearchSchema),
-    mode: "onSubmit",
+    mode: 'onSubmit',
     defaultValues: {
-      title: "",
-      searchVolume: "",
+      title: '',
+      searchVolume: '',
 
       positiveKeywords: [],
       negativeKeywords: [],
@@ -126,20 +126,20 @@ export const KeyWordResearchComponents = () => {
       brand: [],
 
       allCitys: false,
-      requestLanguage: "EN",
-      type: "TRANSACTIONAL",
+      requestLanguage: 'EN',
+      type: 'TRANSACTIONAL',
       companyId: 0,
     },
   });
 
-  const negativeKeywords = watch("negativeKeywords");
-  const extraPositiveKeywords = watch("extraPositiveKeywords");
-  const city = watch("city");
-  const generatedPositiveKeywords = watch("generatedPositiveKeywords");
-  const generatedNegativeKeywords = watch("generatedNegativeKeywords");
-  const region = watch("region");
-  const brand = watch("brand");
-  const positiveKeywords = watch("positiveKeywords");
+  const negativeKeywords = watch('negativeKeywords');
+  const extraPositiveKeywords = watch('extraPositiveKeywords');
+  const city = watch('city');
+  const generatedPositiveKeywords = watch('generatedPositiveKeywords');
+  const generatedNegativeKeywords = watch('generatedNegativeKeywords');
+  const region = watch('region');
+  const brand = watch('brand');
+  const positiveKeywords = watch('positiveKeywords');
 
   //  ----------------------------------------------------------------handlers
 
@@ -151,9 +151,9 @@ export const KeyWordResearchComponents = () => {
 
     if (current.includes(normalized)) {
       showToast({
-        type: "error",
-        message: "Error",
-        description: "Value already exists",
+        type: 'error',
+        message: 'Error',
+        description: 'Value already exists',
       });
       return;
     }
@@ -192,8 +192,8 @@ export const KeyWordResearchComponents = () => {
     if (isError) {
       showToast({
         description: isError,
-        message: "Error",
-        type: "error",
+        message: 'Error',
+        type: 'error',
       });
     }
   }, [isError]);
@@ -210,7 +210,7 @@ export const KeyWordResearchComponents = () => {
         setAllRegions(Regions);
       } catch (error) {
         setIsError(
-          error instanceof Error ? error.message : "Something went wrong"
+          error instanceof Error ? error.message : 'Something went wrong'
         );
       } finally {
         setIsLoadingBrands(false);
@@ -233,70 +233,70 @@ export const KeyWordResearchComponents = () => {
 
   return (
     <form
-      className="max-w-7xl  container  flex flex-col gap-4 items-start justify-start"
+      className='max-w-7xl  container  flex flex-col gap-4 items-start justify-start'
       onSubmit={handleSubmit(onSubmitHandler)}
     >
-      <header className="relative">
-        <h1 className="text-[clamp(1.5rem,5vw,2rem)] font-semibold">
+      <header className='relative'>
+        <h1 className='text-[clamp(1.5rem,5vw,2rem)] font-semibold'>
           Keyword Research Tool
         </h1>
-        <p className="text-foreground/70 text-pretty">
+        <p className='text-foreground/70 text-pretty'>
           Enterprise-grade keyword research powered by advanced AI. Leverage the
           same strategic approach used by industry leaders to discover
           high-impact, filter out irrelevant terms and analyze search patterns
           to identify the most profitable keywords for your business.
         </p>
-        <div className="flex items-center gap-2 md:absolute md:top-0 md:right-0 mt-4 md:mt-0">
+        <div className='flex items-center gap-2 md:absolute md:top-0 md:right-0 mt-4 md:mt-0'>
           <Button
-            variant="outline"
-            size="sm"
-            className="text-xs font-medium relative"
+            variant='outline'
+            size='sm'
+            className='text-xs font-medium relative'
           >
             <Video /> See how it works
-            <span className="rounded-full size-3  absolute -top-1 -right-1 bg-green-500/50 animate-ping" />
-            <span className="rounded-full size-2    absolute -top-0.5 -right-0.5 bg-green-500 " />
+            <span className='rounded-full size-3  absolute -top-1 -right-1 bg-green-500/50 animate-ping' />
+            <span className='rounded-full size-2    absolute -top-0.5 -right-0.5 bg-green-500 ' />
           </Button>
         </div>
       </header>
 
-      <CustomCard title="Research Details" icon={Tag}>
-        <div className="flex flex-col lg:flex-row items-center justify-center gap-2">
-          <div className="grid grid-cols-12 w-full gap-2 ">
-            <div className=" col-span-9">
+      <CustomCard title='Research Details' icon={Tag}>
+        <div className='flex flex-col lg:flex-row items-center justify-center gap-2'>
+          <div className='grid grid-cols-12 w-full gap-2 '>
+            <div className=' col-span-9'>
               <CustomControllerInput
                 control={control}
-                name="title"
-                placeholder="Title for your Keyword Research"
+                name='title'
+                placeholder='Title for your Keyword Research'
                 error={errors.title}
               />
             </div>
-            <div className="col-span-3">
+            <div className='col-span-3'>
               <CustomControllerInput
-                type="number"
+                type='number'
                 control={control}
-                name="searchVolume"
-                placeholder="Volume of Search"
+                name='searchVolume'
+                placeholder='Volume of Search'
                 error={errors.searchVolume}
               />
             </div>
           </div>
-          <div className="flex items-start h-14 gap-2">
+          <div className='flex items-start h-14 gap-2'>
             <Controller
               control={control}
-              name="requestLanguage"
+              name='requestLanguage'
               render={({ field }) => (
                 <div>
                   <Select {...field} onValueChange={field.onChange}>
                     <SelectTrigger
                       value={field.value}
-                      className="w-28 bg-primary! text-primary-foreground"
+                      className='w-28 bg-primary! text-primary-foreground'
                     >
-                      <Languages className="text-primary-foreground" />
-                      <SelectValue placeholder="Select Language" />
+                      <Languages className='text-primary-foreground' />
+                      <SelectValue placeholder='Select Language' />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="EN">English</SelectItem>
-                      <SelectItem value="ES">Spanish</SelectItem>
+                      <SelectItem value='EN'>English</SelectItem>
+                      <SelectItem value='ES'>Spanish</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -309,7 +309,7 @@ export const KeyWordResearchComponents = () => {
                   Region
                 </SheetTrigger>
               </Button>
-              <SheetContent className="p-4">
+              <SheetContent className='p-4'>
                 <SheetHeader>
                   <SheetTitle>Select Region</SheetTitle>
                 </SheetHeader>
@@ -317,29 +317,29 @@ export const KeyWordResearchComponents = () => {
                   You can find and add Search for regions like countries, states
                   or cities
                 </SheetDescription>
-                {allRegions && (
+                {/* {allRegions && (
                   <RegionSelector
                     region={allRegions}
                     onFinish={(data) => {
-                      setValue("region", data.selectedCountries);
+                      setValue('region', data.selectedCountries);
                       setCodes(data.selectedCodes);
                     }}
                   />
-                )}
+                )} */}
               </SheetContent>
             </Sheet>
             <Button onClick={() => setIsDialogOpen(!isDialogOpen)}>
-              <Tags /> Brands{" "}
+              <Tags /> Brands{' '}
             </Button>
             <ControlledDialog
               open={isDialogOpen}
               onOpenChange={setIsDialogOpen}
-              title="Select Brands For You Research"
+              title='Select Brands For You Research'
             >
               <>
                 {isLoadingBrands && (
                   <div>
-                    <CustomLoading message="Getting Brands" />
+                    <CustomLoading message='Getting Brands' />
                   </div>
                 )}
                 {!isLoadingBrands && brands && brands.length > 0 && (
@@ -356,10 +356,10 @@ export const KeyWordResearchComponents = () => {
                 {!isLoadingBrands && brands && brands.length === 0 && (
                   <div>
                     <CustomEmpty
-                      title="No Brands Found"
-                      description="No brands found"
+                      title='No Brands Found'
+                      description='No brands found'
                       icon={Tags}
-                      onClick={() => console.log("brands")}
+                      onClick={() => console.log('brands')}
                     />
                   </div>
                 )}
@@ -372,53 +372,53 @@ export const KeyWordResearchComponents = () => {
         </div>
       </CustomCard>
 
-      <div className="grid gap-2 lg:grid-cols-2 w-full">
-        <CustomCard title="Target Keywords" icon={Target}>
-          <div className="flex flex-col gap-6 w-full">
+      <div className='grid gap-2 lg:grid-cols-2 w-full'>
+        <CustomCard title='Target Keywords' icon={Target}>
+          <div className='flex flex-col gap-6 w-full'>
             <CustomKeywordInputComponent
               controlHandler={control}
-              emptyMessageWorldsContainer="No Positive Keywords Added"
+              emptyMessageWorldsContainer='No Positive Keywords Added'
               inputHandleOnClick={() =>
-                handleAdd("positiveKeywords", temporalWord.positive)
+                handleAdd('positiveKeywords', temporalWord.positive)
               }
-              inputOnChangeValue={(e) => handleTemporalWord(e, "positive")}
+              inputOnChangeValue={(e) => handleTemporalWord(e, 'positive')}
               inputValue={temporalWord.positive}
-              name="positiveKeywords"
-              onClearWorldsContainer={() => handleReset("positiveKeywords")}
+              name='positiveKeywords'
+              onClearWorldsContainer={() => handleReset('positiveKeywords')}
               onDeleteWorldsContainer={(valueToRemove) =>
-                handleDelete("positiveKeywords", valueToRemove)
+                handleDelete('positiveKeywords', valueToRemove)
               }
             />
 
             <Button
-              size="sm"
-              className="text-xs font-medium w-full"
-              variant={"secondary"}
+              size='sm'
+              className='text-xs font-medium w-full'
+              variant={'secondary'}
             >
               <Bot /> Suggest Keyword With AI
             </Button>
           </div>
         </CustomCard>
-        <CustomCard title="Negative Keywords" icon={CircleOff}>
-          <div className="flex flex-col gap-6 w-full">
+        <CustomCard title='Negative Keywords' icon={CircleOff}>
+          <div className='flex flex-col gap-6 w-full'>
             <CustomKeywordInputComponent
               controlHandler={control}
-              emptyMessageWorldsContainer="No Negative Keywords Added"
+              emptyMessageWorldsContainer='No Negative Keywords Added'
               inputHandleOnClick={() =>
-                handleAdd("negativeKeywords", temporalWord.negative)
+                handleAdd('negativeKeywords', temporalWord.negative)
               }
-              inputOnChangeValue={(e) => handleTemporalWord(e, "negative")}
+              inputOnChangeValue={(e) => handleTemporalWord(e, 'negative')}
               inputValue={temporalWord.negative}
-              name="negativeKeywords"
-              onClearWorldsContainer={() => handleReset("negativeKeywords")}
+              name='negativeKeywords'
+              onClearWorldsContainer={() => handleReset('negativeKeywords')}
               onDeleteWorldsContainer={(valueToRemove) =>
-                handleDelete("negativeKeywords", valueToRemove)
+                handleDelete('negativeKeywords', valueToRemove)
               }
             />
             <Button
-              size="sm"
-              className="text-xs font-medium w-full"
-              variant={"secondary"}
+              size='sm'
+              className='text-xs font-medium w-full'
+              variant={'secondary'}
             >
               <Bot /> Suggest Keyword With AI
             </Button>
@@ -426,96 +426,96 @@ export const KeyWordResearchComponents = () => {
         </CustomCard>
       </div>
       <CustomCard
-        title="Cities Filter"
+        title='Cities Filter'
         icon={MapPin}
         disabled={region.length === 0}
       >
-        <div className="flex flex-col gap-6 w-full">
+        <div className='flex flex-col gap-6 w-full'>
           {region.length > 0 && (
-            <div className="flex items-center gap-2">
+            <div className='flex items-center gap-2'>
               {region.slice(0, 5).map((reg) => (
                 <Badge key={reg}>{reg}</Badge>
               ))}
               {region.length > 5 && `and ${region.length - 5} more`}
             </div>
           )}
-          <div className="w-full flex gap-2 items-center">
+          <div className='w-full flex gap-2 items-center'>
             <InputGroup>
-              <InputGroupInput placeholder="Enter a city name..." />
+              <InputGroupInput placeholder='Enter a city name...' />
               <InputGroupAddon>
                 <Search />
               </InputGroupAddon>
             </InputGroup>
-            <div className="flex items-center justify-center gap-2 w-full max-w-32 ">
-              <Switch />{" "}
-              <span className="flex items-center gap-2 text-xs">
-                <Globe className="size-2.5 md:block hidden" />
-                <span className="text-[0.6rem]">Use All Cities</span>
+            <div className='flex items-center justify-center gap-2 w-full max-w-32 '>
+              <Switch />{' '}
+              <span className='flex items-center gap-2 text-xs'>
+                <Globe className='size-2.5 md:block hidden' />
+                <span className='text-[0.6rem]'>Use All Cities</span>
               </span>
             </div>
           </div>
           <WordsContainer
-            message="No Cities Added"
+            message='No Cities Added'
             list={[]}
-            onDelete={() => console.log("Delete")}
-            onClear={() => console.log("Clear")}
+            onDelete={() => console.log('Delete')}
+            onClear={() => console.log('Clear')}
           />
         </div>
       </CustomCard>
-      <CustomCard title="Extra Positive Keywords" icon={Target}>
-        <div className="flex flex-col gap-6 w-full">
+      <CustomCard title='Extra Positive Keywords' icon={Target}>
+        <div className='flex flex-col gap-6 w-full'>
           <CustomKeywordInputComponent
             controlHandler={control}
-            emptyMessageWorldsContainer="No Extra Positive Words Keywords Added"
+            emptyMessageWorldsContainer='No Extra Positive Words Keywords Added'
             inputHandleOnClick={() =>
-              handleAdd("extraPositiveKeywords", temporalWord.negative)
+              handleAdd('extraPositiveKeywords', temporalWord.negative)
             }
-            inputOnChangeValue={(e) => handleTemporalWord(e, "extraPositive")}
+            inputOnChangeValue={(e) => handleTemporalWord(e, 'extraPositive')}
             inputValue={temporalWord.extraPositive}
-            name="extraPositiveKeywords"
-            onClearWorldsContainer={() => handleReset("extraPositiveKeywords")}
+            name='extraPositiveKeywords'
+            onClearWorldsContainer={() => handleReset('extraPositiveKeywords')}
             onDeleteWorldsContainer={(valueToRemove) =>
-              handleDelete("extraPositiveKeywords", valueToRemove)
+              handleDelete('extraPositiveKeywords', valueToRemove)
             }
           />
         </div>
       </CustomCard>
-      <CustomCard title="Search Intent" icon={Focus} variant="banner">
-        <div className="grid grid-cols-2 gap-2">
+      <CustomCard title='Search Intent' icon={Focus} variant='banner'>
+        <div className='grid grid-cols-2 gap-2'>
           <div>
             <Controller
               control={control}
-              name="type"
+              name='type'
               render={({ field }) => {
                 return (
                   <RadioGroup {...field} onValueChange={field.onChange}>
-                    <div className="flex items-center gap-3">
+                    <div className='flex items-center gap-3'>
                       <RadioGroupItem
-                        value="TRANSACTIONAL"
-                        id="transactional"
+                        value='TRANSACTIONAL'
+                        id='transactional'
                       />
-                      <Label htmlFor="transactional">Transactional</Label>
+                      <Label htmlFor='transactional'>Transactional</Label>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className='flex items-center gap-3'>
                       <RadioGroupItem
-                        value="INFORMATIONAL"
-                        id="informational"
+                        value='INFORMATIONAL'
+                        id='informational'
                       />
-                      <Label htmlFor="informational">Informational</Label>
+                      <Label htmlFor='informational'>Informational</Label>
                     </div>
                   </RadioGroup>
                 );
               }}
             />
           </div>
-          <div className="w-full flex items-center justify-center"></div>
+          <div className='w-full flex items-center justify-center'></div>
         </div>
       </CustomCard>
       <Button
-        size={"sm"}
-        variant={"secondary"}
-        className="max-w-64 p-4"
-        type="submit"
+        size={'sm'}
+        variant={'secondary'}
+        className='max-w-64 p-4'
+        type='submit'
       >
         <Send />
         Run Keyword Research

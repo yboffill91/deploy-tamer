@@ -1,20 +1,20 @@
-"use client";
-import { useState, useMemo } from "react";
-import { Button } from "@/components/ui/button";
+'use client';
+import { useState, useMemo } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import {
   Dialog,
   DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Eye,
   ArrowUpDown,
@@ -23,8 +23,8 @@ import {
   ArrowRightCircle,
   Check,
   CheckCheck,
-} from "lucide-react";
-import { CountriesEntity } from "@/core/entities";
+} from 'lucide-react';
+import { CountriesEntity } from '@/core/entities';
 import {
   InputGroup,
   InputGroupAddon,
@@ -36,8 +36,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui";
-import { cn } from "@/lib/utils";
+} from '@/components/ui';
+import { cn } from '@/lib/utils';
 export function CountriesDataTable({
   data,
   onIso2Select,
@@ -47,25 +47,23 @@ export function CountriesDataTable({
   showSelect = false,
 }: {
   data: CountriesEntity[];
-  onIso2Select: (iso2: string) => void;
-  onNameSelect?: (name: string) => void;
+  onIso2Select?: (iso2: string) => void;
+  onNameSelect?: (name: CountriesEntity) => void;
   showView?: boolean;
   showNextStep?: boolean;
   showSelect?: boolean;
 }) {
   const [sortNameAsc, setSortNameAsc] = useState(true);
-  const [regionFilter, setRegionFilter] = useState("all");
+  const [regionFilter, setRegionFilter] = useState('all');
   const [selectedCountry, setSelectedCountry] =
     useState<CountriesEntity | null>(null);
-  const [selectedCountries, setSelectedCountries] = useState<CountriesEntity[]>(
-    []
-  );
+  const [selectedCountries, setSelectedCountries] = useState<CountriesEntity>();
   const regions = useMemo(() => {
     const set = new Set(data.map((el) => el.subregion));
-    return ["all", ...Array.from(set).sort()];
+    return ['all', ...Array.from(set).sort()];
   }, [data]);
   const filteredData = useMemo(() => {
-    if (regionFilter === "all") return data;
+    if (regionFilter === 'all') return data;
     return data.filter((el) => el.subregion === regionFilter);
   }, [data, regionFilter]);
   const sortedData = useMemo(() => {
@@ -75,7 +73,7 @@ export function CountriesDataTable({
       return 0;
     });
   }, [filteredData, sortNameAsc]);
-  const [globalFilter, setGlobalFilter] = useState("");
+  const [globalFilter, setGlobalFilter] = useState('');
   const filteredData2 = useMemo(() => {
     return sortedData.filter((el: CountriesEntity) =>
       el.name!.toLowerCase().includes(globalFilter.toLowerCase())
@@ -83,23 +81,23 @@ export function CountriesDataTable({
   }, [sortedData, globalFilter]);
   return (
     <>
-      <div className="flex gap-4 mb-4">
+      <div className='flex gap-4 mb-4'>
         <Select onValueChange={setRegionFilter} value={regionFilter}>
-          <SelectTrigger className="w-48">
-            <SelectValue placeholder="Region" />
+          <SelectTrigger className='w-48'>
+            <SelectValue placeholder='Region' />
           </SelectTrigger>
           <SelectContent>
             {regions.map(
               (r, i) =>
                 r?.length !== 0 && (
                   <SelectItem key={i} value={r!}>
-                    <span className="capitalize">{" " + r!}</span>
+                    <span className='capitalize'>{' ' + r!}</span>
                   </SelectItem>
                 )
             )}
           </SelectContent>
         </Select>
-        <InputGroup className="w-48">
+        <InputGroup className='w-48'>
           <InputGroupInput
             placeholder={`Search by Name...`}
             onChange={(event) => {
@@ -112,7 +110,7 @@ export function CountriesDataTable({
           </InputGroupAddon>
           <InputGroupButton
             onClick={() => {
-              setGlobalFilter("");
+              setGlobalFilter('');
             }}
             disabled={globalFilter.length === 0}
           >
@@ -121,19 +119,19 @@ export function CountriesDataTable({
         </InputGroup>
       </div>
 
-      <Table className=" text-left w-72">
+      <Table className=' text-left w-72'>
         <TableHeader>
-          <TableRow className="border-b">
-            <TableHead className="p-2 w-48">
+          <TableRow className='border-b'>
+            <TableHead className='p-2 w-48'>
               <span
                 onClick={() => setSortNameAsc(!sortNameAsc)}
-                className="flex items-center gap-2 cursor-pointer"
+                className='flex items-center gap-2 cursor-pointer'
               >
                 Name
-                <ArrowUpDown className="w-4 h-4" />
+                <ArrowUpDown className='w-4 h-4' />
               </span>
             </TableHead>
-            <TableHead className="p-2">Actions</TableHead>
+            <TableHead className='p-2'>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -141,20 +139,20 @@ export function CountriesDataTable({
             <TableRow
               key={el.iso2}
               className={cn(
-                "",
-                selectedCountries.includes(el)
-                  ? " bg-accent text-accent-foreground"
-                  : ""
+                '',
+                selectedCountries === el
+                  ? ' bg-green-300/10 text-accent-foreground'
+                  : ''
               )}
             >
-              <TableCell className="p-2">{el.name}</TableCell>
-              <TableCell className="p-2 flex gap-2 items-center">
+              <TableCell className='p-2'>{el.name}</TableCell>
+              <TableCell className='p-2 flex gap-2 items-center'>
                 {showView && (
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button
-                        size="sm"
-                        variant="ghost"
+                        size='sm'
+                        variant='ghost'
                         onClick={() => setSelectedCountry(el)}
                       >
                         <Eye />
@@ -165,32 +163,32 @@ export function CountriesDataTable({
                         <DialogTitle>Country Info</DialogTitle>
                       </DialogHeader>
                       {selectedCountry ? (
-                        <div className="space-y-2 max-h-[70vh] overflow-y-auto">
+                        <div className='space-y-2 max-h-[70vh] overflow-y-auto'>
                           {Object.entries(selectedCountry).map(
                             ([key, value]) => (
                               <div
                                 key={key}
                                 className={cn(
-                                  "border-b py-2",
+                                  'border-b py-2',
                                   value === undefined ||
                                     !value ||
                                     (value.isArray && value.length === 0)
-                                    ? "hidden"
-                                    : "block",
-                                  key === "id" && "hidden"
+                                    ? 'hidden'
+                                    : 'block',
+                                  key === 'id' && 'hidden'
                                 )}
                               >
-                                <span className="font-medium capitalize">
+                                <span className='font-medium capitalize'>
                                   {key}
                                 </span>
-                                <div className="mt-1 text-sm text-muted-foreground">
-                                  {typeof value === "object" ? (
-                                    <pre className="bg-secondary p-2 rounded-md overflow-x-auto text-xs whitespace-pre-wrap">
+                                <div className='mt-1 text-sm text-muted-foreground'>
+                                  {typeof value === 'object' ? (
+                                    <pre className='bg-secondary p-2 rounded-md overflow-x-auto text-xs whitespace-pre-wrap'>
                                       {JSON.stringify(value, null, 2)}
                                     </pre>
-                                  ) : key === "createdAt" ||
-                                    key === "updatedAt" ||
-                                    key === "deletedAt" ? (
+                                  ) : key === 'createdAt' ||
+                                    key === 'updatedAt' ||
+                                    key === 'deletedAt' ? (
                                     <span>{value}</span>
                                   ) : (
                                     <span>{String(value)}</span>
@@ -207,10 +205,10 @@ export function CountriesDataTable({
                   </Dialog>
                 )}
 
-                {showNextStep && (
+                {showNextStep && onIso2Select && (
                   <Button
-                    size="icon"
-                    variant={"outline"}
+                    size='icon'
+                    variant={'outline'}
                     onClick={() => {
                       onIso2Select(el.iso2!);
                     }}
@@ -218,27 +216,18 @@ export function CountriesDataTable({
                     <ArrowRightCircle />
                   </Button>
                 )}
-                {showSelect && (
+                {showSelect && onNameSelect && (
                   <Button
-                    size="icon"
-                    variant={"ghost"}
+                    type='button'
+                    variant={'ghost'}
+                    size={'icon'}
                     onClick={() => {
-                      onIso2Select(el.iso2!);
-                      if (onNameSelect) {
-                        onNameSelect(el.name!);
-                        if (selectedCountries.includes(el)) {
-                          const elementsRest = selectedCountries.filter(
-                            (country) => country.id !== el.id
-                          );
-                          setSelectedCountries(elementsRest);
-                          return;
-                        }
-                        setSelectedCountries([...selectedCountries, el]);
-                      }
+                      setSelectedCountries(el);
+                      onNameSelect(el);
                     }}
                   >
-                    {selectedCountries.includes(el) ? (
-                      <CheckCheck />
+                    {selectedCountries === el ? (
+                      <CheckCheck className='dark:text-green-400 text-green-700 rounded bg-green-400/20' />
                     ) : (
                       <Check />
                     )}

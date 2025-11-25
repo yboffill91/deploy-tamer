@@ -1,65 +1,61 @@
-import z from "zod";
+import z from 'zod';
 
 export const KeywordResearchSchema = z.object({
-  title: z.string().min(3, "Title must be at least 3 characters wide"),
+  title: z.string().min(3, 'Title must be at least 3 characters wide'),
   searchVolume: z
     .string()
-    .min(0, "Search volume must be at positive")
-    .regex(/^\d+$/, { message: "Positive volume" }),
+    .min(0, 'Search volume must be at positive')
+    .regex(/^\d+$/, { message: 'Positive volume' }),
 
   positiveKeywords: z
     .array(z.string())
     .refine((list) => new Set(list).size === list.length, {
-      message: "Positive keywords has duplicates",
+      message: 'Positive keywords has duplicates',
     }),
 
   negativeKeywords: z
     .array(z.string())
     .refine((list) => new Set(list).size === list.length, {
-      message: "Negative keywords has duplicates",
+      message: 'Negative keywords has duplicates',
     }),
 
   extraPositiveKeywords: z
     .array(z.string())
     .refine((list) => new Set(list).size === list.length, {
-      message: "Extra positive keywords has duplicates",
+      message: 'Extra positive keywords has duplicates',
     }),
 
   city: z
     .array(z.string())
     .refine((list) => new Set(list).size === list.length, {
-      message: "Cities has duplicates",
+      message: 'Cities has duplicates',
     }),
 
   generatedPositiveKeywords: z
     .array(z.string())
     .refine((list) => new Set(list).size === list.length, {
-      message: "Generated positive keywords has duplicates",
+      message: 'Generated positive keywords has duplicates',
     }),
 
   generatedNegativeKeywords: z
     .array(z.string())
     .refine((list) => new Set(list).size === list.length, {
-      message: "Generated negative keywords has duplicates",
+      message: 'Generated negative keywords has duplicates',
     }),
 
   allCitys: z.boolean(),
 
-  region: z
-    .array(z.string())
-    .refine((list) => new Set(list).size === list.length, {
-      message: "Region has duplicates",
-    }),
+  region: z.string().optional(),
 
   requestLanguage: z.string(),
 
   brand: z
     .array(z.string())
     .refine((list) => new Set(list).size === list.length, {
-      message: "Brand has duplicates",
+      message: 'Brand has duplicates',
     }),
 
-  type: z.enum(["INFORMATIONAL", "TRANSACTIONAL"]).default("TRANSACTIONAL"),
+  type: z.enum(['INFORMATIONAL', 'TRANSACTIONAL']).default('TRANSACTIONAL'),
 
   companyId: z.number(),
 });
