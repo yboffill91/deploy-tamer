@@ -1,19 +1,15 @@
 'use client';
 
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { KeywordResearchFormInput, KeywordResearchSchema } from '../utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   KeywordResearchDetailsCard,
   KeywordResearchFormHeader,
 } from './components';
-import { Button, Label, RadioGroup, RadioGroupItem } from '@/components/ui';
-import { Focus, Send } from 'lucide-react';
+import { Button } from '@/components/ui';
+import { Send } from 'lucide-react';
 import { useState } from 'react';
-import { KeywordPositiveNegativeWords } from './components/KeywordPositiveNegativeWords';
-import { KeywordResearchCityComponent } from './components/KeywordResearchCityComponent';
-import { KeywordExtraPositive } from './components/KeywordExtraPositiveComponent';
-import { CustomCard } from '@/components/CustomCard';
 
 export const KeywordResearchForm = () => {
   const [countryCode, setcountryCode] = useState<string>('US');
@@ -44,6 +40,8 @@ export const KeywordResearchForm = () => {
       type: 'TRANSACTIONAL',
     },
   });
+
+  console.log(countryCode);
 
   const onSubmitHandler = (data: KeywordResearchFormInput) => {
     console.log(data);
