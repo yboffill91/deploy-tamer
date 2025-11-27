@@ -36,6 +36,8 @@ export const KeywordResearchDetailsCard = ({ control, errors }: Props) => {
   const Step = useRegionStore((st) => st.step);
   const finalValue = useRegionStore((st) => st.finalValue);
 
+  console.log(finalValue);
+
   useEffect(() => {
     getCountries();
   }, [getCountries]);

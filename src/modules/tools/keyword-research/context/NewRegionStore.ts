@@ -165,17 +165,21 @@ export const useRegionStore = create<RegionStore>((set, get) => ({
   },
   setFinalValue: () =>
     set((state) => {
-      const { partialRoute, selectedCities } = state;
-      let index = 0;
+      const { partialRoute, selectedCities, finalValue } = state;
+
+      const newMap = new Map(finalValue);
+
+      let index = newMap.size;
+
       if (selectedCities.length === 0) {
-        state.finalValue.set(index, [...partialRoute.toReversed()]);
-        index++;
+        newMap.set(index, [...partialRoute.toReversed()]);
       } else {
-        selectedCities.map((city) => {
-          state.finalValue.set(index, [...partialRoute, city].toReversed());
+        selectedCities.forEach((city) => {
+          newMap.set(index, [...partialRoute, city].toReversed());
           index++;
         });
       }
-      return state;
+
+      return { finalValue: newMap };
     }),
 }));
