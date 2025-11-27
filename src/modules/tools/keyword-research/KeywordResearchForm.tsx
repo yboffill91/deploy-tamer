@@ -1,25 +1,30 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { KeywordResearchFormInput, KeywordResearchSchema } from '../utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   KeywordResearchDetailsCard,
   KeywordResearchFormHeader,
 } from './components';
-import { Button } from '@/components/ui';
-import { Send } from 'lucide-react';
-import { useState } from 'react';
+import { Button, Label, RadioGroup, RadioGroupItem } from '@/components/ui';
+import { Focus, Send } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { KeywordPositiveNegativeWords } from './components/KeywordPositiveNegativeWords';
+import { KeywordResearchCityComponent } from './components/KeywordResearchCityComponent';
+import { KeywordExtraPositive } from './components/KeywordExtraPositiveComponent';
+import { CustomCard } from '@/components/CustomCard';
+import { useRegionStore } from './context/RegionsStore';
 
 export const KeywordResearchForm = () => {
-  const [countryCode, setcountryCode] = useState<string>('US');
-
   // --> Inicializacion del formulario
   const {
     control,
     setValue,
+    getValues,
     handleSubmit,
-    formState: { errors },
+    watch,
+    formState: { errors, isValid },
   } = useForm<KeywordResearchFormInput>({
     resolver: zodResolver(KeywordResearchSchema),
     mode: 'onBlur',
@@ -33,7 +38,7 @@ export const KeywordResearchForm = () => {
       generatedPositiveKeywords: [],
       negativeKeywords: [],
       positiveKeywords: [],
-      region: 'United States',
+      region: [],
       requestLanguage: 'EN',
       searchVolume: '0',
       title: '',
@@ -41,11 +46,15 @@ export const KeywordResearchForm = () => {
     },
   });
 
-  console.log(countryCode);
-
   const onSubmitHandler = (data: KeywordResearchFormInput) => {
     console.log(data);
   };
+
+  const selectedCountries = useRegionStore((st) => st.selectedCountries);
+
+  useEffect(() => {
+    setValue('region', selectedCountries);
+  }, [setValue, selectedCountries]);
 
   return (
     <form
@@ -53,32 +62,19 @@ export const KeywordResearchForm = () => {
       onSubmit={handleSubmit(onSubmitHandler)}
     >
       <KeywordResearchFormHeader />
-      <KeywordResearchDetailsCard
-        control={control}
-        errors={errors}
-        onSelectedRegion={(region) => {
-          setValue('region', region.name);
-          setcountryCode(region.iso2!);
-        }}
-        onSelectedBrands={(brands) => {
-          setValue(
-            'brand',
-            brands.map((brand) => brand.name!)
-          );
-        }}
-      />
+      <KeywordResearchDetailsCard control={control} errors={errors} />
       <KeywordPositiveNegativeWords
         onSetNegative={(words) => setValue('negativeKeywords', words)}
         onSetPositive={(words) => setValue('positiveKeywords', words)}
       />
 
+      <KeywordResearchCityComponent />
       <KeywordExtraPositive
         onSetExtraPositive={(value) => setValue('extraPositiveKeywords', value)}
       />
-      {/* <KeywordResearchCityComponent /> */}
 
       <CustomCard title='Search Intent' icon={Focus} variant='banner'>
-        <div className='grid grid-cols-2 gap-2'>
+        <div className='grid grid-cols-2  '>
           <div>
             <Controller
               control={control}
@@ -105,16 +101,20 @@ export const KeywordResearchForm = () => {
               }}
             />
           </div>
-          <div className='w-full flex items-center justify-center'></div>
+          <div className=' flex items-center justify-start'>
+            <Button
+              type='submit'
+              className=' w-full '
+              size={'lg'}
+              disabled={!isValid}
+              variant={isValid ? 'default' : 'ghost'}
+            >
+              <Send />
+              Run Research
+            </Button>
+          </div>
         </div>
       </CustomCard>
-
-      <div className='w-full flex items-center justify-center'>
-        <Button type='submit' className='mt-4  w-full max-w-xl' size={'lg'}>
-          <Send />
-          Run Research
-        </Button>
-      </div>
     </form>
   );
 };

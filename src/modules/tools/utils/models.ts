@@ -45,7 +45,7 @@ export const KeywordResearchSchema = z.object({
 
   allCitys: z.boolean(),
 
-  region: z.string().optional(),
+  region: z.array(z.string()).optional(),
 
   requestLanguage: z.string(),
 

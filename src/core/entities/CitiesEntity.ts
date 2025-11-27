@@ -15,6 +15,7 @@ export class StatesEntity extends BaseCitiesEntity {
   readonly country_id?: number;
   readonly region?: string;
   readonly iso2?: string;
+  readonly country_code?: string;
 }
 
 export class CitiesEntity extends BaseCitiesEntity {

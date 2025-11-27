@@ -1,7 +1,7 @@
 import { Control, Controller, FieldErrors } from 'react-hook-form';
 import { CustomCard } from '@/components/CustomCard';
 import { CustomControllerInput } from '@/components/CustomControllerInput';
-import { CheckCheck, Globe2, Languages, List, Tags } from 'lucide-react';
+import { Bell, Globe2, Languages, List } from 'lucide-react';
 import { KeywordResearchFormInput } from '../../utils/models';
 import {
   Button,
@@ -10,59 +10,35 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-  Sheet,
-  SheetClose,
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
 } from '@/components/ui';
-import { useEffect, useState } from 'react';
-import { CountriesEntity } from '@/core/entities';
-import { CitiesRepository } from '@/infrastructure/repositories';
-import { CustomLoading } from '@/components/CustomLoading';
+import { useEffect } from 'react';
+
 import { showToast } from '@/components/CustomToaster';
-import { CustomRegionSelector } from './CustomRegionSelector';
+import { useRegionStore } from '../context/NewRegionStore';
+import { CustomSheet, Triggerbutton } from '@/components/CustomSheet';
+import {
+  CitiesSelector,
+  CountrySelector,
+  RegionStepController,
+  StateSelector,
+} from './regions-selector';
 
 interface Props {
   control: Control<KeywordResearchFormInput>;
   errors: FieldErrors<KeywordResearchFormInput>;
-  onSelectedRegion(region: CountriesEntity): void;
 }
 
-export const KeywordResearchDetailsCard = ({
-  control,
-  errors,
-  onSelectedRegion,
-}: Props) => {
-  const [regions, setRegions] = useState<CountriesEntity[]>([]);
-  const [isLoadingRegions, setIsLoadingRegions] = useState(false);
-  const [isError, setIsError] = useState<string | null>(null);
-  const [selectedRegion, setSelectedRegion] = useState<CountriesEntity>();
+export const KeywordResearchDetailsCard = ({ control, errors }: Props) => {
+  const regions = useRegionStore((state) => state.allCountries);
+  const getCountries = useRegionStore((state) => state.getAllCountries);
+  const isError = useRegionStore((st) => st.error);
+  const isLoadingRegions = useRegionStore((st) => st.isLoading);
+  const Step = useRegionStore((st) => st.step);
+  const finalValue = useRegionStore((st) => st.finalValue);
 
   useEffect(() => {
-    const getData = async () => {
-      const REGIONS_REPO = new CitiesRepository();
-      try {
-        setIsLoadingRegions(true);
-        const fetched_regions = await REGIONS_REPO.findCuntries();
-        setRegions(fetched_regions);
-      } catch (error) {
-        setIsError(
-          error instanceof Error
-            ? error.message
-            : `Error fetching data : ${error as string}`
-        );
-      } finally {
-        setIsLoadingRegions(false);
-      }
-    };
-    getData();
-  }, []);
+    getCountries();
+  }, [getCountries]);
 
   useEffect(() => {
     if (isError) {
@@ -75,10 +51,18 @@ export const KeywordResearchDetailsCard = ({
   }, [isError]);
 
   return (
-    <CustomCard title='Research Details' icon={List}>
-      <div className='flex flex-col lg:flex-row items-start justify-center gap-2'>
-        <div className='grid grid-cols-12 gap-2 w-full'>
-          <div className=' col-span-9'>
+    <CustomCard
+      title='Research Details'
+      icon={List}
+      action={
+        <Button type='button' size={'icon'} variant={'outline'}>
+          <Bell />
+        </Button>
+      }
+    >
+      <div className='flex flex-col lg:flex-row items-start justify-start gap-2'>
+        <div className='grid grid-cols-12 gap-2 w-full lg:w-3xl'>
+          <div className=' col-span-10'>
             <CustomControllerInput
               control={control}
               name='title'
@@ -87,7 +71,7 @@ export const KeywordResearchDetailsCard = ({
             />
           </div>
 
-          <div className='col-span-3'>
+          <div className='col-span-2'>
             <CustomControllerInput
               type='number'
               control={control}
@@ -97,7 +81,7 @@ export const KeywordResearchDetailsCard = ({
             />
           </div>
         </div>
-        <div className='grid grid-cols-3 w-full lg:max-w-sm  gap-2'>
+        <div className='grid grid-cols-3 w-full lg:w-md gap-2'>
           <Controller
             control={control}
             name='requestLanguage'
@@ -106,13 +90,13 @@ export const KeywordResearchDetailsCard = ({
                 <Select {...field} onValueChange={field.onChange}>
                   <SelectTrigger
                     value={field.value}
-                    className='cursor-pointer w-full bg-secondary! text-secondary-foreground'
+                    className='cursor-pointer w-full bg-primary! text-primary-foreground'
                     type='button'
                   >
-                    <Languages className='text-secondary-foreground' />
+                    <Languages className='text-primary-foreground' />
                     <SelectValue placeholder='Select Language' />
                   </SelectTrigger>
-                  <SelectContent className='bg-secondary text-secondary-foreground'>
+                  <SelectContent className='bg-primary text-primary-foreground'>
                     <SelectItem value='EN'>English</SelectItem>
                     <SelectItem value='ES'>Spanish</SelectItem>
                   </SelectContent>
@@ -120,61 +104,40 @@ export const KeywordResearchDetailsCard = ({
               </div>
             )}
           />
-          <Sheet>
-            <Tooltip>
-              <TooltipTrigger asChild type='button'>
-                <Button
-                  asChild
-                  type='button'
-                  variant={'secondary'}
-                  disabled={isLoadingRegions}
-                >
-                  <SheetTrigger>
-                    {isLoadingRegions ? (
-                      <CustomLoading message='Getting Regions' />
-                    ) : (
-                      <>
-                        <Globe2 /> Regions{' '}
-                      </>
-                    )}
-                  </SheetTrigger>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent className='flex items-center justify-center gap-2'>
-                {' '}
-                <CheckCheck className='size-4' />
-                {selectedRegion ? selectedRegion.name : 'United States'}
-              </TooltipContent>
-            </Tooltip>
-            <SheetContent className='p-4'>
-              <SheetHeader>
-                <SheetTitle>Select Region</SheetTitle>
-              </SheetHeader>
-              <SheetDescription>
-                You can find and add Search for regions like countries, states
-                or cities
-              </SheetDescription>
-              <CustomRegionSelector
-                regions={regions}
-                onSelected={(el) => {
-                  setSelectedRegion(el);
-                  onSelectedRegion(el);
-                }}
+          <CustomSheet
+            title='Select Region'
+            description='  You can find and add Search for regions like countries, states
+                or cities'
+            trigger={
+              <Triggerbutton
+                icon={Globe2}
+                label='Region'
+                loadingState={isLoadingRegions}
               />
-              <SheetClose type='button' asChild>
-                <Button type='button'>
-                  {selectedRegion ? selectedRegion.name! : 'Finish Selection'}
-                </Button>
-              </SheetClose>
-            </SheetContent>
-          </Sheet>
-          <Tooltip>
+            }
+            tooltipContentElement={
+              // <CustomTooltipContent values={selectedCountries} />
+              <p>Under Construction</p>
+            }
+          >
+            <RegionStepController />
+            {Step === 'Country' && <CountrySelector data={regions} />}
+            {Step === 'State' && <StateSelector />}
+            {Step === 'Cities' && <CitiesSelector />}
+          </CustomSheet>
+        </div>
+      </div>
+    </CustomCard>
+  );
+};
+
+{
+  /* <Tooltip>
             <TooltipTrigger type='button' asChild>
               <Button
                 type='button'
                 onClick={() => setShowDialog(!showDialog)}
                 disabled={isBrandsLoading}
-                variant={'secondary'}
               >
                 {isBrandsLoading ? (
                   <CustomLoading message='Brands' />
@@ -195,25 +158,35 @@ export const KeywordResearchDetailsCard = ({
                   </span>
                 ))}
             </TooltipContent>
-          </Tooltip>
-          <ControlledDialog
-            title='Select Brand'
-            description='Pick registred brands to include in the keyword research'
-            onOpenChange={setShowDialog}
-            open={showDialog}
-          >
-            <CustomBrandsSelector
-              brands={brands}
-              preSelectedBrands={selectedBrands}
-              onFinishSelection={(newSelectedBrands) => {
-                setSelectedBrands(newSelectedBrands);
-                onSelectedBrands(newSelectedBrands);
-                setShowDialog(false);
-              }}
-            />
-          </ControlledDialog>
-        </div>
-      </div>
-    </CustomCard>
-  );
-};
+          </Tooltip> */
+}
+{
+  /* <Sheet>
+            <SheetTrigger asChild type='button'>
+              <Button type='button' disabled={isBrandsLoading}>
+                {isBrandsLoading ? (
+                  <CustomLoading message='Brands' />
+                ) : (
+                  <>
+                    <Tags /> Brands{' '}
+                    {selectedBrands.length > 0 && `(${selectedBrands.length})`}
+                  </>
+                )}
+              </Button>
+            </SheetTrigger>
+            <SheetContent className='p-4'>
+              <SheetTitle>Select Brand</SheetTitle>
+              <SheetDescription>
+                Choose one of the brands to add to the research
+              </SheetDescription>
+              <CustomBrandsSelector
+                brands={brands}
+                preSelectedBrands={selectedBrands}
+                onFinishSelection={(newSelectedBrands) => {
+                  setSelectedBrands(newSelectedBrands);
+                  onSelectedBrands(newSelectedBrands);
+                }}
+              />
+            </SheetContent>
+          </Sheet> */
+}

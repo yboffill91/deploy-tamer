@@ -1,12 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 
-
-const MOBILE_BREAKPOINT = 1024;
+const MOBILE_BREAKPOINT = 1555;
 
 export function useIsMobile() {
-  const [isMobile, setIsMobile] = useState<boolean | undefined>(
-    undefined
-  );
+  const [isMobile, setIsMobile] = useState<boolean | undefined>(undefined);
 
   useEffect(() => {
     const isMObile = () => {
@@ -17,8 +14,8 @@ export function useIsMobile() {
       mql.addEventListener('change', onChange);
       setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
       return () => mql.removeEventListener('change', onChange);
-    }
-    isMObile()
+    };
+    isMObile();
   }, []);
 
   return !!isMobile;

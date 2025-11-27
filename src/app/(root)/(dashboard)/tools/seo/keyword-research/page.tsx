@@ -6,7 +6,7 @@ const KeywordResearchPage = () => {
   return (
     <div className=''>
       <Tabs defaultValue={TabsLists[0].tab_value}>
-        <TabsList className='w-full flex shrink-0 items-center justify-start  lg:justify-center bg-transparent  border-b p-0 mb-2 rounded-none overflow-x-auto snap-none md:snap-x md:snap-mandatory snap-always'>
+        <TabsList className='w-full container mx-auto max-w-7xl flex shrink-0 items-center justify-start lg:justify-center   p-0 mb-2 rounded-none overflow-x-auto snap-none md:snap-x md:snap-mandatory snap-always bg-transparent'>
           {TabsLists.map((tab) => (
             <CustomTabTrigger
               key={tab.tab_value}
