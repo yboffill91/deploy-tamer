@@ -9,21 +9,18 @@ import {
 } from './components';
 import { Button, Label, RadioGroup, RadioGroupItem } from '@/components/ui';
 import { Focus, Send } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { KeywordPositiveNegativeWords } from './components/KeywordPositiveNegativeWords';
 import { KeywordResearchCityComponent } from './components/KeywordResearchCityComponent';
 import { KeywordExtraPositive } from './components/KeywordExtraPositiveComponent';
 import { CustomCard } from '@/components/CustomCard';
-import { useRegionStore } from './context/RegionsStore';
+import { useRegionStore } from '@/modules/tools/keyword-research/context/NewRegionStore';
 
 export const KeywordResearchForm = () => {
-  // --> Inicializacion del formulario
   const {
     control,
     setValue,
-    getValues,
     handleSubmit,
-    watch,
     formState: { errors, isValid },
   } = useForm<KeywordResearchFormInput>({
     resolver: zodResolver(KeywordResearchSchema),
@@ -50,11 +47,21 @@ export const KeywordResearchForm = () => {
     console.log(data);
   };
 
-  const selectedCountries = useRegionStore((st) => st.selectedCountries);
+  const finalValues = useRegionStore((st) => st.finalValue);
+  const negativeCities = useRegionStore((st) => st.negativeCities);
+
+  const selectedRegions = Array.from(finalValues, ([key, value]) => ({
+    key,
+    value,
+  }));
 
   useEffect(() => {
-    setValue('region', selectedCountries);
-  }, [setValue, selectedCountries]);
+    const regionValues = selectedRegions.map((region) =>
+      region.value.join(', ')
+    );
+    setValue('region', regionValues);
+    setValue('city', negativeCities);
+  }, [setValue, selectedRegions, negativeCities]);
 
   return (
     <form

@@ -1,5 +1,5 @@
-import { Bell, LucideIcon } from 'lucide-react';
-import { Button, Card, CardContent, CardHeader, CardTitle } from './ui';
+import {  LucideIcon } from 'lucide-react';
+import {  Card, CardContent, CardHeader, CardTitle } from './ui';
 import { cn } from '@/lib/utils';
 import { ReactNode } from 'react';
 

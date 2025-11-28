@@ -12,10 +12,19 @@ export const RegionStepController = () => {
   const clearStates = useRegionStore((st) => st.resetState);
   const setFinalValue = useRegionStore((st) => st.setFinalValue);
   const setPartialRoute = useRegionStore((st) => st.setPartialRoute);
+  const citiesByState = useRegionStore((st) => st.citiesByState);
+  const setCumulativeCities = useRegionStore(
+    (st) => st.setCumululativeSelectedCities
+  );
 
   const onClickHandler = () => {
     if (Step === 'Cities') {
       setFinalValue();
+      const Cities = citiesByState.map((el) => el.name);
+      setCumulativeCities(
+        selectedCities.length === 0 ? Cities : selectedCities
+      );
+
       showToast({
         type: 'success',
         description: `Added to de research ${selectedCountry} / ${selectedState} ${

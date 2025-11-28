@@ -24,12 +24,16 @@ interface RegionStore {
   getStates(): Promise<void>;
   setSelectedState(state: StatesEntity): void;
   setSelectedStateCode(state: StatesEntity): void;
+  negativeCities: string[];
+  setNegativeCities(city: string): void;
 
   // Cities
   citiesByState: CitiesEntity[] | null;
   selectedCities: string[];
   getCities(): Promise<void>;
   setSelectedCities(city: CitiesEntity): void;
+  cumulativeSelectedCities: string[];
+  setCumululativeSelectedCities(values: string[]): void;
 
   error: string;
 
@@ -58,6 +62,8 @@ export const useRegionStore = create<RegionStore>((set, get) => ({
   selectedStateCode: '',
   citiesByState: null,
   selectedCities: [],
+  cumulativeSelectedCities: [],
+  negativeCities: [],
 
   finalValue: new Map(),
 
@@ -208,4 +214,24 @@ export const useRegionStore = create<RegionStore>((set, get) => ({
       newMap.delete(key);
       return { finalValue: newMap };
     }),
+
+  setCumululativeSelectedCities: (values: string[]) => {
+    const { cumulativeSelectedCities } = get();
+
+    const newValues = values.filter(
+      (v) => !cumulativeSelectedCities.includes(v)
+    );
+
+    set({
+      cumulativeSelectedCities: [...cumulativeSelectedCities, ...newValues],
+    });
+  },
+
+  setNegativeCities: (city) => {
+    const { negativeCities } = get();
+    const newArr = negativeCities.includes(city)
+      ? negativeCities.filter((value) => city !== value)
+      : [...negativeCities, city];
+    set({ negativeCities: newArr });
+  },
 }));

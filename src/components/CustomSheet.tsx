@@ -48,7 +48,7 @@ export const CustomSheet = ({
     <Sheet>
       <Tooltip>
         <TooltipTrigger asChild type='button'>
-          <div>{trigger}</div>
+          <div className='w-full'>{trigger}</div>
         </TooltipTrigger>
         <TooltipContent className='flex items-center justify-center gap-2'>
           {tooltipContentElement}
@@ -72,87 +72,6 @@ export const CustomSheet = ({
   );
 };
 
-interface TriggerButtonProps {
-  label: string;
-  loadingState?: boolean;
-  icon: LucideIcon;
-}
 
-export const Triggerbutton = ({
-  label,
-  loadingState = false,
-  icon: Icon,
-}: TriggerButtonProps) => {
-  const selectedList = useRegionStore((st) => st.finalValue);
-  const manageDeleteList = useRegionStore((st) => st.deleteEntryFinalValue);
 
-  const items = Array.from(selectedList, ([key, value]) => ({
-    key,
-    value,
-  }));
 
-  console.log(selectedList);
-  return (
-    <>
-      <ButtonGroup className='w-full'>
-        <Button
-          asChild
-          type='button'
-          disabled={loadingState}
-          className='w-full'
-        >
-          <SheetTrigger>
-            {loadingState ? (
-              <CustomLoading message={label} />
-            ) : (
-              <>
-                <Icon /> <span className='capitalize'>{label}</span>
-              </>
-            )}
-          </SheetTrigger>
-        </Button>
-        {selectedList.size > 0 && (
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button size='icon'>
-                <ChevronDown />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className='w-80'>
-              <Command className='rounded-lg border shadow-md md:min-w-[450px]'>
-                <CommandInput placeholder='Search in the selected list' />
-                <CommandList>
-                  <CommandEmpty>No results found.</CommandEmpty>
-                  <CommandGroup heading='Selected Regions'>
-                    {items.map((item) => (
-                      <CommandItem key={item.key}>
-                        {item.value.join(' / ')}
-                        <Button
-                          size='sm'
-                          variant='destructive'
-                          className='size-6 bg-destructive/10! '
-                          onClick={() => {
-                            manageDeleteList(item.key);
-                            showToast({
-                              type: 'success',
-                              message: 'Removed Successfully',
-                              description: `Removed ${item.value.join(
-                                ' / '
-                              )} from de Research Regions List`,
-                            });
-                          }}
-                        >
-                          <Trash2 className='text-destructive' />
-                        </Button>
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </CommandList>
-              </Command>
-            </PopoverContent>
-          </Popover>
-        )}
-      </ButtonGroup>
-    </>
-  );
-};

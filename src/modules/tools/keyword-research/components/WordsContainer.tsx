@@ -37,9 +37,9 @@ export const WordsContainer = ({ message, list, onDelete }: Props) => {
           <TooltipTrigger asChild type='button'>
             <Button
               size={'sm'}
-              variant={'ghost'}
+              variant={'secondary'}
               onClick={() => copyToClipBoardArray(list)}
-              className='size-6  absolute -top-18'
+              className='size-6  absolute top-0'
               type='button'
             >
               <Copy className='text-foreground/50' />

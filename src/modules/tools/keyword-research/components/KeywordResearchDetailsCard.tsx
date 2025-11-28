@@ -15,7 +15,7 @@ import { useEffect } from 'react';
 
 import { showToast } from '@/components/CustomToaster';
 import { useRegionStore } from '../context/NewRegionStore';
-import { CustomSheet, Triggerbutton } from '@/components/CustomSheet';
+import { CustomSheet } from '@/components/CustomSheet';
 import {
   CitiesSelector,
   CountrySelector,
@@ -23,6 +23,7 @@ import {
   StateSelector,
 } from './regions-selector';
 import { CustomTooltipContent } from '@/components/CustomTooltipContentArray';
+import { RegionsTrigguer } from './RegionsTrigguer';
 
 interface Props {
   control: Control<KeywordResearchFormInput>;
@@ -110,7 +111,7 @@ export const KeywordResearchDetailsCard = ({ control, errors }: Props) => {
             description='  You can find and add Search for regions like countries, states
                 or cities'
             trigger={
-              <Triggerbutton
+              <RegionsTrigguer
                 icon={Globe2}
                 label='Region'
                 loadingState={isLoadingRegions}
