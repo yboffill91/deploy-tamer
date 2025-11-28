@@ -8,10 +8,6 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
-  CommandShortcut,
-  Input,
-  Label,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -25,20 +21,9 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
+  Badge,
 } from './ui';
-import {
-  Calculator,
-  Calendar,
-  ChevronDown,
-  ChevronRight,
-  CreditCard,
-  Globe2,
-  LucideIcon,
-  Settings,
-  Smile,
-  Trash2,
-  User,
-} from 'lucide-react';
+import { ChevronDown, LucideIcon, Trash2 } from 'lucide-react';
 import { CustomLoading } from './CustomLoading';
 import { useRegionStore } from '@/modules/tools/keyword-research/context/NewRegionStore';
 import { showToast } from './CustomToaster';
