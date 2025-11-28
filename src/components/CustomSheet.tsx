@@ -1,6 +1,20 @@
 import { PropsWithChildren, ReactNode } from 'react';
 import {
   Button,
+  ButtonGroup,
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+  CommandShortcut,
+  Input,
+  Label,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   Sheet,
   SheetClose,
   SheetContent,
@@ -12,8 +26,22 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from './ui';
-import { LucideIcon } from 'lucide-react';
+import {
+  Calculator,
+  Calendar,
+  ChevronDown,
+  ChevronRight,
+  CreditCard,
+  Globe2,
+  LucideIcon,
+  Settings,
+  Smile,
+  Trash2,
+  User,
+} from 'lucide-react';
 import { CustomLoading } from './CustomLoading';
+import { useRegionStore } from '@/modules/tools/keyword-research/context/NewRegionStore';
+import { showToast } from './CustomToaster';
 
 interface SheetProps extends PropsWithChildren {
   title: string;
@@ -70,17 +98,76 @@ export const Triggerbutton = ({
   loadingState = false,
   icon: Icon,
 }: TriggerButtonProps) => {
+  const selectedList = useRegionStore((st) => st.finalValue);
+  const manageDeleteList = useRegionStore((st) => st.deleteEntryFinalValue);
+
+  const items = Array.from(selectedList, ([key, value]) => ({
+    key,
+    value,
+  }));
+
+  console.log(selectedList);
   return (
-    <Button asChild type='button' disabled={loadingState} className='w-full'>
-      <SheetTrigger>
-        {loadingState ? (
-          <CustomLoading message={label} />
-        ) : (
-          <>
-            <Icon /> <span className='capitalize'>{label}</span>
-          </>
+    <>
+      <ButtonGroup className='w-full'>
+        <Button
+          asChild
+          type='button'
+          disabled={loadingState}
+          className='w-full'
+        >
+          <SheetTrigger>
+            {loadingState ? (
+              <CustomLoading message={label} />
+            ) : (
+              <>
+                <Icon /> <span className='capitalize'>{label}</span>
+              </>
+            )}
+          </SheetTrigger>
+        </Button>
+        {selectedList.size > 0 && (
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button size='icon'>
+                <ChevronDown />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className='w-80'>
+              <Command className='rounded-lg border shadow-md md:min-w-[450px]'>
+                <CommandInput placeholder='Search in the selected list' />
+                <CommandList>
+                  <CommandEmpty>No results found.</CommandEmpty>
+                  <CommandGroup heading='Selected Regions'>
+                    {items.map((item) => (
+                      <CommandItem key={item.key}>
+                        {item.value.join(' / ')}
+                        <Button
+                          size='sm'
+                          variant='destructive'
+                          className='size-6 bg-destructive/10! '
+                          onClick={() => {
+                            manageDeleteList(item.key);
+                            showToast({
+                              type: 'success',
+                              message: 'Removed Successfully',
+                              description: `Removed ${item.value.join(
+                                ' / '
+                              )} from de Research Regions List`,
+                            });
+                          }}
+                        >
+                          <Trash2 className='text-destructive' />
+                        </Button>
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
         )}
-      </SheetTrigger>
-    </Button>
+      </ButtonGroup>
+    </>
   );
 };

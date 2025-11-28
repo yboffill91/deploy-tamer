@@ -1,6 +1,7 @@
 import { Button, Progress } from '@/components/ui';
 import { useRegionStore } from '../../context/NewRegionStore';
 import { ChevronRight } from 'lucide-react';
+import { showToast } from '@/components/CustomToaster';
 
 export const RegionStepController = () => {
   const Step = useRegionStore((st) => st.step);
@@ -15,6 +16,13 @@ export const RegionStepController = () => {
   const onClickHandler = () => {
     if (Step === 'Cities') {
       setFinalValue();
+      showToast({
+        type: 'success',
+        description: `Added to de research ${selectedCountry} / ${selectedState} ${
+          selectedCities.length + 0 && '/ ' + selectedCities.length + ' Cities'
+        }`,
+        message: 'Success',
+      });
       clearStates();
     } else {
       setPartialRoute(Step === 'Country' ? selectedCountry : selectedState);

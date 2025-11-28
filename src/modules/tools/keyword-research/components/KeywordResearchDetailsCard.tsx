@@ -22,6 +22,7 @@ import {
   RegionStepController,
   StateSelector,
 } from './regions-selector';
+import { CustomTooltipContent } from '@/components/CustomTooltipContentArray';
 
 interface Props {
   control: Control<KeywordResearchFormInput>;
@@ -34,9 +35,6 @@ export const KeywordResearchDetailsCard = ({ control, errors }: Props) => {
   const isError = useRegionStore((st) => st.error);
   const isLoadingRegions = useRegionStore((st) => st.isLoading);
   const Step = useRegionStore((st) => st.step);
-  const finalValue = useRegionStore((st) => st.finalValue);
-
-  console.log(finalValue);
 
   useEffect(() => {
     getCountries();
@@ -106,6 +104,7 @@ export const KeywordResearchDetailsCard = ({ control, errors }: Props) => {
               </div>
             )}
           />
+
           <CustomSheet
             title='Select Region'
             description='  You can find and add Search for regions like countries, states
@@ -117,10 +116,7 @@ export const KeywordResearchDetailsCard = ({ control, errors }: Props) => {
                 loadingState={isLoadingRegions}
               />
             }
-            tooltipContentElement={
-              // <CustomTooltipContent values={selectedCountries} />
-              <p>Under Construction</p>
-            }
+            tooltipContentElement={<CustomTooltipContent />}
           >
             <RegionStepController />
             {Step === 'Country' && <CountrySelector data={regions} />}

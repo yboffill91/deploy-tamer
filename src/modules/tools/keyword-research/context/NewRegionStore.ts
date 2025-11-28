@@ -42,6 +42,7 @@ interface RegionStore {
 
   finalValue: Map<number, string[]>;
   setFinalValue(): void;
+  deleteEntryFinalValue(entry: number): void;
 }
 
 export const useRegionStore = create<RegionStore>((set, get) => ({
@@ -171,15 +172,40 @@ export const useRegionStore = create<RegionStore>((set, get) => ({
 
       let index = newMap.size;
 
+      const existsInMap = (value: string[]) => {
+        const valueString = JSON.stringify(value);
+        for (const [, existingValue] of newMap) {
+          if (JSON.stringify(existingValue) === valueString) {
+            return true;
+          }
+        }
+        return false;
+      };
+
       if (selectedCities.length === 0) {
-        newMap.set(index, [...partialRoute.toReversed()]);
+        const value = [...partialRoute].toReversed();
+
+        if (!existsInMap(value)) {
+          newMap.set(index, value);
+        }
       } else {
         selectedCities.forEach((city) => {
-          newMap.set(index, [...partialRoute, city].toReversed());
-          index++;
+          const value = [...partialRoute, city].toReversed();
+
+          if (!existsInMap(value)) {
+            newMap.set(index, value);
+            index++;
+          }
         });
       }
 
+      return { finalValue: newMap };
+    }),
+
+  deleteEntryFinalValue: (key) =>
+    set((state) => {
+      const newMap = new Map(state.finalValue);
+      newMap.delete(key);
       return { finalValue: newMap };
     }),
 }));
