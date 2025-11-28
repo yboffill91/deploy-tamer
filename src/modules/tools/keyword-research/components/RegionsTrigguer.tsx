@@ -65,36 +65,6 @@ export const RegionsTrigguer = ({
               </Button>
             </PopoverTrigger>
             <PopoverContent className='w-80'>
-              {/* <Command className='rounded-lg border shadow-md md:min-w-[450px]'>
-                <CommandInput placeholder='Search in the selected list' />
-                <CommandList>
-                  <CommandEmpty>No results found.</CommandEmpty>
-                  <CommandGroup heading='Selected Regions'>
-                    {items.map((item) => (
-                      <CommandItem key={item.key}>
-                        {item.value.join(' / ')}
-                        <Button
-                          size='sm'
-                          variant='destructive'
-                          className='size-6 bg-destructive/10! '
-                          onClick={() => {
-                            manageDeleteList(item.key);
-                            showToast({
-                              type: 'success',
-                              message: 'Removed Successfully',
-                              description: `Removed ${item.value.join(
-                                ' / '
-                              )} from de Research Regions List`,
-                            });
-                          }}
-                        >
-                          <Trash2 className='text-destructive' />
-                        </Button>
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </CommandList>
-              </Command> */}
               <div className='max-h-96 h-full overflow-y-auto w-72'>
                 {items.map((item) => (
                   <div

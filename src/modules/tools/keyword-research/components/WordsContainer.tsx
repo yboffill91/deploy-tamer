@@ -7,7 +7,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui';
 import { cn } from '@/lib/utils';
-import { Copy, X, XCircle } from 'lucide-react';
+import { Copy, X } from 'lucide-react';
 
 interface Props {
   message: string;
