@@ -1,6 +1,6 @@
 'use client';
 
-import { useRegionStore } from '@/modules/tools/keyword-research/context/NewRegionStore';
+import { useRegionStore } from '@/modules/tools/keyword-research/context/RegionStore';
 
 export const CustomTooltipContent = () => {
   const finalValue = useRegionStore((st) => st.finalValue);

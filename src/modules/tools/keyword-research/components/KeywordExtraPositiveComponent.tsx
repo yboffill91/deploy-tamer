@@ -1,18 +1,29 @@
 import { CustomCard } from '@/components/CustomCard';
 import { CirclePlus } from 'lucide-react';
-import { KeyWordResearchComponents } from './KeywordResearchPositiveWords';
+import { KeywordResearchWordsComponent } from './KeywordResearchWordsComponent';
+import { useExtraPositiveStore } from '../context/WordsStoreFactory';
+import { GenerateWordsWithAiButton } from './GenerateWordsWithAiButton';
 
-interface Props {
-  onSetExtraPositive(words: string[]): void;
-}
+export const KeywordExtraPositive = () => {
+  const extraWords = useExtraPositiveStore((st) => st.words);
+  const addExtraWord = useExtraPositiveStore((st) => st.addWord);
+  const removeExtraWord = useExtraPositiveStore((st) => st.deleteWord);
+  const loading = useExtraPositiveStore((st) => st.isLoading);
 
-export const KeywordExtraPositive = ({ onSetExtraPositive }: Props) => {
   return (
     <CustomCard title='Extra Positive Keywords' icon={CirclePlus}>
-      <KeyWordResearchComponents
-        onSetWords={(words) => onSetExtraPositive(words)}
+      <KeywordResearchWordsComponent
         emptyMessage='No Extra Positive Words Added'
+        addHandler={(word) => addExtraWord(word)}
+        list={extraWords}
+        removeHandler={(word) => removeExtraWord(word)}
       />
+      <div className='w-full mt-3'>
+        <GenerateWordsWithAiButton
+          type='Extra Positive Words'
+          isLoading={loading}
+        />
+      </div>
     </CustomCard>
   );
 };

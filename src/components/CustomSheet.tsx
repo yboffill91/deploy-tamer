@@ -25,7 +25,7 @@ import {
 } from './ui';
 import { ChevronDown, LucideIcon, Trash2 } from 'lucide-react';
 import { CustomLoading } from './CustomLoading';
-import { useRegionStore } from '@/modules/tools/keyword-research/context/NewRegionStore';
+import { useRegionStore } from '@/modules/tools/keyword-research/context/RegionStore';
 import { showToast } from './CustomToaster';
 
 interface SheetProps extends PropsWithChildren {
@@ -71,7 +71,3 @@ export const CustomSheet = ({
     </Sheet>
   );
 };
-
-
-
-

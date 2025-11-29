@@ -29,7 +29,7 @@ import {
   Search,
 } from 'lucide-react';
 import { WordsContainer } from './WordsContainer';
-import { useRegionStore } from '../context/NewRegionStore';
+import { useRegionStore } from '../context/RegionStore';
 import { CustomSheet } from '@/components/CustomSheet';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';

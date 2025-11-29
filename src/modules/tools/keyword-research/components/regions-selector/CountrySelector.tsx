@@ -1,7 +1,7 @@
 'use client';
 import { CountriesEntity } from '@/core/entities';
 import { useMemo, useState } from 'react';
-import { useRegionStore } from '../../context/NewRegionStore';
+import { useRegionStore } from '../../context/RegionStore';
 import {
   InputGroup,
   InputGroupAddon,

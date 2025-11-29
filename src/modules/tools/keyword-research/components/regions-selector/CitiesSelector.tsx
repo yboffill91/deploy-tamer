@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRegionStore } from '../../context/NewRegionStore';
+import { useRegionStore } from '../../context/RegionStore';
 import { showToast } from '@/components/CustomToaster';
 import { CustomPageLoader } from '@/components/CustomPageLoader';
 import { CitiesEntity, StatesEntity } from '@/core/entities';

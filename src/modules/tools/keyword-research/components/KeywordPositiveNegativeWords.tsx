@@ -1,41 +1,51 @@
 import { CustomCard } from '@/components/CustomCard';
-import { Ban, Bot, CheckCircle } from 'lucide-react';
-import { KeyWordResearchComponents } from './KeywordResearchPositiveWords';
-import { Button } from '@/components/ui';
+import { Ban, CheckCircle } from 'lucide-react';
+import { KeywordResearchWordsComponent } from './KeywordResearchWordsComponent';
+import {
+  useNegativeStore,
+  usePositiveStore,
+} from '../context/WordsStoreFactory';
+import { GenerateWordsWithAiButton } from './GenerateWordsWithAiButton';
 
-interface Props {
-  onSetPositive(words: string[]): void;
-  onSetNegative(words: string[]): void;
-}
+export const KeywordPositiveNegativeWords = () => {
+  const positiveWords = usePositiveStore((st) => st.words);
+  const addPositiveWord = usePositiveStore((st) => st.addWord);
+  const removePositiveWord = usePositiveStore((st) => st.deleteWord);
+  const loadingPositiveWords = usePositiveStore((st) => st.isLoading);
 
-export const KeywordPositiveNegativeWords = ({
-  onSetPositive,
-  onSetNegative,
-}: Props) => {
+  const negativeWords = useNegativeStore((st) => st.words);
+  const addNegativeWord = useNegativeStore((st) => st.addWord);
+  const removeNegativeWord = useNegativeStore((st) => st.deleteWord);
+  const loadingNegativeWords = useNegativeStore((st) => st.isLoading);
+
   return (
     <div className='grid md:grid-cols-2 gap-4 w-full'>
       <CustomCard title='Positive Keywords' icon={CheckCircle}>
-        <KeyWordResearchComponents
-          onSetWords={(words) => onSetPositive(words)}
-          emptyMessage='No POsitive Words Added'
+        <KeywordResearchWordsComponent
+          emptyMessage='No Positive Words Added'
+          addHandler={(word) => addPositiveWord(word)}
+          list={positiveWords}
+          removeHandler={(word) => removePositiveWord(word)}
         />
         <div className='w-full mt-3'>
-          <Button disabled className='w-full' variant={'outline'} type='button'>
-            <Bot />
-            Generate Positive Words With AI
-          </Button>
+          <GenerateWordsWithAiButton
+            type='Positive Words'
+            isLoading={loadingPositiveWords}
+          />
         </div>
       </CustomCard>
       <CustomCard title='Negative Keywords' icon={Ban}>
-        <KeyWordResearchComponents
-          onSetWords={(words) => onSetNegative(words)}
+        <KeywordResearchWordsComponent
           emptyMessage='No Negative Words Added'
+          addHandler={(word) => addNegativeWord(word)}
+          list={negativeWords}
+          removeHandler={(word) => removeNegativeWord(word)}
         />
         <div className='w-full mt-3'>
-          <Button disabled className='w-full' variant={'outline'} type='button'>
-            <Bot />
-            Generate Negative Words With AI
-          </Button>
+          <GenerateWordsWithAiButton
+            type='Negative Words'
+            isLoading={loadingNegativeWords}
+          />
         </div>
       </CustomCard>
     </div>

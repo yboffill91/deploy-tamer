@@ -14,8 +14,13 @@ import { KeywordPositiveNegativeWords } from './components/KeywordPositiveNegati
 import { KeywordResearchCityComponent } from './components/KeywordResearchCityComponent';
 import { KeywordExtraPositive } from './components/KeywordExtraPositiveComponent';
 import { CustomCard } from '@/components/CustomCard';
-import { useRegionStore } from '@/modules/tools/keyword-research/context/NewRegionStore';
-import { useBrandStore } from './context/BrandsStore';
+import { useRegionStore } from '@/modules/tools/keyword-research/context/RegionStore';
+import {
+  useBrandStore,
+  useExtraPositiveStore,
+  useNegativeStore,
+  usePositiveStore,
+} from './context/WordsStoreFactory';
 
 export const KeywordResearchForm = () => {
   const {
@@ -50,12 +55,15 @@ export const KeywordResearchForm = () => {
 
   const finalValues = useRegionStore((st) => st.finalValue);
   const negativeCities = useRegionStore((st) => st.negativeCities);
+  const positiveWords = usePositiveStore((st) => st.words);
+  const negativeWords = useNegativeStore((st) => st.words);
+  const brands = useBrandStore((st) => st.words);
+  const extraPositiveWords = useExtraPositiveStore((st) => st.words);
 
   const selectedRegions = Array.from(finalValues, ([key, value]) => ({
     key,
     value,
   }));
-  const selectedBrands = useBrandStore((st) => st.brands);
 
   useEffect(() => {
     const regionValues = selectedRegions.map((region) =>
@@ -63,8 +71,20 @@ export const KeywordResearchForm = () => {
     );
     setValue('region', regionValues);
     setValue('city', negativeCities);
-    setValue('brand', selectedBrands);
-  }, [setValue, selectedRegions, negativeCities, selectedBrands]);
+    setValue('positiveKeywords', positiveWords);
+    setValue('negativeKeywords', negativeWords);
+    setValue('extraPositiveKeywords', extraPositiveWords);
+
+    setValue('brand', brands);
+  }, [
+    setValue,
+    selectedRegions,
+    negativeCities,
+    positiveWords,
+    negativeWords,
+    brands,
+    extraPositiveWords,
+  ]);
 
   return (
     <form
@@ -73,15 +93,10 @@ export const KeywordResearchForm = () => {
     >
       <KeywordResearchFormHeader />
       <KeywordResearchDetailsCard control={control} errors={errors} />
-      <KeywordPositiveNegativeWords
-        onSetNegative={(words) => setValue('negativeKeywords', words)}
-        onSetPositive={(words) => setValue('positiveKeywords', words)}
-      />
+      <KeywordPositiveNegativeWords />
 
+      <KeywordExtraPositive />
       <KeywordResearchCityComponent />
-      <KeywordExtraPositive
-        onSetExtraPositive={(value) => setValue('extraPositiveKeywords', value)}
-      />
 
       <CustomCard title='Search Intent' icon={Focus} variant='banner'>
         <div className='grid grid-cols-2  '>

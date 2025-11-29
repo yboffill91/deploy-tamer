@@ -1,5 +1,5 @@
 import { ChevronDown, LucideIcon, Trash2 } from 'lucide-react';
-import { useRegionStore } from '../context/NewRegionStore';
+import { useRegionStore } from '../context/RegionStore';
 import { CustomLoading } from '@/components/CustomLoading';
 import { showToast } from '@/components/CustomToaster';
 import {
@@ -36,6 +36,7 @@ export const RegionsTrigguer = ({
       <ButtonGroup className='w-full'>
         <Button
           asChild
+          variant='secondary'
           type='button'
           disabled={loadingState}
           className={cn(
@@ -55,8 +56,12 @@ export const RegionsTrigguer = ({
         {selectedList.size > 0 && (
           <Popover>
             <PopoverTrigger asChild>
-              <Button size='icon' className={'bg-primary/90 rounded-s-none'}>
-                <ChevronDown className={'opacity-40'} />
+              <Button
+                size='icon'
+                variant='secondary'
+                className={'opacity-90 rounded-s-none'}
+              >
+                <ChevronDown />
               </Button>
             </PopoverTrigger>
             <PopoverContent className='w-80'>
