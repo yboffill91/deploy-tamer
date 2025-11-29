@@ -41,6 +41,7 @@ const ManageAuthAndToken = async (user: UsersEntity) => {
   try {
     const userToken = await SESSION_REPOSITORY.sendEmailUuid(
       user.email!,
+      user.uid!,
       user.token!
     );
     if (userToken === 'User Not Found') {

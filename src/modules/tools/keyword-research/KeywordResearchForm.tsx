@@ -15,6 +15,7 @@ import { KeywordResearchCityComponent } from './components/KeywordResearchCityCo
 import { KeywordExtraPositive } from './components/KeywordExtraPositiveComponent';
 import { CustomCard } from '@/components/CustomCard';
 import { useRegionStore } from '@/modules/tools/keyword-research/context/NewRegionStore';
+import { useBrandStore } from './context/BrandsStore';
 
 export const KeywordResearchForm = () => {
   const {
@@ -54,6 +55,7 @@ export const KeywordResearchForm = () => {
     key,
     value,
   }));
+  const selectedBrands = useBrandStore((st) => st.brands);
 
   useEffect(() => {
     const regionValues = selectedRegions.map((region) =>
@@ -61,7 +63,8 @@ export const KeywordResearchForm = () => {
     );
     setValue('region', regionValues);
     setValue('city', negativeCities);
-  }, [setValue, selectedRegions, negativeCities]);
+    setValue('brand', selectedBrands);
+  }, [setValue, selectedRegions, negativeCities, selectedBrands]);
 
   return (
     <form
