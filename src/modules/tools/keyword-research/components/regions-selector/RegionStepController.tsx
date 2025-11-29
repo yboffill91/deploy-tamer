@@ -33,9 +33,17 @@ export const RegionStepController = () => {
         message: 'Success',
       });
       clearStates();
+    } else if (Step === 'State' && !selectedState) {
+      setFinalValue();
+      showToast({
+        type: 'success',
+        description: `Added to de research ${selectedCountry} 
+        `,
+        message: 'Success',
+      });
+      clearStates();
     } else {
       setPartialRoute(Step === 'Country' ? selectedCountry : selectedState);
-
       manegeNextStep();
     }
   };
@@ -44,13 +52,9 @@ export const RegionStepController = () => {
     <div className='flex flex-col items-center justify-center mb-2 bg-secondary rounded-md '>
       <div className='w-full '>
         <Button
-          disabled={
-            (Step === 'Country' && selectedCountry.length === 0) ||
-            (Step === 'State' && selectedState.length === 0)
-          }
+          disabled={Step === 'Country' && selectedCountry.length === 0}
           variant={
-            (Step === 'Country' && selectedCountry.length === 0) ||
-            (Step === 'State' && selectedState.length === 0)
+            Step === 'Country' && selectedCountry.length === 0
               ? 'ghost'
               : 'default'
           }
@@ -87,7 +91,13 @@ export const RegionStepController = () => {
                       </span>{' '}
                     </>
                   ) : (
-                    'Select a State'
+                    <>
+                      Use All Country{' '}
+                      <span className='font-black flex items-center justify-center gap-2 ml-2'>
+                        {' '}
+                        {selectedCountry}
+                      </span>{' '}
+                    </>
                   )}
                 </>
               ),

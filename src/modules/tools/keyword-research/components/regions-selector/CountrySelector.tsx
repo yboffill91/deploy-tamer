@@ -123,7 +123,8 @@ export const CountrySelector = ({ data }: { data: CountriesEntity[] }) => {
                 'cursor-pointer',
                 selectedCountry === el.name!
                   ? ' bg-green-500/20 text-accent-foreground'
-                  : ''
+                  : '',
+                el.name!.toLowerCase() === 'antarctica' && 'hidden'
               )}
               onClick={() => {
                 setSelectedCountry(el);
