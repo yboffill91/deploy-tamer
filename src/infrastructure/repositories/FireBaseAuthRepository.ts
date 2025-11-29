@@ -10,23 +10,28 @@ import {
   FacebookAuthProvider,
   sendPasswordResetEmail,
   confirmPasswordReset,
-
 } from 'firebase/auth';
 import { AuthError, IAuthRepository, UsersEntity } from '@/core';
 import { firebaseApp } from '../services/firebase';
 import { FirebaseUserMapper } from '../dto';
 
 export class FirebaseAuthRepository implements IAuthRepository {
-
   private readonly auth = getAuth(firebaseApp);
-
 
   async register(email: string, password: string): Promise<UsersEntity> {
     try {
-      const { user } = await createUserWithEmailAndPassword(this.auth, email, password);
+      const { user } = await createUserWithEmailAndPassword(
+        this.auth,
+        email,
+        password
+      );
       const responseDTO = FirebaseUserMapper.toDTO(user);
-      const returnedUser = Object.assign(new UsersEntity(), responseDTO)
-      return returnedUser
+      const token = await user.getIdToken();
+
+      const returnedUser = Object.assign(new UsersEntity(), responseDTO, {
+        token,
+      });
+      return returnedUser;
     } catch (error) {
       throw new AuthError(
         error instanceof Error ? error.message : 'Error registering user'
@@ -36,10 +41,17 @@ export class FirebaseAuthRepository implements IAuthRepository {
 
   async login(email: string, password: string): Promise<UsersEntity> {
     try {
-      const { user } = await signInWithEmailAndPassword(this.auth, email, password);
+      const { user } = await signInWithEmailAndPassword(
+        this.auth,
+        email,
+        password
+      );
       const responseDTO = FirebaseUserMapper.toDTO(user);
-      const returnedUser = Object.assign(new UsersEntity(), responseDTO)
-      return returnedUser
+      const token = await user.getIdToken();
+      const returnedUser = Object.assign(new UsersEntity(), responseDTO, {
+        token,
+      });
+      return returnedUser;
     } catch (error) {
       throw new AuthError(
         error instanceof Error ? error.message : 'Error logging in user'
@@ -57,7 +69,9 @@ export class FirebaseAuthRepository implements IAuthRepository {
     }
   }
 
-  async loginWithProvider(provider: 'google' | 'github' | 'facebook'): Promise<UsersEntity> {
+  async loginWithProvider(
+    provider: 'google' | 'github' | 'facebook'
+  ): Promise<UsersEntity> {
     let providerInstance;
 
     if (provider === 'google') {
@@ -77,8 +91,11 @@ export class FirebaseAuthRepository implements IAuthRepository {
       );
 
       const responseDTO = FirebaseUserMapper.toDTO(user);
-      const returnedUser = Object.assign(new UsersEntity(), responseDTO)
-      return returnedUser
+      const token = await user.getIdToken();
+      const returnedUser = Object.assign(new UsersEntity(), responseDTO, {
+        token,
+      });
+      return returnedUser;
     } catch (error) {
       throw new AuthError(
         error instanceof Error ? error.message : 'Error singing in user'
@@ -92,11 +109,7 @@ export class FirebaseAuthRepository implements IAuthRepository {
         handleCodeInApp: true,
       };
 
-      await sendPasswordResetEmail(
-        this.auth,
-        email,
-        actionCodeSettings
-      );
+      await sendPasswordResetEmail(this.auth, email, actionCodeSettings);
     } catch (error) {
       throw new AuthError(
         error instanceof Error ? error.message : 'Error reseting user password'
@@ -121,8 +134,8 @@ export class FirebaseAuthRepository implements IAuthRepository {
     const user = this.auth.currentUser;
     if (!user) throw new AuthError('User no authenticated');
     const responseDTO = FirebaseUserMapper.toDTO(user);
-    const returnedUser = Object.assign(new UsersEntity(), responseDTO)
-    return returnedUser
+    const returnedUser = Object.assign(new UsersEntity(), responseDTO);
+    return returnedUser;
   }
 
   async getUserToken(): Promise<string | null> {
@@ -130,5 +143,4 @@ export class FirebaseAuthRepository implements IAuthRepository {
     if (!user) return null;
     return await user.getIdToken();
   }
-
 }

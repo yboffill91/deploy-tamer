@@ -1,17 +1,20 @@
 import { Control, Controller, FieldErrors } from 'react-hook-form';
 import { CustomCard } from '@/components/CustomCard';
 import { CustomControllerInput } from '@/components/CustomControllerInput';
-import { Bell, Globe2, Languages, List } from 'lucide-react';
+import { Bell, Bot, Globe2, Languages, List, Plus, Tags } from 'lucide-react';
 import { KeywordResearchFormInput } from '../../utils/models';
 import {
+  Badge,
   Button,
+  ButtonGroup,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SheetTrigger,
 } from '@/components/ui';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { showToast } from '@/components/CustomToaster';
 import { useRegionStore } from '../context/NewRegionStore';
@@ -24,6 +27,10 @@ import {
 } from './regions-selector';
 import { CustomTooltipContent } from '@/components/CustomTooltipContentArray';
 import { RegionsTrigguer } from './RegionsTrigguer';
+import { useBrandStore } from '../context/BrandsStore';
+import { CustomWordsComponent } from './CustomWordsComponent';
+import { CreateSuggestDTO } from '@/core/dto';
+import { CustomLoading } from '@/components/CustomLoading';
 
 interface Props {
   control: Control<KeywordResearchFormInput>;
@@ -36,6 +43,7 @@ export const KeywordResearchDetailsCard = ({ control, errors }: Props) => {
   const isError = useRegionStore((st) => st.error);
   const isLoadingRegions = useRegionStore((st) => st.isLoading);
   const Step = useRegionStore((st) => st.step);
+  const Brands = useBrandStore((st) => st.brands);
 
   useEffect(() => {
     getCountries();
@@ -124,68 +132,111 @@ export const KeywordResearchDetailsCard = ({ control, errors }: Props) => {
             {Step === 'State' && <StateSelector />}
             {Step === 'Cities' && <CitiesSelector />}
           </CustomSheet>
+          <CustomSheet
+            title='Generate Brands'
+            description='Use our IA to generate Brands'
+            tooltipContentElement={
+              Brands.length === 0
+                ? 'No Brands Selected'
+                : Brands.map((brand, idx) => (
+                    <Badge key={brand + idx}>{brand}</Badge>
+                  ))
+            }
+            trigger={<BrandsTrigguer />}
+            showClose
+          >
+            <BrandsSelector />
+          </CustomSheet>
         </div>
       </div>
     </CustomCard>
   );
 };
 
-{
-  /* <Tooltip>
-            <TooltipTrigger type='button' asChild>
-              <Button
-                type='button'
-                onClick={() => setShowDialog(!showDialog)}
-                disabled={isBrandsLoading}
-              >
-                {isBrandsLoading ? (
-                  <CustomLoading message='Brands' />
-                ) : (
-                  <>
-                    <Tags /> Brands{' '}
-                    {selectedBrands.length > 0 && `(${selectedBrands.length})`}
-                  </>
-                )}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent className='flex items-center justify-center gap-2'>
-              {selectedBrands.length === 0 && 'No Brands Selected'}
-              {selectedBrands.length > 0 &&
-                selectedBrands.map((brand, index) => (
-                  <span key={brand.id}>
-                    {brand.name!} {index !== selectedBrands.length - 1 && '|'}
-                  </span>
-                ))}
-            </TooltipContent>
-          </Tooltip> */
-}
-{
-  /* <Sheet>
-            <SheetTrigger asChild type='button'>
-              <Button type='button' disabled={isBrandsLoading}>
-                {isBrandsLoading ? (
-                  <CustomLoading message='Brands' />
-                ) : (
-                  <>
-                    <Tags /> Brands{' '}
-                    {selectedBrands.length > 0 && `(${selectedBrands.length})`}
-                  </>
-                )}
-              </Button>
-            </SheetTrigger>
-            <SheetContent className='p-4'>
-              <SheetTitle>Select Brand</SheetTitle>
-              <SheetDescription>
-                Choose one of the brands to add to the research
-              </SheetDescription>
-              <CustomBrandsSelector
-                brands={brands}
-                preSelectedBrands={selectedBrands}
-                onFinishSelection={(newSelectedBrands) => {
-                  setSelectedBrands(newSelectedBrands);
-                  onSelectedBrands(newSelectedBrands);
-                }}
-              />
-            </SheetContent>
-          </Sheet> */
-}
+const BrandsTrigguer = () => {
+  return (
+    <>
+      <ButtonGroup className='w-full'>
+        <Button type='button' className='w-full' asChild>
+          <SheetTrigger>
+            <Tags />
+            Brands
+          </SheetTrigger>
+        </Button>
+      </ButtonGroup>
+    </>
+  );
+};
+
+const BrandsSelector = () => {
+  const [keywords, setKeywords] = useState<string[]>([]);
+  const [keyword, setKeyword] = useState('');
+  const [duplicatedWordsError, setDuplicatedWordsError] = useState<
+    string | null
+  >(null);
+
+  const Generate = useBrandStore((st) => st.getSuggestedBrands);
+  const SuggestedBrands = useBrandStore((st) => st.brands);
+  const isLoading = useBrandStore((st) => st.isLoading);
+  const isError = useBrandStore((st) => st.isError);
+  const setBrands = useBrandStore((st) => st.setBrands);
+  const deleteBrand = useBrandStore((st) => st.deleteBrand);
+  useEffect(() => {
+    if (duplicatedWordsError) {
+      showToast({
+        type: 'error',
+        description: duplicatedWordsError,
+        message: 'Error',
+      });
+    }
+  }, [duplicatedWordsError]);
+
+  const onKeywordAdd = (keyword: string) => {
+    setBrands(keyword);
+    setKeyword('');
+  };
+
+  const handleDelete = (keyword: string) => {
+    deleteBrand(keyword);
+  };
+
+  const onHandleGenerate = () => {
+    const payLoad = new CreateSuggestDTO(SuggestedBrands);
+    console.log(payLoad);
+    Generate(payLoad);
+  };
+
+  useEffect(() => {
+    if (isError) {
+      showToast({
+        type: 'error',
+        description: isError,
+        message: 'Error',
+      });
+    }
+  }, [isError]);
+
+  return (
+    <div className='min-h-[70dvh] h-full  flex flex-col gap-2'>
+      <CustomWordsComponent
+        emptyMessageWorldsContainer='No Keywords Added to Run the Suggest'
+        inputHandleOnClick={() => onKeywordAdd(keyword)}
+        onDeleteWorldsContainer={(keyword) => handleDelete(keyword)}
+        inputOnChangeValue={(e) => setKeyword(e.target.value)}
+        inputValue={keyword}
+        list={SuggestedBrands}
+      />
+      <div className='flex items-center'>
+        <Button
+          type='button'
+          disabled={SuggestedBrands.length === 0}
+          onClick={() => onHandleGenerate()}
+          className='flex-1'
+        >
+          <Bot /> {isLoading && <CustomLoading message='thinking' />}
+          {!isLoading && `Generate`}
+        </Button>
+      </div>
+    </div>
+  );
+};

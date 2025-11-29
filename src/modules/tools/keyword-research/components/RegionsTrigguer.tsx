@@ -1,4 +1,4 @@
-import { ChevronDown, Command, LucideIcon, Trash2 } from 'lucide-react';
+import { ChevronDown, LucideIcon, Trash2 } from 'lucide-react';
 import { useRegionStore } from '../context/NewRegionStore';
 import { CustomLoading } from '@/components/CustomLoading';
 import { showToast } from '@/components/CustomToaster';
@@ -8,11 +8,6 @@ import {
   PopoverTrigger,
   PopoverContent,
   Popover,
-  CommandInput,
-  CommandList,
-  CommandEmpty,
-  CommandGroup,
-  CommandItem,
   ButtonGroup,
 } from '@/components/ui';
 

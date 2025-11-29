@@ -1,21 +1,21 @@
-"use client";
-import { showToast } from "@/components/CustomToaster";
-import { AuthError, UsersEntity } from "@/core";
-import { FirebaseUserMapper } from "@/infrastructure/dto";
+'use client';
+import { showToast } from '@/components/CustomToaster';
+import { AuthError, UsersEntity } from '@/core';
+import { FirebaseUserMapper } from '@/infrastructure/dto';
 import {
   FirebaseAuthRepository,
   SessionRepository,
   SessionVerificationRepository,
-} from "@/infrastructure/repositories";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { useRouter } from "next/navigation";
+} from '@/infrastructure/repositories';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
 import {
   ReactNode,
   createContext,
   useContext,
   useEffect,
   useState,
-} from "react";
+} from 'react';
 
 interface Props {
   children: ReactNode;
@@ -28,7 +28,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string) => Promise<void>;
   loginWithProvider: (
-    provider: "google" | "github" | "facebook"
+    provider: 'google' | 'github' | 'facebook'
   ) => Promise<void>;
 
   logout: () => Promise<void>;
@@ -37,38 +37,39 @@ interface AuthContextType {
 const ManageAuthAndToken = async (user: UsersEntity) => {
   const SESSION_REPOSITORY = new SessionVerificationRepository();
   const COOKIES_MANAGER_REPOSITORY = new SessionRepository();
+  console.log(user);
   try {
     const userToken = await SESSION_REPOSITORY.sendEmailUuid(
       user.email!,
-      user.uid!
+      user.token!
     );
-    if (userToken === "User Not Found") {
+    if (userToken === 'User Not Found') {
       showToast({
-        type: "error",
-        message: "Auth Error",
+        type: 'error',
+        message: 'Auth Error',
         description:
-          "You cannot authenticate at this time. Please contact our support team.Error: User Disabled",
+          'You cannot authenticate at this time. Please contact our support team.Error: User Disabled',
       });
       return `/sign_in`;
     } else if (!userToken) {
       throw new AuthError(
-        "This error should not have occurred. Please try again, and if the problem persists, contact the Support team."
+        'This error should not have occurred. Please try again, and if the problem persists, contact the Support team.'
       );
     } else {
       const { access_token, usuario } = JSON.parse(userToken);
       SESSION_REPOSITORY.getCode(access_token!);
       await COOKIES_MANAGER_REPOSITORY.createSessionCookie(
         access_token!,
-        "TS_SESSION"
+        'TS_SESSION'
       );
-      await COOKIES_MANAGER_REPOSITORY.createSessionCookie(usuario!, "TS_USER");
+      await COOKIES_MANAGER_REPOSITORY.createSessionCookie(usuario!, 'TS_USER');
       showToast({
-        type: "success",
-        message: "Success",
+        type: 'success',
+        message: 'Success',
         description:
-          "We have sent an email to your address with the OTP code for the second authentication factor.",
+          'We have sent an email to your address with the OTP code for the second authentication factor.',
       });
-      return "/verify_account";
+      return '/verify_account';
     }
   } catch (error) {
     throw new Error(`Error getting user ${user.email} auth: ${error}`);
@@ -106,8 +107,8 @@ export const AuthProvider = ({ children }: Props) => {
   useEffect(() => {
     if (error) {
       showToast({
-        type: "error",
-        message: "Error",
+        type: 'error',
+        message: 'Error',
         description: error,
       });
     }
@@ -124,14 +125,14 @@ export const AuthProvider = ({ children }: Props) => {
         setError(
           error instanceof Error
             ? error.message
-            : "Error managing user auth next step"
+            : 'Error managing user auth next step'
         );
       } finally {
         setLoading(false);
       }
     } catch (error) {
       setError(
-        error instanceof Error ? error.message : "Error logging in User"
+        error instanceof Error ? error.message : 'Error logging in User'
       );
     } finally {
       setLoading(false);
@@ -148,21 +149,21 @@ export const AuthProvider = ({ children }: Props) => {
         setError(
           error instanceof Error
             ? error.message
-            : "Error managing user auth next step"
+            : 'Error managing user auth next step'
         );
       } finally {
         setLoading(false);
       }
     } catch (error) {
       setError(
-        error instanceof Error ? error.message : "Error logging in User"
+        error instanceof Error ? error.message : 'Error logging in User'
       );
     } finally {
       setLoading(false);
     }
   };
   const loginWithProvider = async (
-    provider: "google" | "github" | "facebook"
+    provider: 'google' | 'github' | 'facebook'
   ) => {
     try {
       setLoading(true);
@@ -174,14 +175,14 @@ export const AuthProvider = ({ children }: Props) => {
         setError(
           error instanceof Error
             ? error.message
-            : "Error managing user auth next step"
+            : 'Error managing user auth next step'
         );
       } finally {
         setLoading(false);
       }
     } catch (error) {
       setError(
-        error instanceof Error ? error.message : "Error logging in User"
+        error instanceof Error ? error.message : 'Error logging in User'
       );
     } finally {
       setLoading(false);
@@ -192,9 +193,9 @@ export const AuthProvider = ({ children }: Props) => {
       setLoading(true);
       await AuthRepository.logout();
       showToast({
-        message: "Success",
-        type: "success",
-        description: "Session successfully closed",
+        message: 'Success',
+        type: 'success',
+        description: 'Session successfully closed',
       });
 
       CookiesRepository.deleteSessionCookie();
@@ -231,6 +232,6 @@ export const AuthProvider = ({ children }: Props) => {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context)
-    throw new AuthError("useAuth must be used within an AuthProvider");
+    throw new AuthError('useAuth must be used within an AuthProvider');
   return context;
 };

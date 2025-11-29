@@ -1,5 +1,5 @@
-import { UsersPositionsDTO } from "../dto";
-import { TeamsEntity } from "./TeamsEntity";
+import { UsersPositionsDTO } from '../dto';
+import { TeamsEntity } from './TeamsEntity';
 
 export class UsersEntity {
   readonly id?: number;
@@ -15,4 +15,5 @@ export class UsersEntity {
   readonly team?: TeamsEntity;
   readonly photoURL?: string;
   readonly displayName?: string;
+  readonly token?: string;
 }

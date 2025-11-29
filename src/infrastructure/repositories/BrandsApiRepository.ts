@@ -1,76 +1,32 @@
-import { IRepository } from "@/core";
-import { fetchHelper } from "@/lib/fetch-helper";
-import { brandsApi } from "@/lib/apis";
-import { BrandsEntity } from "@/core/entities";
-import { BrandDTO, CreateBrandDTO } from "@/core/dto";
+import { CreateSuggestDTO, SuggestedWordsDTO } from '@/core/dto';
+import { SuggestedWordsEntity } from '@/core/entities';
+import { Endpoint, IGeneratedRepository, Languages } from '@/core/interfaces';
+import { suggestWordsApi } from '@/lib/apis';
+import { fetchHelper } from '@/lib/fetch-helper';
 
-export class BrandApiRepository implements IRepository {
-  async findAll(): Promise<BrandsEntity[]> {
+export class SuggestWordsApi implements IGeneratedRepository {
+  async getSugguest(
+    keyword: CreateSuggestDTO,
+    language: Languages,
+    endpoint: Endpoint
+  ): Promise<SuggestedWordsEntity | string[]> {
     try {
-      const response = await fetchHelper<BrandDTO[]>(brandsApi);
-      if (!response) {
-        throw new Error("Failed to fetch brands");
-      }
-      return response.map((brand) => Object.assign(new BrandsEntity(), brand));
-    } catch (error) {
-      throw error;
-    }
-  }
+      const Response = await fetchHelper<SuggestedWordsDTO | []>(
+        suggestWordsApi + endpoint + `/${language}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            accept: '*/*',
+          },
+          body: JSON.stringify(keyword),
+        }
+      );
+      console.log('Response :', Response);
 
-  async findById(id: string): Promise<BrandsEntity> {
-    try {
-      const response = await fetchHelper<BrandDTO>(`${brandsApi}/${id}`);
-      if (!response) {
-        throw new Error("Failed to fetch brand");
-      }
-      return Object.assign(new BrandsEntity(), response);
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async create(data: CreateBrandDTO): Promise<void> {
-    try {
-      const response = await fetchHelper<BrandDTO>(brandsApi, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-      if (!response) {
-        throw new Error("Failed to create brand");
-      }
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async update(id: string, data: CreateBrandDTO): Promise<void> {
-    try {
-      const response = await fetchHelper<BrandDTO>(`${brandsApi}/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-      if (!response) {
-        throw new Error("Failed to update brand");
-      }
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async delete(id: string): Promise<void> {
-    try {
-      const response = await fetchHelper<BrandDTO>(`${brandsApi}/${id}`, {
-        method: "DELETE",
-      });
-      if (!response) {
-        throw new Error("Failed to delete brand");
-      }
+      if (!Response) throw new Error('Error genereting sugguested words');
+      if (Array.isArray(Response)) return Response;
+      return Object.assign(new SuggestedWordsEntity(), Response);
     } catch (error) {
       throw error;
     }

@@ -6,10 +6,9 @@ import {
   InputGroupInput,
 } from '@/components/ui';
 import { Plus } from 'lucide-react';
-import { Control, Controller, FieldValues, Path } from 'react-hook-form';
 import { WordsContainer } from './WordsContainer';
 
-interface Props<TForm extends FieldValues> {
+interface Props {
   inputOnChangeValue: (event: React.ChangeEvent<HTMLInputElement>) => void;
   inputValue: string;
   inputHandleOnClick: () => void;
@@ -18,14 +17,14 @@ interface Props<TForm extends FieldValues> {
   list: string[];
 }
 
-export const CustomWordsComponent = <TForm extends FieldValues>({
+export const CustomWordsComponent = ({
   emptyMessageWorldsContainer,
   inputHandleOnClick,
   inputOnChangeValue,
   inputValue,
   onDeleteWorldsContainer,
   list,
-}: Props<TForm>) => {
+}: Props) => {
   return (
     <div className='grid grid-cols-1 gap-2'>
       <InputGroup>
