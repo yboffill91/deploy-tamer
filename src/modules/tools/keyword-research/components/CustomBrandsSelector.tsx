@@ -1,6 +1,5 @@
 'use client';
 import {
-  Badge,
   Button,
   Empty,
   EmptyMedia,
