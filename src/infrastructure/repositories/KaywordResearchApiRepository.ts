@@ -1,14 +1,14 @@
 import { IRepository } from "@/core";
-import { KeywordResearchDTO, ResponseKeywordResearchDTO } from "@/core/dto";
+import { KeywordResearchDTO, CreateKeywordResearchDTO } from "@/core/dto";
 import { KeywordResearchEntity } from "@/core/entities";
 import { keywordResearchApi } from "@/lib/apis";
 import { fetchHelper } from "@/lib/fetch-helper";
 
 export class KeywordResearchApiRepository implements IRepository {
-  private mapToDto(data: ResponseKeywordResearchDTO): KeywordResearchDTO {
+  private mapToDto(data: KeywordResearchDTO): Partial<KeywordResearchDTO> {
     return {
-      title: data.title!,
-      searchVolume: data.searchVolume!,
+      title: data.title,
+      searchVolume: data.searchVolume,
       positiveKeywords: data.positiveKeywords,
       extraPositiveKeywords: data.extraPositiveKeywords,
       negativeKeywords: data.negativeKeywords,
@@ -20,12 +20,22 @@ export class KeywordResearchApiRepository implements IRepository {
       brand: data.brand,
       type: data.type,
       companyId: data.companyId,
+      result: data.result,
+      tag: data.tag,
+      status: data.status,
+      requesterId: data.requesterId,
+      price: data.price,
+      tasks: data.tasks,
+      createdAt: data.createdAt,
+      deletedAt: data.deletedAt,
+      organicResult: data.organicResult,
+      organicResultFull: data.organicResultFull,
     };
   }
 
   async findAll(): Promise<KeywordResearchEntity[]> {
     try {
-      const response = await fetchHelper<ResponseKeywordResearchDTO[]>(
+      const response = await fetchHelper<CreateKeywordResearchDTO[]>(
         keywordResearchApi
       );
       if (!response) {
@@ -44,15 +54,14 @@ export class KeywordResearchApiRepository implements IRepository {
 
   async findById(id: string): Promise<KeywordResearchEntity> {
     try {
-      const response = await fetchHelper<ResponseKeywordResearchDTO[]>(
+      const response = await fetchHelper<CreateKeywordResearchDTO>(
         keywordResearchApi + `/${id}`
       );
       if (!response) {
         throw new Error("Error getting KeyWord Research's");
       }
-      const sanitizedData: KeywordResearchDTO[] = response.map((res) =>
-        this.mapToDto(res)
-      );
+      const sanitizedData: CreateKeywordResearchDTO = this.mapToDto(response);
+
       return Object.assign(new KeywordResearchEntity(), sanitizedData);
     } catch (error) {
       throw error;
@@ -102,7 +111,7 @@ export class KeywordResearchApiRepository implements IRepository {
   }
   async findByTag(tag: string): Promise<KeywordResearchEntity> {
     try {
-      const response = await fetchHelper<ResponseKeywordResearchDTO[]>(
+      const response = await fetchHelper<CreateKeywordResearchDTO[]>(
         keywordResearchApi + `/${tag}`
       );
       if (!response) {
