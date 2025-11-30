@@ -1,6 +1,6 @@
 enum KeywordResearchType {
-  INFORMATIONAL = "INFORMATIONAL",
-  TRANSACTIONAL = "TRANSACTIONAL",
+  INFORMATIONAL = 'INFORMATIONAL',
+  TRANSACTIONAL = 'TRANSACTIONAL',
 }
 
 export class KeywordResearchEntity {
@@ -24,7 +24,7 @@ export class KeywordResearchEntity {
   readonly status?: string;
   readonly requesterId?: number | null;
   readonly price?: number;
-  readonly result?: Result | null;
+  readonly result?: Result[] | null;
   readonly tasks?: string[];
   readonly createdAt?: Date;
   readonly deletedAt?: Date | null;
@@ -43,7 +43,7 @@ interface Result {
     year: number;
     month: number;
     search_volume: number;
-  }[];
+  };
 }
 
 interface OrganicResultFull {

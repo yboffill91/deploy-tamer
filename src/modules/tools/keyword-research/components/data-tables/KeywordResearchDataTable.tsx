@@ -1,0 +1,141 @@
+'use client';
+import { GenericDataTable } from '@/components/GenericDataTable';
+import { CompanyEntity, KeywordResearchEntity } from '@/core/entities';
+import { Badge } from '@/components/ui';
+import { cn } from '@/lib/utils';
+
+interface Props {
+  data: KeywordResearchEntity[];
+  onEdit?: (brand: KeywordResearchEntity) => void;
+  onDelete?: (brand: KeywordResearchEntity) => void;
+  onAdd?: () => void;
+  //   companies: CompanyEntity[];
+}
+
+export function KeywordResearchDataTable({
+  data,
+  onEdit,
+  onDelete,
+  onAdd,
+}: //   companies,
+Props) {
+  function formatearNumeroTabla(num, decimales = 1) {
+    if (isNaN(num)) {
+      return 'N/A';
+    }
+
+    const absNum = Math.abs(num);
+
+    if (absNum < 10000) {
+      return num.toLocaleString('es-ES', { maximumFractionDigits: 0 });
+    }
+
+    const sufijos = [
+      { valor: 1e3, simbolo: 'K' }, // Kilo
+      { valor: 1e6, simbolo: 'M' }, // Mega
+      { valor: 1e9, simbolo: 'B' }, // Billón (Giga)
+      { valor: 1e12, simbolo: 'T' }, // Trillón (Tera)
+    ];
+
+    const sufijo = sufijos.reverse().find((s) => absNum >= s.valor);
+
+    if (sufijo) {
+      const numFormateado = (num / sufijo.valor).toFixed(decimales);
+
+      return numFormateado.replace('.', ',') + sufijo.simbolo;
+    }
+
+    return num.toPrecision(3);
+  }
+
+  const renderType = (value: string) => {
+    return (
+      <Badge
+        className={cn(
+          'text-xs',
+          value === 'INFORMATIONAL'
+            ? 'bg-orange-500/10 dark:text-orange-500 text-orange-700'
+            : 'bg-purple-500/10 dark:text-purple-500 text-purple-700'
+        )}
+      >
+        {value}
+      </Badge>
+    );
+  };
+
+  const renderStatus = (value: string) => {
+    return (
+      <Badge
+        className={cn(
+          'text-xs',
+          value === 'CREATED' &&
+            'bg-green-500/10 dark:text-green-500 text-green-700',
+          value === 'IN_PROGRESS' &&
+            'bg-blue-500/10 text-blue-700 dark:text-blue-500'
+        )}
+      >
+        {value.replace('_', ' ')}
+      </Badge>
+    );
+  };
+
+  type WordsValue = string[] | Record<string | number, unknown>;
+
+  const renderWords = (value: WordsValue) => {
+    let words: string[] = [];
+
+    if (Array.isArray(value)) {
+      words = value;
+    } else if (typeof value === 'object' && value !== null) {
+      const firstValue = Object.values(value)[0];
+
+      if (Array.isArray(firstValue)) {
+        words = firstValue;
+      }
+    }
+
+    if (!words.length)
+      return <span className='italic opacity-50 '>No Words Provided</span>;
+
+    return (
+      <div className='flex flex-wrap gap-2'>
+        {words.map((word, index) => (
+          <Badge key={index} variant='secondary'>
+            {word}
+          </Badge>
+        ))}
+      </div>
+    );
+  };
+
+  return (
+    <GenericDataTable<KeywordResearchEntity>
+      data={data}
+      onEdit={onEdit}
+      onDelete={onDelete}
+      onAdd={onAdd ? () => onAdd() : undefined}
+      showAddButton={!!onAdd}
+      customRenderers={{
+        searchVolume: (value) => formatearNumeroTabla(value),
+        type: (value) => renderType(value),
+        status: (value) => renderStatus(value),
+        positiveKeywords: (value) => renderWords(value),
+        extraPositiveKeywords: (value) => renderWords(value),
+        negativeKeywords: (value) => renderWords(value),
+      }}
+      excludeColumns={[
+        'generatedPositiveKeywords',
+        'generatedNegativeKeywords',
+        'allCitys',
+        'companyId',
+        'tag',
+        'generatedPositiveKeyWordFullInfo',
+        'requesterId',
+        'result',
+        'tasks',
+        'organicResult',
+        'organicResultFull',
+      ]}
+    />
+  );
+}

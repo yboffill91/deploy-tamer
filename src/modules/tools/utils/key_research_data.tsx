@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { ReactNode } from 'react';
 import { KeywordResearchForm } from '../keyword-research/KeywordResearchForm';
+import { AllRequestTable } from '../keyword-research/components/all-request/AllRequestTable';
 
 interface TabsLists {
   tab_name: string;
@@ -29,7 +30,7 @@ export const TabsLists: TabsLists[] = [
     tab_value: 'all_request',
     icon: List,
     name: 'all_request',
-    component: <h1>All Request</h1>,
+    component: <AllRequestTable />,
   },
   // {
   //   tab_name: 'Brands List',
