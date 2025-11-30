@@ -68,9 +68,11 @@ export const AllRequestTable = () => {
         <CustomPageLoader message='Getting All Keyword Research Data' />
       )}
       {!isLoading && rawData && (
-        <Card className=''>
+        <Card className='container'>
           <CardContent>
-            <KeywordResearchDataTable data={rawData} />
+                      <KeywordResearchDataTable data={rawData}
+              
+                      />
           </CardContent>
         </Card>
       )}

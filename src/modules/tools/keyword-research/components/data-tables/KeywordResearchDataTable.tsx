@@ -3,6 +3,7 @@ import { GenericDataTable } from '@/components/GenericDataTable';
 import { CompanyEntity, KeywordResearchEntity } from '@/core/entities';
 import { Badge } from '@/components/ui';
 import { cn } from '@/lib/utils';
+import { symbol } from 'zod';
 
 interface Props {
   data: KeywordResearchEntity[];
@@ -30,19 +31,19 @@ Props) {
       return num.toLocaleString('es-ES', { maximumFractionDigits: 0 });
     }
 
-    const sufijos = [
-      { valor: 1e3, simbolo: 'K' }, // Kilo
-      { valor: 1e6, simbolo: 'M' }, // Mega
-      { valor: 1e9, simbolo: 'B' }, // Billón (Giga)
-      { valor: 1e12, simbolo: 'T' }, // Trillón (Tera)
+    const sufixes = [
+      { value: 1e3, symbol: 'K' }, // Kilo
+      { value: 1e6, symbol: 'M' }, // Mega
+      { value: 1e9, symbol: 'B' }, // Billón (Giga)
+      { value: 1e12, symbol: 'T' }, // Trillón (Tera)
     ];
 
-    const sufijo = sufijos.reverse().find((s) => absNum >= s.valor);
+    const sufix = sufixes.reverse().find((s) => absNum >= s.value);
 
-    if (sufijo) {
-      const numFormateado = (num / sufijo.valor).toFixed(decimales);
+    if (sufix) {
+      const formatedNum = (num / sufix.value).toFixed(decimales);
 
-      return numFormateado.replace('.', ',') + sufijo.simbolo;
+      return formatedNum.replace('.', ',') + sufix.symbol;
     }
 
     return num.toPrecision(3);
@@ -81,7 +82,10 @@ Props) {
 
   type WordsValue = string[] | Record<string | number, unknown>;
 
-  const renderWords = (value: WordsValue) => {
+  const renderWords = (
+    value: WordsValue,
+    type: 'Words' | 'Brands' | 'Cities' = 'Words'
+  ) => {
     let words: string[] = [];
 
     if (Array.isArray(value)) {
@@ -95,19 +99,19 @@ Props) {
     }
 
     if (!words.length)
-      return <span className='italic opacity-50 '>No Words Provided</span>;
+      return <span className='italic opacity-50 '>No {type} Provided</span>;
 
     return (
       <div className='flex flex-wrap gap-2'>
-        {words.map((word, index) => (
+        {words.slice(0, 4).map((word, index) => (
           <Badge key={index} variant='secondary'>
-            {word}
+            {index >= 4 ? `... ${words.length - index} more` : word}
           </Badge>
         ))}
       </div>
     );
-  };
-
+    };
+   
   return (
     <GenericDataTable<KeywordResearchEntity>
       data={data}
@@ -122,6 +126,8 @@ Props) {
         positiveKeywords: (value) => renderWords(value),
         extraPositiveKeywords: (value) => renderWords(value),
         negativeKeywords: (value) => renderWords(value),
+        brand: (value) => renderWords(value, 'Brands'),
+        city: (value) => renderWords(value, 'Cities'),
       }}
       excludeColumns={[
         'generatedPositiveKeywords',
