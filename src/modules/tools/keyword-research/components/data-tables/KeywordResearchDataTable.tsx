@@ -1,19 +1,19 @@
-'use client';
-import { GenericDataTable } from '@/components/GenericDataTable';
-import { KeywordResearchEntity } from '@/core/entities';
+"use client";
+import { GenericDataTable } from "@/components/GenericDataTable";
+import { KeywordResearchEntity } from "@/core/entities";
 import {
   Badge,
   Empty,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from '@/components/ui';
-import { cn } from '@/lib/utils';
-import { useResearchStore } from '../../all-request/context/ResearchStore';
-import { useState } from 'react';
-import { ControlledDialog } from '@/components/ControlledDialog';
-import KeywordDataTable from '../../all-request/KeywordDataTable';
-import { AlertTriangle } from 'lucide-react';
+} from "@/components/ui";
+import { cn } from "@/lib/utils";
+import { useResearchStore } from "../../all-request/context/ResearchStore";
+import { useState } from "react";
+import { ControlledDialog } from "@/components/ControlledDialog";
+import KeywordDataTable from "../../../../../../Components_To_Review/KeywordDataTable";
+import { AlertTriangle } from "lucide-react";
 
 interface Props {
   data: KeywordResearchEntity[];
@@ -36,20 +36,20 @@ export function KeywordResearchDataTable({
 
   function formatearNumeroTabla(num, decimales = 1) {
     if (isNaN(num)) {
-      return 'N/A';
+      return "N/A";
     }
 
     const absNum = Math.abs(num);
 
     if (absNum < 10000) {
-      return num.toLocaleString('es-ES', { maximumFractionDigits: 0 });
+      return num.toLocaleString("es-ES", { maximumFractionDigits: 0 });
     }
 
     const sufixes = [
-      { value: 1e3, symbol: 'K' }, // Kilo
-      { value: 1e6, symbol: 'M' }, // Mega
-      { value: 1e9, symbol: 'B' }, // Billón (Giga)
-      { value: 1e12, symbol: 'T' }, // Trillón (Tera)
+      { value: 1e3, symbol: "K" }, // Kilo
+      { value: 1e6, symbol: "M" }, // Mega
+      { value: 1e9, symbol: "B" }, // Billón (Giga)
+      { value: 1e12, symbol: "T" }, // Trillón (Tera)
     ];
 
     const sufix = sufixes.reverse().find((s) => absNum >= s.value);
@@ -57,7 +57,7 @@ export function KeywordResearchDataTable({
     if (sufix) {
       const formatedNum = (num / sufix.value).toFixed(decimales);
 
-      return formatedNum.replace('.', ',') + sufix.symbol;
+      return formatedNum.replace(".", ",") + sufix.symbol;
     }
 
     return num.toPrecision(3);
@@ -67,10 +67,10 @@ export function KeywordResearchDataTable({
     return (
       <Badge
         className={cn(
-          'text-xs',
-          value === 'INFORMATIONAL'
-            ? 'bg-orange-500/10 dark:text-orange-500 text-orange-700'
-            : 'bg-purple-500/10 dark:text-purple-500 text-purple-700'
+          "text-xs",
+          value === "INFORMATIONAL"
+            ? "bg-orange-500/10 dark:text-orange-500 text-orange-700"
+            : "bg-purple-500/10 dark:text-purple-500 text-purple-700"
         )}
       >
         {value}
@@ -82,14 +82,14 @@ export function KeywordResearchDataTable({
     return (
       <Badge
         className={cn(
-          'text-xs',
-          value === 'CREATED' &&
-            'bg-green-500/10 dark:text-green-500 text-green-700',
-          value === 'IN_PROGRESS' &&
-            'bg-blue-500/10 text-blue-700 dark:text-blue-500'
+          "text-xs",
+          value === "CREATED" &&
+            "bg-green-500/10 dark:text-green-500 text-green-700",
+          value === "IN_PROGRESS" &&
+            "bg-blue-500/10 text-blue-700 dark:text-blue-500"
         )}
       >
-        {value.replace('_', ' ')}
+        {value.replace("_", " ")}
       </Badge>
     );
   };
@@ -98,13 +98,13 @@ export function KeywordResearchDataTable({
 
   const renderWords = (
     value: WordsValue,
-    type: 'Words' | 'Brands' | 'Cities' = 'Words'
+    type: "Words" | "Brands" | "Cities" = "Words"
   ) => {
     let words: string[] = [];
 
     if (Array.isArray(value)) {
       words = value;
-    } else if (typeof value === 'object' && value !== null) {
+    } else if (typeof value === "object" && value !== null) {
       const firstValue = Object.values(value)[0];
 
       if (Array.isArray(firstValue)) {
@@ -113,12 +113,12 @@ export function KeywordResearchDataTable({
     }
 
     if (!words.length)
-      return <span className='italic opacity-50 '>No {type} Provided</span>;
+      return <span className="italic opacity-50 ">No {type} Provided</span>;
 
     return (
-      <div className='flex flex-wrap gap-2'>
+      <div className="flex flex-wrap gap-2">
         {words.slice(0, 4).map((word, index) => (
-          <Badge key={index} variant='secondary'>
+          <Badge key={index} variant="secondary">
             {index >= 4 ? `... ${words.length - index} more` : word}
           </Badge>
         ))}
@@ -141,8 +141,8 @@ export function KeywordResearchDataTable({
           positiveKeywords: (value) => renderWords(value),
           extraPositiveKeywords: (value) => renderWords(value),
           negativeKeywords: (value) => renderWords(value),
-          brand: (value) => renderWords(value, 'Brands'),
-          city: (value) => renderWords(value, 'Cities'),
+          brand: (value) => renderWords(value, "Brands"),
+          city: (value) => renderWords(value, "Cities"),
         }}
         onShow={(item) => {
           setSelectedResearch(item);
@@ -155,17 +155,17 @@ export function KeywordResearchDataTable({
           }
         }}
         excludeColumns={[
-          'generatedPositiveKeywords',
-          'generatedNegativeKeywords',
-          'allCitys',
-          'companyId',
-          'tag',
-          'generatedPositiveKeyWordFullInfo',
-          'requesterId',
-          'result',
-          'tasks',
-          'organicResult',
-          'organicResultFull',
+          "generatedPositiveKeywords",
+          "generatedNegativeKeywords",
+          "allCitys",
+          "companyId",
+          "tag",
+          "generatedPositiveKeyWordFullInfo",
+          "requesterId",
+          "result",
+          "tasks",
+          "organicResult",
+          "organicResultFull",
         ]}
       />
       {selectedResearch && (
@@ -180,7 +180,7 @@ export function KeywordResearchDataTable({
           <>
             {!selectedResearch.result && (
               <Empty>
-                <EmptyMedia variant='icon'>
+                <EmptyMedia variant="icon">
                   <AlertTriangle />
                 </EmptyMedia>
                 <EmptyHeader>
@@ -194,8 +194,8 @@ export function KeywordResearchDataTable({
 
       {selectedResearch && showTable && (
         <div>
-          {' '}
-          <KeywordDataTable keywordData={selectedResearch} />{' '}
+          {" "}
+          <KeywordDataTable keywordData={selectedResearch} />{" "}
         </div>
       )}
     </>

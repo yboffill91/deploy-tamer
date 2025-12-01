@@ -1,7 +1,8 @@
 import { List, LucideIcon, Search } from 'lucide-react';
 import { ReactNode } from 'react';
 import { KeywordResearchForm } from '../keyword-research/KeywordResearchForm';
-import { AllRequestTable } from '../keyword-research/all-request/AllRequestTable';
+import { AllRequestTable } from '../../../../Components_To_Review/AllRequestTable';
+import { KeywordsResearchDataTable } from '../keyword-research/all-request/KeywordsResearchDataTable';
 
 interface TabsLists {
   tab_name: string;
@@ -23,7 +24,7 @@ export const TabsLists: TabsLists[] = [
     tab_value: 'all_request',
     icon: List,
     name: 'all_request',
-    component: <AllRequestTable />,
+    component: <KeywordsResearchDataTable />,
   },
   // {
   //   tab_name: 'Brands List',

@@ -1,5 +1,5 @@
-@import 'tailwindcss';
-@import 'tw-animate-css';
+@import "tailwindcss";
+@import "tw-animate-css";
 
 /* Theme preset styles: these override CSS variables based on the selected data-theme-preset */
 /* @import '../styles/presets/brutalist.css';
@@ -7,7 +7,6 @@
 @import '../styles/presets/tangerine.css'; */
 
 @custom-variant dark (&:is(.dark *));
-
 :root {
   --background: oklch(0.99 0 0);
   --foreground: oklch(0 0 0);
@@ -178,36 +177,37 @@
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
 }
+
 @layer utilities {
-  [data-theme-preset]:not([data-theme-preset='default']) .shadow-2xs {
+  [data-theme-preset]:not([data-theme-preset="default"]) .shadow-2xs {
     box-shadow: var(--shadow-2xs);
   }
 
-  [data-theme-preset]:not([data-theme-preset='default']) .shadow-xs {
+  [data-theme-preset]:not([data-theme-preset="default"]) .shadow-xs {
     box-shadow: var(--shadow-xs);
   }
 
-  [data-theme-preset]:not([data-theme-preset='default']) .shadow-sm {
+  [data-theme-preset]:not([data-theme-preset="default"]) .shadow-sm {
     box-shadow: var(--shadow-sm);
   }
 
-  [data-theme-preset]:not([data-theme-preset='default']) .shadow {
+  [data-theme-preset]:not([data-theme-preset="default"]) .shadow {
     box-shadow: var(--shadow);
   }
 
-  [data-theme-preset]:not([data-theme-preset='default']) .shadow-md {
+  [data-theme-preset]:not([data-theme-preset="default"]) .shadow-md {
     box-shadow: var(--shadow-md);
   }
 
-  [data-theme-preset]:not([data-theme-preset='default']) .shadow-lg {
+  [data-theme-preset]:not([data-theme-preset="default"]) .shadow-lg {
     box-shadow: var(--shadow-lg);
   }
 
-  [data-theme-preset]:not([data-theme-preset='default']) .shadow-xl {
+  [data-theme-preset]:not([data-theme-preset="default"]) .shadow-xl {
     box-shadow: var(--shadow-xl);
   }
 
-  [data-theme-preset]:not([data-theme-preset='default']) .shadow-2xl {
+  [data-theme-preset]:not([data-theme-preset="default"]) .shadow-2xl {
     box-shadow: var(--shadow-2xl);
   }
 }
@@ -238,51 +238,48 @@
 /* Custom Toast */
 
 .my-toast {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    padding: 12px 14px;
-    border-radius: 12px;
-    box-shadow: 0 8px 22px rgba(12, 12, 12, 0.12);
-    font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto;
-    background: #131213;
-    color: #ffffff;
-    border-bottom: 3px solid transparent;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 12px;
+  box-shadow: 0 8px 22px rgba(12, 12, 12, 0.12);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto;
+  background: #131213;
+  color: #ffffff;
+  border-bottom: 3px solid transparent;
 }
 
-
-
 .my-toast--success {
-    border-bottom-color: #599700;
+  border-bottom-color: #599700;
 }
 
 .my-toast--error {
-    border-bottom-color: #971700;
+  border-bottom-color: #971700;
 }
 
 .my-toast .toast-icon svg {
-    width: 20px;
-    height: 20px;
-    border-radius: 10px !important;
+  width: 20px;
+  height: 20px;
+  border-radius: 10px !important;
 }
 
 .my-toast--success .toast-icon svg {
-    color: #599700;
-    background-color: #323332 !important;
+  color: #599700;
+  background-color: #323332 !important;
 }
 
 .my-toast--error .toast-icon svg {
-    color: #971700;
-    background-color: #2c1f1f !important;
+  color: #971700;
+  background-color: #2c1f1f !important;
 }
 
 .my-toast .toast-title {
-    font-weight: 600;
-    font-size: 18px;
+  font-weight: 600;
+  font-size: 18px;
 }
 .my-toast .toast-desc {
-    font-size: 14px;
-    opacity: 0.9;
-    margin-top: 6px;
-
+  font-size: 14px;
+  opacity: 0.9;
+  margin-top: 6px;
 }
