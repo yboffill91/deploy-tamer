@@ -4,7 +4,9 @@ import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   getPaginationRowModel,
+  getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
 
@@ -28,6 +30,10 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
   Select,
   SelectContent,
   SelectItem,
@@ -35,39 +41,54 @@ import {
   SelectValue,
 } from '../ui';
 import {
+  ChevronDown,
   ChevronFirst,
   ChevronLast,
   ChevronLeft,
   ChevronRight,
+  ChevronUp,
+  FilterX,
+  Plus,
+  Search,
   SlidersHorizontal,
 } from 'lucide-react';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  onAdd?(): void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  onAdd,
 }: DataTableProps<TData, TValue>) {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
   });
   const [columnVisibility, setColumnVisibility] = useState({});
+  const [sortColumn, setSortColumn] = useState([]);
+  const [filtering, setFiltering] = useState('');
 
   const table = useReactTable({
     data,
     columns,
+    state: {
+      pagination,
+      columnVisibility,
+      sorting: sortColumn,
+      globalFilter: filtering,
+    },
     getCoreRowModel: getCoreRowModel(),
     onPaginationChange: setPagination,
     getPaginationRowModel: getPaginationRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
-    state: {
-      pagination,
-      columnVisibility,
-    },
+    getSortedRowModel: getSortedRowModel(),
+    onSortingChange: setSortColumn,
+    getFilteredRowModel: getFilteredRowModel(),
+    onGlobalFilterChange: setFiltering,
   });
 
   const totalRows = table.getFilteredRowModel().rows.length;
@@ -75,8 +96,25 @@ export function DataTable<TData, TValue>({
   return (
     <Card className='overflow-hidden rounded-md border'>
       <CardHeader>
-        <div className='w-full flex items-center justify-between'>
+        <div className='w-full flex md:items-center items-end gap-2 justify-between md:flex-row flex-col-reverse'>
           <div className='flex items-center gap-2'>
+            <InputGroup>
+              <InputGroupInput
+                placeholder='Filter Data'
+                onChange={(e) => setFiltering(e.target.value)}
+              />
+              <InputGroupAddon>
+                <Search />
+              </InputGroupAddon>
+              <InputGroupButton
+                onClick={() => setFiltering('')}
+                disabled={filtering.length === 0}
+                className={filtering.length === 0 && 'hidden'}
+              >
+                <FilterX />
+              </InputGroupButton>
+            </InputGroup>
+
             <span className='text-sm text-muted-foreground'>Rows:</span>
 
             <Select
@@ -105,7 +143,7 @@ export function DataTable<TData, TValue>({
               </SelectContent>
             </Select>
           </div>
-          <div>
+          <div className='flex items-center gap-2'>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant='outline' size='sm' className='ml-auto'>
@@ -132,6 +170,12 @@ export function DataTable<TData, TValue>({
                   ))}
               </DropdownMenuContent>
             </DropdownMenu>
+            {onAdd && (
+              <Button onClick={onAdd}>
+                <Plus />
+                Add
+              </Button>
+            )}
           </div>
         </div>
       </CardHeader>
@@ -140,18 +184,29 @@ export function DataTable<TData, TValue>({
           <TableHeader className='bg-accent text-accent-foreground'>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
+                {headerGroup.headers.map((header) => (
+                  <TableHead
+                    key={header.id}
+                    className='cursor-pointer '
+                    onClick={header.column.getToggleSortingHandler()}
+                  >
+                    <Button className='w-full justify-start' variant='ghost'>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
                             header.getContext()
                           )}
-                    </TableHead>
-                  );
-                })}
+                      {header.column.getIsSorted() === 'asc' && (
+                        <ChevronUp className='size-4' />
+                      )}
+
+                      {header.column.getIsSorted() === 'desc' && (
+                        <ChevronDown className='size-4' />
+                      )}
+                    </Button>
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>

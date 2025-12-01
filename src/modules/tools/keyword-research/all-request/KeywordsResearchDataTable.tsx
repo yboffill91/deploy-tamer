@@ -110,7 +110,11 @@ export const KeywordsResearchDataTable = () => {
         <CustomPageLoader message='Getting Keywords Research' />
       )}
       {keywordsResearch && keywordsResearch.length > 0 && !isLoading && (
-        <DataTable data={keywordsResearch} columns={columns} />
+        <DataTable
+          data={keywordsResearch}
+          columns={columns}
+          onAdd={() => console.log('Add')}
+        />
       )}
     </>
   );
