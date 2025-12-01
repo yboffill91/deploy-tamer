@@ -3,7 +3,6 @@
 import { CustomEmpty } from '@/components/CustomEmpty';
 import { CustomPageLoader } from '@/components/CustomPageLoader';
 import { showToast } from '@/components/CustomToaster';
-import { GenericDataTable } from '@/components/GenericDataTable';
 import { Card, CardContent } from '@/components/ui';
 import { CompanyEntity, KeywordResearchEntity } from '@/core/entities';
 import {
@@ -13,7 +12,7 @@ import {
 import { CommonHeader } from '@/modules/users/admin';
 import { AlertTriangle, List } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { KeywordResearchDataTable } from '../data-tables/KeywordResearchDataTable';
+import { KeywordResearchDataTable } from '../components/data-tables/KeywordResearchDataTable';
 
 export const AllRequestTable = () => {
   const [rawData, setRawData] = useState<KeywordResearchEntity[]>();
@@ -70,9 +69,7 @@ export const AllRequestTable = () => {
       {!isLoading && rawData && (
         <Card className='container'>
           <CardContent>
-                      <KeywordResearchDataTable data={rawData}
-              
-                      />
+            <KeywordResearchDataTable data={rawData} />
           </CardContent>
         </Card>
       )}

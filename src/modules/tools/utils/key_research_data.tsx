@@ -1,14 +1,7 @@
-import {
-  AlertTriangle,
-  Building2,
-  List,
-  LucideIcon,
-  MapPin,
-  Search,
-} from 'lucide-react';
+import { List, LucideIcon, Search } from 'lucide-react';
 import { ReactNode } from 'react';
 import { KeywordResearchForm } from '../keyword-research/KeywordResearchForm';
-import { AllRequestTable } from '../keyword-research/components/all-request/AllRequestTable';
+import { AllRequestTable } from '../keyword-research/all-request/AllRequestTable';
 
 interface TabsLists {
   tab_name: string;

@@ -7,10 +7,7 @@ import {
   ArrowUpDown,
   Edit,
   Trash2,
-  ChevronsUpDown,
-  Check,
   Plus,
-  AlertCircle,
   ChevronLeft,
   ChevronRight,
   FilterX,
@@ -40,22 +37,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import {
-  Badge,
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
@@ -71,6 +54,7 @@ import {
 
 interface GenericDataTableProps<TData extends Record<string, any>> {
   data: TData[];
+  onShow?: (item: TData) => void;
   onEdit?: (item: TData) => void;
   onDelete?: (item: TData) => void;
   onAdd?: (searchValue: string) => void;
@@ -87,6 +71,7 @@ export function GenericDataTable<TData extends Record<string, any>>({
   onEdit,
   onDelete,
   onAdd,
+  onShow,
   showAddButton = true,
   excludeColumns = [],
   customRenderers = {},
@@ -104,7 +89,6 @@ export function GenericDataTable<TData extends Record<string, any>>({
   }, [columns]);
 
   const [globalFilter, setGlobalFilter] = React.useState('');
-  const [open, setOpen] = React.useState(false);
   const [sortColumn, setSortColumn] = React.useState<string | null>(null);
   const [sortDirection, setSortDirection] = React.useState<'asc' | 'desc'>(
     'asc'
@@ -272,104 +256,6 @@ export function GenericDataTable<TData extends Record<string, any>>({
   return (
     <div className='w-full space-y-4 relative'>
       <div className='flex flex-col-reverse sm:flex-row gap-2'>
-        {/* {data.length > 10 && (
-          <Popover open={open} onOpenChange={setOpen}>
-            <div className='flex items-center gap-2'>
-              <PopoverTrigger asChild>
-                <div className='flex items-center gap-2'>
-                  <div className='w-full  flex justify-start gap-2 '>
-                    <Button
-                      variant='outline'
-                      role='combobox'
-                      aria-expanded={open}
-                      className='justify-between bg-transparent w-[250px]'
-                    >
-                      {globalFilter ? (
-                        <span className='line-clamp-1'>{globalFilter}</span>
-                      ) : (
-                        `Search by ${formatColumnHeader(filterColumn)}...`
-                      )}
-                      <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
-                    </Button>
-                  </div>
-                </div>
-              </PopoverTrigger>
-              <Button
-                variant={'ghost'}
-                size={'icon'}
-                onClick={() => setGlobalFilter('')}
-                disabled={globalFilter.length === 0}
-              >
-                <FilterX />
-              </Button>
-            </div>
-            <PopoverContent className='w-[250px]'>
-              <Command>
-                <CommandInput
-                  placeholder={`Search by ${formatColumnHeader(
-                    filterColumn
-                  )}...`}
-                  value={globalFilter}
-                  onValueChange={(value) => {
-                    setGlobalFilter(value);
-                    setCurrentPage(0);
-                  }}
-                />
-                <CommandList>
-                  <CommandEmpty>
-                    <Badge variant={'destructive'}>
-                      <AlertCircle className='size-4' /> No results for{' '}
-                      {globalFilter}
-                    </Badge>
-                  </CommandEmpty>
-                  <CommandGroup>
-                    {filteredData.slice(0, 50).map((item, index) => (
-                      <CommandItem
-                        key={item.id || index}
-                        value={getItemDisplayText(item)}
-                        onSelect={() => {
-                          setGlobalFilter(getItemDisplayText(item));
-                          setOpen(false);
-                        }}
-                      >
-                        <Check
-                          className={cn(
-                            'mr-2 h-4 w-4',
-                            globalFilter === getItemDisplayText(item)
-                              ? 'opacity-100'
-                              : 'opacity-0'
-                          )}
-                        />
-                        {getItemDisplayText(item)}
-                      </CommandItem>
-                    ))}
-                    {filteredData.length > 50 && (
-                      <div className='px-2 py-1.5 text-xs text-muted-foreground'>
-                        Showing first 50 results. Type to refine search.
-                      </div>
-                    )}
-                  </CommandGroup>
-                  <div className='border-t flex w-full items-center justify-center'>
-                    {showAddButton && onAdd && globalFilter && (
-                      <Button
-                        size='sm'
-                        onClick={() => {
-                          onAdd(globalFilter);
-                          setOpen(false);
-                        }}
-                        className='w-justify-start gap-2 w-1/2'
-                      >
-                        Add
-                        <Plus className='h-4 w-4' />
-                      </Button>
-                    )}
-                  </div>
-                </CommandList>
-              </Command>
-            </PopoverContent>
-          </Popover>
-        )} */}
-
         <InputGroup className='w-sm'>
           <InputGroupInput
             placeholder={`Search by ${formatColumnHeader(filterColumn)}...`}
@@ -430,7 +316,6 @@ export function GenericDataTable<TData extends Record<string, any>>({
             <Button
               onClick={() => {
                 onAdd(globalFilter);
-                setOpen(false);
               }}
             >
               Add
@@ -470,16 +355,30 @@ export function GenericDataTable<TData extends Record<string, any>>({
                   ))}
                   <TableCell className='text-right'>
                     <div className='flex gap-1 items-center justify-end'>
-                      <Button
-                        variant='ghost'
-                        size={'icon'}
-                        onClick={() => {
-                          setSelectedItem(item);
-                          setViewOpen(true);
-                        }}
-                      >
-                        <Eye className='h-4 w-4' />
-                      </Button>
+                      {!onShow && (
+                        <Button
+                          variant='ghost'
+                          size={'icon'}
+                          onClick={() => {
+                            setSelectedItem(item);
+                            setViewOpen(true);
+                          }}
+                        >
+                          <Eye className='h-4 w-4' />
+                        </Button>
+                      )}
+
+                      {onShow && (
+                        <Button
+                          variant='ghost'
+                          size={'icon'}
+                          onClick={() => {
+                            onShow(item);
+                          }}
+                        >
+                          <Eye className='h-4 w-4' />
+                        </Button>
+                      )}
 
                       {onEdit && (
                         <Button
@@ -624,3 +523,103 @@ const getDateFormated = (value: string) => {
   const fdate = new Date(value);
   return <p>{fdate.toDateString().toString()}</p>;
 };
+
+{
+  /* {data.length > 10 && (
+          <Popover open={open} onOpenChange={setOpen}>
+            <div className='flex items-center gap-2'>
+              <PopoverTrigger asChild>
+                <div className='flex items-center gap-2'>
+                  <div className='w-full  flex justify-start gap-2 '>
+                    <Button
+                      variant='outline'
+                      role='combobox'
+                      aria-expanded={open}
+                      className='justify-between bg-transparent w-[250px]'
+                    >
+                      {globalFilter ? (
+                        <span className='line-clamp-1'>{globalFilter}</span>
+                      ) : (
+                        `Search by ${formatColumnHeader(filterColumn)}...`
+                      )}
+                      <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                    </Button>
+                  </div>
+                </div>
+              </PopoverTrigger>
+              <Button
+                variant={'ghost'}
+                size={'icon'}
+                onClick={() => setGlobalFilter('')}
+                disabled={globalFilter.length === 0}
+              >
+                <FilterX />
+              </Button>
+            </div>
+            <PopoverContent className='w-[250px]'>
+              <Command>
+                <CommandInput
+                  placeholder={`Search by ${formatColumnHeader(
+                    filterColumn
+                  )}...`}
+                  value={globalFilter}
+                  onValueChange={(value) => {
+                    setGlobalFilter(value);
+                    setCurrentPage(0);
+                  }}
+                />
+                <CommandList>
+                  <CommandEmpty>
+                    <Badge variant={'destructive'}>
+                      <AlertCircle className='size-4' /> No results for{' '}
+                      {globalFilter}
+                    </Badge>
+                  </CommandEmpty>
+                  <CommandGroup>
+                    {filteredData.slice(0, 50).map((item, index) => (
+                      <CommandItem
+                        key={item.id || index}
+                        value={getItemDisplayText(item)}
+                        onSelect={() => {
+                          setGlobalFilter(getItemDisplayText(item));
+                          setOpen(false);
+                        }}
+                      >
+                        <Check
+                          className={cn(
+                            'mr-2 h-4 w-4',
+                            globalFilter === getItemDisplayText(item)
+                              ? 'opacity-100'
+                              : 'opacity-0'
+                          )}
+                        />
+                        {getItemDisplayText(item)}
+                      </CommandItem>
+                    ))}
+                    {filteredData.length > 50 && (
+                      <div className='px-2 py-1.5 text-xs text-muted-foreground'>
+                        Showing first 50 results. Type to refine search.
+                      </div>
+                    )}
+                  </CommandGroup>
+                  <div className='border-t flex w-full items-center justify-center'>
+                    {showAddButton && onAdd && globalFilter && (
+                      <Button
+                        size='sm'
+                        onClick={() => {
+                          onAdd(globalFilter);
+                          setOpen(false);
+                        }}
+                        className='w-justify-start gap-2 w-1/2'
+                      >
+                        Add
+                        <Plus className='h-4 w-4' />
+                      </Button>
+                    )}
+                  </div>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+        )} */
+}

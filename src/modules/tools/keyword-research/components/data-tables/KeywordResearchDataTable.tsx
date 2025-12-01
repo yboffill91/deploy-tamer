@@ -1,9 +1,17 @@
 'use client';
 import { GenericDataTable } from '@/components/GenericDataTable';
-import { CompanyEntity, KeywordResearchEntity } from '@/core/entities';
+import { KeywordResearchEntity } from '@/core/entities';
 import { Badge } from '@/components/ui';
 import { cn } from '@/lib/utils';
-import { symbol } from 'zod';
+import { useResearchStore } from '../../all-request/context/ResearchStore';
+import { useMemo, useState } from 'react';
+import { ControlledDialog } from '@/components/ControlledDialog';
+import { StatsOverview } from '../../all-request/StatsOverlay';
+import { TrendChart } from '../../all-request/TrendChart';
+import { ComparisonChart } from '../../all-request/ComparisonChart';
+import { CompetitionFilter } from '../../all-request/ComparisonFilter';
+import { KeywordCard } from '../../all-request/KeywordCard';
+import { useRouter } from 'next/navigation';
 
 interface Props {
   data: KeywordResearchEntity[];
@@ -18,8 +26,11 @@ export function KeywordResearchDataTable({
   onEdit,
   onDelete,
   onAdd,
-}: //   companies,
-Props) {
+}: Props) {
+  const setSelectedResearch = useResearchStore((st) => st.setSelectedResearch);
+  const selectedResearch = useResearchStore((st) => st.selectedResearch);
+  const [isOpen, setIsOpen] = useState(false);
+
   function formatearNumeroTabla(num, decimales = 1) {
     if (isNaN(num)) {
       return 'N/A';
@@ -110,38 +121,58 @@ Props) {
         ))}
       </div>
     );
-    };
-   
+  };
+
+  const router = useRouter();
+
   return (
-    <GenericDataTable<KeywordResearchEntity>
-      data={data}
-      onEdit={onEdit}
-      onDelete={onDelete}
-      onAdd={onAdd ? () => onAdd() : undefined}
-      showAddButton={!!onAdd}
-      customRenderers={{
-        searchVolume: (value) => formatearNumeroTabla(value),
-        type: (value) => renderType(value),
-        status: (value) => renderStatus(value),
-        positiveKeywords: (value) => renderWords(value),
-        extraPositiveKeywords: (value) => renderWords(value),
-        negativeKeywords: (value) => renderWords(value),
-        brand: (value) => renderWords(value, 'Brands'),
-        city: (value) => renderWords(value, 'Cities'),
-      }}
-      excludeColumns={[
-        'generatedPositiveKeywords',
-        'generatedNegativeKeywords',
-        'allCitys',
-        'companyId',
-        'tag',
-        'generatedPositiveKeyWordFullInfo',
-        'requesterId',
-        'result',
-        'tasks',
-        'organicResult',
-        'organicResultFull',
-      ]}
-    />
+    <>
+      <GenericDataTable<KeywordResearchEntity>
+        data={data}
+        onEdit={onEdit}
+        onDelete={onDelete}
+        onAdd={onAdd ? () => onAdd() : undefined}
+        showAddButton={!!onAdd}
+        customRenderers={{
+          searchVolume: (value) => formatearNumeroTabla(value),
+          type: (value) => renderType(value),
+          status: (value) => renderStatus(value),
+          positiveKeywords: (value) => renderWords(value),
+          extraPositiveKeywords: (value) => renderWords(value),
+          negativeKeywords: (value) => renderWords(value),
+          brand: (value) => renderWords(value, 'Brands'),
+          city: (value) => renderWords(value, 'Cities'),
+        }}
+        onShow={(item) => {
+          setSelectedResearch(item);
+          router.push('/tools/seo/keyword-research/show-research');
+        }}
+        excludeColumns={[
+          'generatedPositiveKeywords',
+          'generatedNegativeKeywords',
+          'allCitys',
+          'companyId',
+          'tag',
+          'generatedPositiveKeyWordFullInfo',
+          'requesterId',
+          'result',
+          'tasks',
+          'organicResult',
+          'organicResultFull',
+        ]}
+      />
+      {selectedResearch && (
+        <ControlledDialog
+          title={`SEO Keyword Analysis - ${selectedResearch.title!}`}
+          open={isOpen}
+          onOpenChange={setIsOpen}
+          description={`${selectedResearch.type} • ${
+            selectedResearch.region
+          } • ${selectedResearch.requestLanguage.toUpperCase()}`}
+        >
+          <></>
+        </ControlledDialog>
+      )}
+    </>
   );
 }

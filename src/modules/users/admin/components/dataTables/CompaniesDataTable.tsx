@@ -1,8 +1,9 @@
-"use client";
-import { GenericDataTable } from "@/components/GenericDataTable";
-import { Badge, Button } from "@/components/ui";
-import { CompanyEntity, UsersEntity } from "@/core/entities";
-import { cn } from "@/lib/utils";
+'use client';
+import { GenericDataTable } from '@/components/GenericDataTable';
+import { Badge, Button } from '@/components/ui';
+import { CompanyEntity, UsersEntity } from '@/core/entities';
+import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 
 interface CompaniesDataTableProps {
   data: CompanyEntity[];
@@ -28,21 +29,21 @@ export function CompaniesDataTable({
     return (
       <Badge
         className={cn(
-          "text-xs",
-          status === "POTENTIAL_CLIENT"
-            ? "bg-orange-500/10 dark:text-orange-500 text-orange-700"
-            : "bg-purple-500/10 dark:text-purple-500 text-purple-700"
+          'text-xs',
+          status === 'POTENTIAL_CLIENT'
+            ? 'bg-orange-500/10 dark:text-orange-500 text-orange-700'
+            : 'bg-purple-500/10 dark:text-purple-500 text-purple-700'
         )}
       >
-        {status.replace("_", " ")}
+        {status.replace('_', ' ')}
       </Badge>
     );
   };
 
   const renderUrl = (url: string) => {
     return (
-      <Button asChild variant={"link"}>
-        <a href={"https://" + url} target="_blank" rel="noopener noreferrer">
+      <Button asChild variant={'link'}>
+        <a href={'https://' + url} target='_blank' rel='noopener noreferrer'>
           {url}
         </a>
       </Button>
@@ -61,7 +62,7 @@ export function CompaniesDataTable({
         status: (value) => renderStatus(value),
         website: (value) => renderUrl(value),
       }}
-      excludeColumns={["notes"]}
+      excludeColumns={['notes']}
     />
   );
 }
