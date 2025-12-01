@@ -69,7 +69,7 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 20,
   });
   const [columnVisibility, setColumnVisibility] = useState({});
   const [sortColumn, setSortColumn] = useState([]);
@@ -140,8 +140,8 @@ export function DataTable<TData, TValue>({
                   }
                 }}
               >
-                <SelectTrigger className='w-[90px] h-9'>
-                  <SelectValue />
+                <SelectTrigger className='w-[90px] h-9' size='sm'>
+                  <SelectValue defaultValue={pagination.pageSize} />
                 </SelectTrigger>
 
                 <SelectContent>
