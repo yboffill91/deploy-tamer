@@ -1,17 +1,19 @@
 'use client';
 import { GenericDataTable } from '@/components/GenericDataTable';
 import { KeywordResearchEntity } from '@/core/entities';
-import { Badge } from '@/components/ui';
+import {
+  Badge,
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui';
 import { cn } from '@/lib/utils';
 import { useResearchStore } from '../../all-request/context/ResearchStore';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { ControlledDialog } from '@/components/ControlledDialog';
-import { StatsOverview } from '../../all-request/StatsOverlay';
-import { TrendChart } from '../../all-request/TrendChart';
-import { ComparisonChart } from '../../all-request/ComparisonChart';
-import { CompetitionFilter } from '../../all-request/ComparisonFilter';
-import { KeywordCard } from '../../all-request/KeywordCard';
-import { useRouter } from 'next/navigation';
+import KeywordDataTable from '../../all-request/KeywordDataTable';
+import { AlertTriangle } from 'lucide-react';
 
 interface Props {
   data: KeywordResearchEntity[];
@@ -30,6 +32,7 @@ export function KeywordResearchDataTable({
   const setSelectedResearch = useResearchStore((st) => st.setSelectedResearch);
   const selectedResearch = useResearchStore((st) => st.selectedResearch);
   const [isOpen, setIsOpen] = useState(false);
+  const [showTable, setShowTable] = useState(false);
 
   function formatearNumeroTabla(num, decimales = 1) {
     if (isNaN(num)) {
@@ -123,8 +126,6 @@ export function KeywordResearchDataTable({
     );
   };
 
-  const router = useRouter();
-
   return (
     <>
       <GenericDataTable<KeywordResearchEntity>
@@ -145,7 +146,13 @@ export function KeywordResearchDataTable({
         }}
         onShow={(item) => {
           setSelectedResearch(item);
-          router.push('/tools/seo/keyword-research/show-research');
+          if (selectedResearch.result) {
+            setIsOpen(false);
+            setShowTable(true);
+          } else {
+            setShowTable(false);
+            setIsOpen(!isOpen);
+          }
         }}
         excludeColumns={[
           'generatedPositiveKeywords',
@@ -170,8 +177,26 @@ export function KeywordResearchDataTable({
             selectedResearch.region
           } • ${selectedResearch.requestLanguage.toUpperCase()}`}
         >
-          <></>
+          <>
+            {!selectedResearch.result && (
+              <Empty>
+                <EmptyMedia variant='icon'>
+                  <AlertTriangle />
+                </EmptyMedia>
+                <EmptyHeader>
+                  <EmptyTitle> No Results</EmptyTitle>
+                </EmptyHeader>
+              </Empty>
+            )}
+          </>
         </ControlledDialog>
+      )}
+
+      {selectedResearch && showTable && (
+        <div>
+          {' '}
+          <KeywordDataTable keywordData={selectedResearch} />{' '}
+        </div>
       )}
     </>
   );
