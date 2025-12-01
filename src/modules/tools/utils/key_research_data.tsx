@@ -1,7 +1,6 @@
 import { List, LucideIcon, Search } from 'lucide-react';
 import { ReactNode } from 'react';
 import { KeywordResearchForm } from '../keyword-research/KeywordResearchForm';
-import { AllRequestTable } from '../../../../Components_To_Review/AllRequestTable';
 import { KeywordsResearchDataTable } from '../keyword-research/all-request/KeywordsResearchDataTable';
 
 interface TabsLists {
