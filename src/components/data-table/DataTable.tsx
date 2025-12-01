@@ -114,7 +114,8 @@ export function DataTable<TData, TValue>({
                 <FilterX />
               </InputGroupButton>
             </InputGroup>
-
+          </div>
+          <div className='flex items-center gap-2'>
             <span className='text-sm text-muted-foreground'>Rows:</span>
 
             <Select
@@ -127,7 +128,7 @@ export function DataTable<TData, TValue>({
                 }
               }}
             >
-              <SelectTrigger className='w-[90px]'>
+              <SelectTrigger className='w-[90px]' size='sm'>
                 <SelectValue placeholder='10' />
               </SelectTrigger>
 
@@ -142,8 +143,6 @@ export function DataTable<TData, TValue>({
                 <SelectItem value='all'>All</SelectItem>
               </SelectContent>
             </Select>
-          </div>
-          <div className='flex items-center gap-2'>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant='outline' size='sm' className='ml-auto'>
@@ -171,7 +170,7 @@ export function DataTable<TData, TValue>({
               </DropdownMenuContent>
             </DropdownMenu>
             {onAdd && (
-              <Button onClick={onAdd}>
+              <Button onClick={onAdd} size='sm'>
                 <Plus />
                 Add
               </Button>
