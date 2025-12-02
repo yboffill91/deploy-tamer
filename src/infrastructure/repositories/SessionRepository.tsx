@@ -1,5 +1,5 @@
-import { getTokenApi, sessionApi } from "@/lib/apis";
-import { fetchHelper } from "@/lib/fetch-helper";
+import { getTokenApi, sessionApi } from '@/lib/apis';
+import { fetchHelper } from '@/lib/fetch-helper';
 
 interface ISessionRepository {
   createSessionCookie(
@@ -8,6 +8,7 @@ interface ISessionRepository {
   ): Promise<void>;
   deleteSessionCookie(cookie: string): Promise<void>;
   getToken(): Promise<string>;
+  autorization(): Promise<string>;
 }
 
 export class SessionRepository implements ISessionRepository {
@@ -15,13 +16,13 @@ export class SessionRepository implements ISessionRepository {
     idToken: string | null,
     cookie: string | null
   ): Promise<void> {
-    if (!idToken) throw new Error("No User Id Founded");
+    if (!idToken) throw new Error('No User Id Founded');
     try {
       await fetch(sessionApi, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ idToken, cookie }),
-        credentials: "include",
+        credentials: 'include',
       });
     } catch (error) {
       throw new Error(`error: ${error}`);
@@ -31,16 +32,16 @@ export class SessionRepository implements ISessionRepository {
   async deleteSessionCookie(): Promise<void> {
     try {
       await fetch(`${sessionApi}/session_delete`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify("TS_SESSION"),
-        credentials: "include",
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify('TS_SESSION'),
+        credentials: 'include',
       });
       await fetch(`${sessionApi}/session_delete`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify("TS_USER"),
-        credentials: "include",
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify('TS_USER'),
+        credentials: 'include',
       });
     } catch (error) {
       throw new Error(`error: ${error}`);
@@ -55,16 +56,22 @@ export class SessionRepository implements ISessionRepository {
           value: string;
         };
       }>(getTokenApi, {
-        method: "GET",
-        credentials: "include",
+        method: 'GET',
+        credentials: 'include',
       });
 
       if (!tokenFromCookie) {
-        throw new Error("Error fetching access token");
+        throw new Error('Error fetching access token');
       }
       return tokenFromCookie.token.value;
     } catch (error) {
       throw new Error(`error: ${error}`);
     }
+  }
+
+  async autorization(): Promise<string> {
+    const token = await this.getToken();
+    console.log(token);
+    return token;
   }
 }

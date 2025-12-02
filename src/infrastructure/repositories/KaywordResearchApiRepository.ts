@@ -1,8 +1,9 @@
-import { IRepository } from "@/core";
-import { KeywordResearchDTO, CreateKeywordResearchDTO } from "@/core/dto";
-import { KeywordResearchEntity } from "@/core/entities";
-import { keywordResearchApi } from "@/lib/apis";
-import { fetchHelper } from "@/lib/fetch-helper";
+import { IRepository } from '@/core';
+import { KeywordResearchDTO, CreateKeywordResearchDTO } from '@/core/dto';
+import { KeywordResearchEntity } from '@/core/entities';
+import { keywordResearchApi } from '@/lib/apis';
+import { fetchHelper } from '@/lib/fetch-helper';
+import { SessionRepository } from './SessionRepository';
 
 export class KeywordResearchApiRepository implements IRepository {
   private mapToDto(data: KeywordResearchDTO): Partial<KeywordResearchDTO> {
@@ -30,14 +31,27 @@ export class KeywordResearchApiRepository implements IRepository {
       deletedAt: data.deletedAt,
       organicResult: data.organicResult,
       organicResultFull: data.organicResultFull,
+      id: data.id,
     };
   }
+
+  private auth = async () => {
+    const AuthRepo = new SessionRepository();
+    const auth = await AuthRepo.autorization();
+    return auth;
+  };
 
   async findAll(): Promise<KeywordResearchEntity[]> {
     try {
       const response = await fetchHelper<CreateKeywordResearchDTO[]>(
-        keywordResearchApi
+        keywordResearchApi,
+        {
+          headers: {
+            Authorization: `Bearer ${await this.auth()}`,
+          },
+        }
       );
+
       if (!response) {
         throw new Error("Error getting KeyWords Research's");
       }
@@ -55,7 +69,12 @@ export class KeywordResearchApiRepository implements IRepository {
   async findById(id: string): Promise<KeywordResearchEntity> {
     try {
       const response = await fetchHelper<CreateKeywordResearchDTO>(
-        keywordResearchApi + `/${id}`
+        keywordResearchApi + `/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${await this.auth()}`,
+          },
+        }
       );
       if (!response) {
         throw new Error("Error getting KeyWord Research's");
@@ -72,13 +91,14 @@ export class KeywordResearchApiRepository implements IRepository {
     try {
       const response = await fetchHelper(keywordResearchApi, {
         headers: {
-          method: "POST",
-          "Content-Type": "application/json",
+          method: 'POST',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${await this.auth()}`,
         },
         body: JSON.stringify(data),
       });
       if (!response) {
-        throw new Error("Error creating new Keyword Research Report");
+        throw new Error('Error creating new Keyword Research Report');
       }
     } catch (error) {
       throw error;
@@ -88,13 +108,14 @@ export class KeywordResearchApiRepository implements IRepository {
     try {
       const response = await fetchHelper(keywordResearchApi + `/${id}`, {
         headers: {
-          method: "PATCH",
-          "Content-Type": "application/json",
+          method: 'PATCH',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${await this.auth()}`,
         },
         body: JSON.stringify(data),
       });
       if (!response) {
-        throw new Error("Error creating new Keyword Research Report");
+        throw new Error('Error creating new Keyword Research Report');
       }
     } catch (error) {
       throw error;
@@ -103,7 +124,11 @@ export class KeywordResearchApiRepository implements IRepository {
   async delete(id: string): Promise<void> {
     try {
       await fetchHelper(keywordResearchApi + `/${id}`, {
-        method: "DELETE",
+        method: 'DELETE',
+
+        headers: {
+          Authorization: `Bearer ${await this.auth()}`,
+        },
       });
     } catch (error) {
       throw error;
@@ -112,7 +137,12 @@ export class KeywordResearchApiRepository implements IRepository {
   async findByTag(tag: string): Promise<KeywordResearchEntity> {
     try {
       const response = await fetchHelper<CreateKeywordResearchDTO[]>(
-        keywordResearchApi + `/${tag}`
+        keywordResearchApi + `/${tag}`,
+        {
+          headers: {
+            Authorization: `Bearer ${await this.auth()}`,
+          },
+        }
       );
       if (!response) {
         throw new Error("Error getting KeyWord Research's");
@@ -128,7 +158,12 @@ export class KeywordResearchApiRepository implements IRepository {
   async googleSearchWord(word: string): Promise<string> {
     try {
       const response = await fetchHelper(
-        keywordResearchApi + `/google/search/${word}`
+        keywordResearchApi + `/google/search/${word}`,
+        {
+          headers: {
+            Authorization: `Bearer ${await this.auth()}`,
+          },
+        }
       );
       return response as string;
     } catch (error) {

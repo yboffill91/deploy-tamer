@@ -8,12 +8,13 @@ import { KeywordResearchEntity } from '@/core/entities';
 import { CommonHeader } from '@/modules/users/admin';
 import { ColumnDef } from '@tanstack/react-table';
 import { Eye, List, Pencil, Trash2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useResearchStore } from './context/ResearchStore';
-import { ShowDetails } from '@/components/data-table/ShowDetails';
 import { ActionsButtonSet } from '@/components/data-table/ActionsButtons';
 import { TypeBadge } from './TypesBadge';
 import { StatusBadge } from './StatusBadge';
+import { useKeywordStore } from './context/KeywordSelectionStore';
+import { useRouter } from 'next/navigation';
 
 export const KeywordsResearchDataTable = () => {
   const keywordsResearch = useResearchStore((st) => st.allResearch);
@@ -21,9 +22,10 @@ export const KeywordsResearchDataTable = () => {
   const isError = useResearchStore((st) => st.isErrorGettingResearch);
   const getKeywordsResearch = useResearchStore((st) => st.getAllResearch);
 
-  const [open, setOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<KeywordResearchEntity>();
+  const setResultSelected = useKeywordStore((st) => st.setSelection);
+  const router = useRouter();
 
+  console.log(keywordsResearch);
   useEffect(() => {
     getKeywordsResearch();
   }, [getKeywordsResearch]);
@@ -39,8 +41,8 @@ export const KeywordsResearchDataTable = () => {
   }, [isError]);
 
   const onShow = (item: KeywordResearchEntity) => {
-    setSelectedItem(item);
-    setOpen(!open);
+    setResultSelected(item.result!);
+    router.push('/tools/seo/keyword-result');
   };
 
   const columns: ColumnDef<KeywordResearchEntity>[] = [
@@ -166,10 +168,8 @@ export const KeywordsResearchDataTable = () => {
         desc='All Keyword Researchs'
         title='Keyword Researchs'
       />
-      {isLoading && !keywordsResearch && (
-        <CustomPageLoader message='Getting Keywords Research' />
-      )}
-      {keywordsResearch && keywordsResearch.length > 0 && !isLoading && (
+      {isLoading && <CustomPageLoader message='Getting Keywords Research' />}
+      {keywordsResearch && !isLoading && (
         <>
           <DataTable
             data={keywordsResearch}
@@ -178,11 +178,9 @@ export const KeywordsResearchDataTable = () => {
           />
         </>
       )}
-      <ShowDetails
-        open={open}
-        onOpenChange={setOpen}
-        selectedItem={selectedItem}
-      />
+      {/* {!isLoading && (keywordsResearch.length === 0 || !keywordsResearch) && (
+        <div>Empty</div>
+      )} */}
     </>
   );
 };

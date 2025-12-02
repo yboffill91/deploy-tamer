@@ -206,9 +206,9 @@ export function DataTable<TData, TValue>({
                 {table
                   .getAllColumns()
                   .filter((column) => column.getCanHide())
-                  .map((column) => (
+                  .map((column, idx) => (
                     <DropdownMenuCheckboxItem
-                      key={column.id}
+                      key={idx}
                       checked={column.getIsVisible()}
                       onCheckedChange={(value) =>
                         column.toggleVisibility(!!value)
@@ -236,11 +236,11 @@ export function DataTable<TData, TValue>({
       <CardContent className=''>
         <Table className='rounded-xl overflow-hidden border-separate border-spacing-0 border'>
           <TableHeader className='bg-muted text-muted-foreground '>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
+            {table.getHeaderGroups().map((headerGroup, idx) => (
+              <TableRow key={idx}>
+                {headerGroup.headers.map((header, idx) => (
                   <TableHead
-                    key={header.id}
+                    key={idx}
                     onClick={header.column.getToggleSortingHandler()}
                     className='cursor-pointer select-none py-3 font-semibold text-sm border-b'
                   >
@@ -268,14 +268,14 @@ export function DataTable<TData, TValue>({
 
           <TableBody>
             {table.getRowModel().rows.length ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map((row, idx) => (
                 <TableRow
-                  key={row.id}
+                  key={idx}
                   className='hover:bg-muted/30 transition-colors duration-100 ease-out '
                 >
-                  {row.getVisibleCells().map((cell) => (
+                  {row.getVisibleCells().map((cell, idx) => (
                     <TableCell
-                      key={cell.id}
+                      key={idx}
                       className='py-3 border-b border-muted/30'
                     >
                       {flexRender(
