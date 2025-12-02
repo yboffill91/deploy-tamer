@@ -39,6 +39,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Checkbox,
 } from '@/components/ui';
 
 import {
@@ -54,18 +55,22 @@ import {
   SlidersHorizontal,
 } from 'lucide-react';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   onAdd?(): void;
+
+  /** NUEVO: permitir activar selección */
+  enableSelection?: boolean;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   onAdd,
+  enableSelection = false,
 }: DataTableProps<TData, TValue>) {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
@@ -74,16 +79,50 @@ export function DataTable<TData, TValue>({
   const [columnVisibility, setColumnVisibility] = useState({});
   const [sortColumn, setSortColumn] = useState([]);
   const [filtering, setFiltering] = useState('');
+  const [rowSelection, setRowSelection] = useState({});
+
+  /** --- Columna de selección --- */
+  const selectionColumn: ColumnDef<TData> = {
+    id: 'select',
+    header: ({ table }) => (
+      <Checkbox
+        checked={table.getIsAllPageRowsSelected()}
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label='Select all'
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label='Select row'
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+    size: 5,
+  };
+
+  /** --- Combinar columnas si enableSelection está activo --- */
+  const finalColumns = useMemo(() => {
+    return enableSelection ? [selectionColumn, ...columns] : columns;
+  }, [enableSelection, columns]);
 
   const table = useReactTable({
     data,
-    columns,
+    columns: finalColumns,
     state: {
       pagination,
       columnVisibility,
       sorting: sortColumn,
       globalFilter: filtering,
+      rowSelection,
     },
+
+    /** --- NUEVO --- */
+    onRowSelectionChange: setRowSelection,
+    enableRowSelection: enableSelection,
+
     getCoreRowModel: getCoreRowModel(),
     onPaginationChange: setPagination,
     getPaginationRowModel: getPaginationRowModel(),
@@ -250,7 +289,7 @@ export function DataTable<TData, TValue>({
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length}
+                  colSpan={finalColumns.length}
                   className='text-center py-6 text-muted-foreground'
                 >
                   No results found.
