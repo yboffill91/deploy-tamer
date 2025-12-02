@@ -5,18 +5,24 @@ import { showToast } from '@/components/CustomToaster';
 import { DataTable } from '@/components/data-table/DataTable';
 import { Badge } from '@/components/ui';
 import { KeywordResearchEntity } from '@/core/entities';
-import { cn } from '@/lib/utils';
 import { CommonHeader } from '@/modules/users/admin';
 import { ColumnDef } from '@tanstack/react-table';
-import { List } from 'lucide-react';
-import { useEffect } from 'react';
+import { Eye, List, Pencil, Trash2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useResearchStore } from './context/ResearchStore';
+import { ShowDetails } from '@/components/data-table/ShowDetails';
+import { ActionsButtonSet } from '@/components/data-table/ActionsButtons';
+import { TypeBadge } from './TypesBadge';
+import { StatusBadge } from './StatusBadge';
 
 export const KeywordsResearchDataTable = () => {
   const keywordsResearch = useResearchStore((st) => st.allResearch);
   const isLoading = useResearchStore((st) => st.isLoadingResearchs);
   const isError = useResearchStore((st) => st.isErrorGettingResearch);
   const getKeywordsResearch = useResearchStore((st) => st.getAllResearch);
+
+  const [open, setOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<KeywordResearchEntity>();
 
   useEffect(() => {
     getKeywordsResearch();
@@ -32,14 +38,16 @@ export const KeywordsResearchDataTable = () => {
     }
   }, [isError]);
 
-  console.log(keywordsResearch);
-
-  // ---> Columns Defs
+  const onShow = (item: KeywordResearchEntity) => {
+    setSelectedItem(item);
+    setOpen(!open);
+  };
 
   const columns: ColumnDef<KeywordResearchEntity>[] = [
     {
       accessorKey: 'title',
       header: 'Title',
+      enableHiding: false,
     },
     {
       accessorKey: 'positiveKeywords',
@@ -72,6 +80,25 @@ export const KeywordsResearchDataTable = () => {
       },
     },
     {
+      accessorKey: 'region',
+      header: 'Regions',
+    },
+    {
+      accessorKey: 'result',
+      header: 'Has Result',
+      cell: ({ row }) => {
+        const value: KeywordResearchEntity['result'] = row.getValue('result');
+        return value && value.length > 0 ? (
+          <Badge className='bg-green-500/10 dark:text-green-500 text-green-700'>
+            Yes
+          </Badge>
+        ) : (
+          <Badge className='bg-destructive/10 text-destructive'>No</Badge>
+        );
+      },
+    },
+
+    {
       accessorKey: 'status',
       header: 'Status',
       cell: ({ row }) => {
@@ -97,6 +124,39 @@ export const KeywordsResearchDataTable = () => {
         return value === 0 ? 'No Volume Search' : value;
       },
     },
+    {
+      id: 'actions',
+      header: 'Actions',
+      cell: ({ row }) => {
+        const item = row.original;
+        return (
+          <ActionsButtonSet
+            item={item}
+            actions={[
+              {
+                icon: Eye,
+                label: 'View Details',
+                onClick: onShow,
+                show: (item) => Array.isArray(item.result),
+              },
+              {
+                icon: Pencil,
+                label: 'Edit',
+                onClick: () => console.log(item),
+              },
+              {
+                icon: Trash2,
+                label: 'Delete',
+                onClick: () => console.log(item),
+                variant: 'destructive',
+              },
+            ]}
+          />
+        );
+      },
+      enableSorting: false,
+      enableHiding: false,
+    },
   ];
 
   return (
@@ -110,42 +170,19 @@ export const KeywordsResearchDataTable = () => {
         <CustomPageLoader message='Getting Keywords Research' />
       )}
       {keywordsResearch && keywordsResearch.length > 0 && !isLoading && (
-        <DataTable
-          data={keywordsResearch}
-          columns={columns}
-          onAdd={() => console.log('Add')}
-        />
+        <>
+          <DataTable
+            data={keywordsResearch}
+            columns={columns}
+            onAdd={() => console.log('Add')}
+          />
+        </>
       )}
+      <ShowDetails
+        open={open}
+        onOpenChange={setOpen}
+        selectedItem={selectedItem}
+      />
     </>
-  );
-};
-
-const StatusBadge = ({ value }: { value: KeywordResearchEntity['status'] }) => {
-  return (
-    <Badge
-      className={cn(
-        value === 'CREATED' &&
-          'bg-green-500/10 dark:text-green-500 text-green-700',
-        value === 'IN_PROGRESS' &&
-          'bg-orange-500/10 dark:text-orange-500 text-orange-700'
-      )}
-    >
-      {value.replace('_', ' ')}
-    </Badge>
-  );
-};
-
-const TypeBadge = ({ value }: { value: KeywordResearchEntity['type'] }) => {
-  return (
-    <Badge
-      className={cn(
-        value === 'TRANSACTIONAL' &&
-          'bg-green-500/10 dark:text-green-500 text-green-700',
-        value === 'INFORMATIONAL' &&
-          'bg-orange-500/10 dark:text-orange-500 text-orange-700'
-      )}
-    >
-      {value.replace('_', ' ')}
-    </Badge>
   );
 };
