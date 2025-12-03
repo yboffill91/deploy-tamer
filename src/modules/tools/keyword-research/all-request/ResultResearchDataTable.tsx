@@ -246,12 +246,12 @@ export const ResultResearchDataTable = ({ data }: Props) => {
         <CustomTabTrigger
           tab_value='results'
           icon={ListCheck}
-          tab_name='Research Result'
+          tab_name={`Result Research (${data.length})`}
         />
         <CustomTabTrigger
           tab_value='unSelected'
           icon={ListMinus}
-          tab_name='Discard Positive Words'
+          tab_name={`Discard Positive Words (${unSelected.length})`}
         />
       </TabsList>
       <TabsContent value='results'>
