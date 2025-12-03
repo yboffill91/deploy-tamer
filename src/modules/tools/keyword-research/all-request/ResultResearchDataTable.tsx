@@ -8,6 +8,7 @@ import { KeywordResultEntity } from '@/core/entities';
 
 import { DataTable } from '@/components/data-table/DataTable';
 import {
+  Button,
   Card,
   CardContent,
   CardHeader,
@@ -23,8 +24,11 @@ import {
   ArrowLeftCircle,
   ArrowRightCircle,
   Eye,
+  FileText,
   ListCheck,
   ListMinus,
+  Save,
+  SaveAll,
 } from 'lucide-react';
 import { KeywordResearchApiRepository } from '@/infrastructure/repositories';
 import { useEffect, useState } from 'react';
@@ -241,71 +245,81 @@ export const ResultResearchDataTable = ({ data }: Props) => {
   ];
 
   return (
-    <Tabs defaultValue='results'>
-      <TabsList className='w-full container mx-auto max-w-7xl flex shrink-0 items-center justify-start lg:justify-center   p-0 mb-2 rounded-none overflow-x-auto snap-none md:snap-x md:snap-mandatory snap-always bg-transparent'>
-        <CustomTabTrigger
-          tab_value='results'
-          icon={ListCheck}
-          tab_name={`Result Research (${data.length})`}
-        />
-        <CustomTabTrigger
-          tab_value='unSelected'
-          icon={ListMinus}
-          tab_name={`Discard Positive Words (${unSelected.length})`}
-        />
-      </TabsList>
-      <TabsContent value='results'>
-        <div className='grid md:grid-cols-2  gap-2'>
-          <DataTable columns={columns} data={data} pageSize={100} />
+    <>
+      <Tabs defaultValue='results'>
+        <TabsList className='w-full container mx-auto max-w-7xl flex shrink-0 items-center justify-start lg:justify-center   p-0 mb-2 rounded-none overflow-x-auto snap-none md:snap-x md:snap-mandatory snap-always bg-transparent'>
+          <CustomTabTrigger
+            tab_value='results'
+            icon={ListCheck}
+            tab_name={`Result Research (${data.length})`}
+          />
+          <CustomTabTrigger
+            tab_value='unSelected'
+            icon={ListMinus}
+            tab_name={`Discard Positive Words (${unSelected.length})`}
+          />
+        </TabsList>
+        <TabsContent value='results'>
+          <div className='grid md:grid-cols-2  gap-2'>
+            <DataTable columns={columns} data={data} pageSize={100} />
 
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                <div className='flex items-center gap-2'>
-                  {' '}
-                  <Image
-                    src={'/logos/google.svg'}
-                    alt='Google'
-                    className='size-6'
-                    width={128}
-                    height={128}
-                  />{' '}
-                  <h2 className='texl-xl'>Google Snap</h2>
-                </div>
-              </CardTitle>
-              <CardContent className=' w-full min-h-64'>
-                {isLoading ? (
-                  <div>
-                    <CustomLoading message='Getting Google Snapshot' />
+            <Card>
+              <CardHeader>
+                <CardTitle>
+                  <div className='flex items-center gap-2'>
+                    {' '}
+                    <Image
+                      src={'/logos/google.svg'}
+                      alt='Google'
+                      className='size-6'
+                      width={128}
+                      height={128}
+                    />{' '}
+                    <h2 className='texl-xl'>Google Snap</h2>
                   </div>
-                ) : (
-                  <Image
-                    src={
-                      image.length === 0
-                        ? '/placeholder.png'
-                        : `data:image/jpeg;base64, ${image}`
-                    }
-                    alt={
-                      image.length === 0 ? 'Placeholder Image' : 'Google Snap'
-                    }
-                    width={1920}
-                    height={1080}
-                    className='w-full rounded-md'
-                    loading='eager'
-                  />
-                )}
-              </CardContent>
-            </CardHeader>
-          </Card>
-        </div>
-      </TabsContent>
-      <TabsContent value='unSelected'>
-        <DataTable
-          columns={columnsUnSelected}
-          data={unSelected}
-          pageSize={100}
-        />
-      </TabsContent>
-    </Tabs>
+                </CardTitle>
+                <CardContent className=' w-full min-h-64'>
+                  {isLoading ? (
+                    <div>
+                      <CustomLoading message='Getting Google Snapshot' />
+                    </div>
+                  ) : (
+                    <Image
+                      src={
+                        image.length === 0
+                          ? '/placeholder.png'
+                          : `data:image/jpeg;base64, ${image}`
+                      }
+                      alt={
+                        image.length === 0 ? 'Placeholder Image' : 'Google Snap'
+                      }
+                      width={1920}
+                      height={1080}
+                      className='w-full rounded-md'
+                      loading='eager'
+                    />
+                  )}
+                </CardContent>
+              </CardHeader>
+            </Card>
+          </div>
+        </TabsContent>
+        <TabsContent value='unSelected'>
+          <DataTable
+            columns={columnsUnSelected}
+            data={unSelected}
+            pageSize={100}
+          />
+        </TabsContent>
+      </Tabs>
+      <div className='h-12 p-2 bg-card border-t backdrop-blur-md w-full sticky bottom-0 flex items-center justify-end gap-6'>
+        <Button variant='secondary' className='w-64'>
+          Download Report <FileText />
+        </Button>
+        <Button>
+          Save <SaveAll />
+        </Button>
+      </div>
+    </>
   );
 };
