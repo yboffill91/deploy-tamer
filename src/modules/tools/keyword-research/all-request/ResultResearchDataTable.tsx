@@ -7,14 +7,24 @@ import { Badge } from '@/components/ui/badge';
 import { KeywordResultEntity } from '@/core/entities';
 
 import { DataTable } from '@/components/data-table/DataTable';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui';
 import Image from 'next/image';
 import { ActionsButtonSet } from '@/components/data-table/ActionsButtons';
 import {
   ArrowLeftCircle,
-  ArrowRight,
   ArrowRightCircle,
   Eye,
+  ListCheck,
+  ListMinus,
 } from 'lucide-react';
 import { KeywordResearchApiRepository } from '@/infrastructure/repositories';
 import { useEffect, useState } from 'react';
@@ -22,6 +32,7 @@ import { showToast } from '@/components/CustomToaster';
 import { CustomLoading } from '@/components/CustomLoading';
 import { useRouter } from 'next/navigation';
 import { useKeywordStore } from './context/KeywordSelectionStore';
+import { CustomTabTrigger } from '../../components';
 
 interface Props {
   data: KeywordResultEntity[];
@@ -170,7 +181,14 @@ export const ResultResearchDataTable = ({ data }: Props) => {
               {
                 icon: ArrowRightCircle,
                 label: 'Delete',
-                onClick: () => setUnselect(item),
+                onClick: () => {
+                  setUnselect(item);
+                  showToast({
+                    message: 'Successfully moved',
+                    description: `${item.keyword} It was correctly moved to the discard list`,
+                    type: 'success',
+                  });
+                },
                 variant: 'destructive',
               },
             ]}
@@ -203,9 +221,17 @@ export const ResultResearchDataTable = ({ data }: Props) => {
               {
                 icon: ArrowLeftCircle,
                 label: 'Delete',
-                onClick: () => setUnselect(item),
+                onClick: () => {
+                  setUnselect(item);
+                  showToast({
+                    message: 'Successfully moved',
+                    description: `${item.keyword} It was correctly moved to the Positive Keywords list`,
+                    type: 'success',
+                  });
+                },
               },
             ]}
+            className='bg-green-500/10 text-green-500'
           />
         );
       },
@@ -215,47 +241,71 @@ export const ResultResearchDataTable = ({ data }: Props) => {
   ];
 
   return (
-    <div className='grid md:grid-cols-3 gap-2'>
-      <DataTable columns={columns} data={data} pageSize={100} />
-      <DataTable columns={columnsUnSelected} data={unSelected} pageSize={100} />
+    <Tabs defaultValue='results'>
+      <TabsList className='w-full container mx-auto max-w-7xl flex shrink-0 items-center justify-start lg:justify-center   p-0 mb-2 rounded-none overflow-x-auto snap-none md:snap-x md:snap-mandatory snap-always bg-transparent'>
+        <CustomTabTrigger
+          tab_value='results'
+          icon={ListCheck}
+          tab_name='Research Result'
+        />
+        <CustomTabTrigger
+          tab_value='unSelected'
+          icon={ListMinus}
+          tab_name='Discard Positive Words'
+        />
+      </TabsList>
+      <TabsContent value='results'>
+        <div className='grid md:grid-cols-2  gap-2'>
+          <DataTable columns={columns} data={data} pageSize={100} />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            <div className='flex items-center gap-2'>
-              {' '}
-              <Image
-                src={'/logos/google.svg'}
-                alt='Google'
-                className='size-6'
-                width={128}
-                height={128}
-              />{' '}
-              <h2 className='texl-xl'>Google Snap</h2>
-            </div>
-          </CardTitle>
-          <CardContent className=' w-full min-h-64'>
-            {isLoading ? (
-              <div>
-                <CustomLoading message='Getting Google Snapshot' />
-              </div>
-            ) : (
-              <Image
-                src={
-                  image.length === 0
-                    ? '/placeholder.png'
-                    : `data:image/jpeg;base64, ${image}`
-                }
-                alt={image.length === 0 ? 'Placeholder Image' : 'Google Snap'}
-                width={1920}
-                height={1080}
-                className='w-full rounded-md'
-                loading='eager'
-              />
-            )}
-          </CardContent>
-        </CardHeader>
-      </Card>
-    </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <div className='flex items-center gap-2'>
+                  {' '}
+                  <Image
+                    src={'/logos/google.svg'}
+                    alt='Google'
+                    className='size-6'
+                    width={128}
+                    height={128}
+                  />{' '}
+                  <h2 className='texl-xl'>Google Snap</h2>
+                </div>
+              </CardTitle>
+              <CardContent className=' w-full min-h-64'>
+                {isLoading ? (
+                  <div>
+                    <CustomLoading message='Getting Google Snapshot' />
+                  </div>
+                ) : (
+                  <Image
+                    src={
+                      image.length === 0
+                        ? '/placeholder.png'
+                        : `data:image/jpeg;base64, ${image}`
+                    }
+                    alt={
+                      image.length === 0 ? 'Placeholder Image' : 'Google Snap'
+                    }
+                    width={1920}
+                    height={1080}
+                    className='w-full rounded-md'
+                    loading='eager'
+                  />
+                )}
+              </CardContent>
+            </CardHeader>
+          </Card>
+        </div>
+      </TabsContent>
+      <TabsContent value='unSelected'>
+        <DataTable
+          columns={columnsUnSelected}
+          data={unSelected}
+          pageSize={100}
+        />
+      </TabsContent>
+    </Tabs>
   );
 };

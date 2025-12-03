@@ -12,11 +12,13 @@ export interface ActionConfig<T> {
 export interface ActionsButtonSetProps<T> {
   item: T;
   actions: ActionConfig<T>[];
+  className?: string;
 }
 
 export function ActionsButtonSet<T>({
   item,
   actions,
+  className = '',
 }: ActionsButtonSetProps<T>) {
   return (
     <div className='flex gap-2 items-center justify-end'>
@@ -29,6 +31,7 @@ export function ActionsButtonSet<T>({
             variant={variant ?? 'ghost'}
             onClick={() => onClick(item)}
             aria-label={label}
+            className={className}
           >
             <Icon className='size-4' />
           </Button>
