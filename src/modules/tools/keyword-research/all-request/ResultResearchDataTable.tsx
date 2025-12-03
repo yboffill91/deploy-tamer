@@ -8,6 +8,8 @@ import { ActionsButtonSet } from '@/components/data-table/ActionsButtons';
 import { ChartArea } from 'lucide-react';
 import { DataTable } from '@/components/data-table/DataTable';
 import { ResponsiveContainer, XAxis, YAxis, Line, LineChart } from 'recharts';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
+import Image from 'next/image';
 
 interface Props {
   data: KeywordResultEntity[];
@@ -104,70 +106,70 @@ export const ResultResearchDataTable = ({ data }: Props) => {
     },
 
     // BIDS (LOW / HIGH)
-    {
-      id: 'bids',
-      header: 'Low / High Bid',
-      cell: ({ row }) => {
-        const low = row.original.low_top_of_page_bid;
-        const high = row.original.high_top_of_page_bid;
+    // {
+    //   id: 'bids',
+    //   header: 'Low / High Bid',
+    //   cell: ({ row }) => {
+    //     const low = row.original.low_top_of_page_bid;
+    //     const high = row.original.high_top_of_page_bid;
 
-        const getColor = (v?: number | null) => {
-          if (v == null) return 'bg-gray-400/10 text-gray-500';
-          if (v < 0.1) return 'bg-red-500/10 text-red-500';
-          if (v < 0.5) return 'bg-orange-500/10 text-orange-500';
-          return 'bg-green-500/10 text-green-500';
-        };
+    //     const getColor = (v?: number | null) => {
+    //       if (v == null) return 'bg-gray-400/10 text-gray-500';
+    //       if (v < 0.1) return 'bg-red-500/10 text-red-500';
+    //       if (v < 0.5) return 'bg-orange-500/10 text-orange-500';
+    //       return 'bg-green-500/10 text-green-500';
+    //     };
 
-        return (
-          <div className='flex flex-col gap-1'>
-            <Badge className={getColor(low)}>
-              Low: {low == null ? '—' : `$${low.toFixed(2)}`}
-            </Badge>
+    //     return (
+    //       <div className='flex flex-col gap-1'>
+    //         <Badge className={getColor(low)}>
+    //           Low: {low == null ? '—' : `$${low.toFixed(2)}`}
+    //         </Badge>
 
-            <Badge className={getColor(high)}>
-              High: {high == null ? '—' : `$${high.toFixed(2)}`}
-            </Badge>
-          </div>
-        );
-      },
-    },
+    //         <Badge className={getColor(high)}>
+    //           High: {high == null ? '—' : `$${high.toFixed(2)}`}
+    //         </Badge>
+    //       </div>
+    //     );
+    //   },
+    // },
 
     // TREND (monthly_searches)
 
-    {
-      accessorKey: 'monthly_searches',
-      header: 'Trend',
-      cell: ({ row }) => {
-        const monthly = row.original.monthly_searches;
+    // {
+    //   accessorKey: 'monthly_searches',
+    //   header: 'Trend',
+    //   cell: ({ row }) => {
+    //     const monthly = row.original.monthly_searches;
 
-        if (!monthly || monthly.length === 0) {
-          return <span className='text-muted-foreground text-xs'>No data</span>;
-        }
+    //     if (!monthly || monthly.length === 0) {
+    //       return <span className='text-muted-foreground text-xs'>No data</span>;
+    //     }
 
-        const chartData = monthly.map((m) => ({
-          month: m.month ? m.month : 1,
-          value: m.search_volume,
-          max: Math.max(m.search_volume),
-          min: Math.min(m.search_volume),
-        }));
+    //     const chartData = monthly.map((m) => ({
+    //       month: m.month ? m.month : 1,
+    //       value: m.search_volume,
+    //       max: Math.max(m.search_volume),
+    //       min: Math.min(m.search_volume),
+    //     }));
 
-        return (
-          <ResponsiveContainer width={320} height={80}>
-            <LineChart data={chartData}>
-              <XAxis dataKey='month' tick={{ fontSize: 6 }} />
-              <YAxis domain={['min', 'max']} tick={{ fontSize: 7 }} />
-              <Line
-                type='basis'
-                dataKey='value'
-                stroke='currentColor'
-                strokeWidth={1}
-                dot={false}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        );
-      },
-    },
+    //     return (
+    //       <ResponsiveContainer width={320} height={80}>
+    //         <LineChart data={chartData}>
+    //           <XAxis dataKey='month' tick={{ fontSize: 6 }} />
+    //           <YAxis domain={['min', 'max']} tick={{ fontSize: 7 }} />
+    //           <Line
+    //             type='basis'
+    //             dataKey='value'
+    //             stroke='currentColor'
+    //             strokeWidth={1}
+    //             dot={false}
+    //           />
+    //         </LineChart>
+    //       </ResponsiveContainer>
+    //     );
+    //   },
+    // },
 
     // {
     //   id: 'actions',
@@ -303,8 +305,26 @@ export const ResultResearchDataTable = ({ data }: Props) => {
   //   },
   // ];
   return (
-    <>
+    <div className='grid md:grid-cols-2 gap-2'>
       <DataTable columns={columns} data={data} enableSelection />
-    </>
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            <div className='flex items-center gap-2'>
+              {' '}
+              <Image
+                src={'/logos/google.svg'}
+                alt='Google'
+                className='size-6'
+                width={128}
+                height={128}
+              />{' '}
+              <h2 className='texl-xl'>Google Snap</h2>
+            </div>
+          </CardTitle>
+          <CardContent className='bg-muted w-full min-h-64'></CardContent>
+        </CardHeader>
+      </Card>
+    </div>
   );
 };

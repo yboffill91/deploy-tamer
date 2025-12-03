@@ -1,4 +1,4 @@
-export * from './BrandsApiRepository';
+export * from './SuggestWordsAIRepo';
 export * from './CitiesRepository';
 export * from './CompanyRepository';
 export * from './DocumentsApiRepository';

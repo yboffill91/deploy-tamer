@@ -1,15 +1,30 @@
-import { buildRolesCascadeDTO, IRepository, RolesDTO, RolesEntity } from '@/core';
+import {
+  buildRolesCascadeDTO,
+  IRepository,
+  RolesDTO,
+  RolesEntity,
+} from '@/core';
 import { rolesApi } from '@/lib/apis';
 import { fetchHelper } from '@/lib/fetch-helper';
+import { SessionRepository } from './SessionRepository';
 
 export class RolesApiRepository implements IRepository {
+  private auth = async () => {
+    const AuthRepo = new SessionRepository();
+    const auth = await AuthRepo.autorization();
+    return auth;
+  };
   async findAll(): Promise<RolesEntity[]> {
     try {
-      const data = await fetchHelper<RolesDTO[]>(rolesApi);
+      const data = await fetchHelper<RolesDTO[]>(rolesApi, {
+        headers: {
+          Authorization: `Bearer ${await this.auth()}`,
+        },
+      });
       if (!data) {
         return [];
       }
-      return data.map((r) => Object.assign(new RolesEntity, r));
+      return data.map((r) => Object.assign(new RolesEntity(), r));
     } catch (error) {
       throw new Error(
         error instanceof Error ? error.message : 'Error fetching roles'
@@ -19,11 +34,15 @@ export class RolesApiRepository implements IRepository {
 
   async findById(id: string): Promise<RolesEntity> {
     try {
-      const data = await fetchHelper<RolesDTO>(`${rolesApi}/${id}`);
+      const data = await fetchHelper<RolesDTO>(`${rolesApi}/${id}`, {
+        headers: {
+          Authorization: `Bearer ${await this.auth()}`,
+        },
+      });
       if (!data) {
         throw new Error('Role not found');
       }
-      return Object.assign(new RolesEntity, data)
+      return Object.assign(new RolesEntity(), data);
     } catch (error) {
       throw new Error(
         error instanceof Error ? error.message : 'Error fetching role'
@@ -37,6 +56,7 @@ export class RolesApiRepository implements IRepository {
         headers: {
           accept: '*/*',
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${await this.auth()}`,
         },
         body: JSON.stringify(data),
       });
@@ -53,8 +73,9 @@ export class RolesApiRepository implements IRepository {
         headers: {
           accept: '*/*',
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${await this.auth()}`,
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       });
     } catch (error) {
       throw new Error(
@@ -68,6 +89,7 @@ export class RolesApiRepository implements IRepository {
         method: 'DELETE',
         headers: {
           accept: '*/*',
+          Authorization: `Bearer ${await this.auth()}`,
         },
       });
     } catch (error) {

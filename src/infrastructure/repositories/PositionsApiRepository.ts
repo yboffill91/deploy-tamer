@@ -3,8 +3,14 @@ import { PositionsEntity } from '@/core/entities';
 import { IRepository } from '@/core/interfaces';
 import { positionsApi } from '@/lib/apis';
 import { fetchHelper } from '@/lib/fetch-helper';
+import { SessionRepository } from './SessionRepository';
 
 export class PositionsApiRepository implements IRepository {
+  private auth = async () => {
+    const AuthRepo = new SessionRepository();
+    const auth = await AuthRepo.autorization();
+    return auth;
+  };
   private commonHeader = {
     'Content-Type': 'application/json',
     accept: '*/*',
@@ -12,7 +18,10 @@ export class PositionsApiRepository implements IRepository {
 
   async findAll(): Promise<PositionsEntity[]> {
     try {
-      const positions = await fetchHelper<responsePositionsDTO[]>(positionsApi);
+      const positions = await fetchHelper<responsePositionsDTO[]>(
+        positionsApi,
+        { headers: { Authorization: `Bearer ${await this.auth()}` } }
+      );
 
       if (!positions) {
         throw new Error('Error getting positions');
@@ -29,7 +38,8 @@ export class PositionsApiRepository implements IRepository {
   async findById(id: string): Promise<PositionsEntity> {
     try {
       const position = await fetchHelper<responsePositionsDTO>(
-        `${positionsApi}/${id}`
+        `${positionsApi}/${id}`,
+        { headers: { Authorization: `Bearer ${await this.auth()}` } }
       );
       return Object.assign(new PositionsEntity(), position);
     } catch (error) {
@@ -43,7 +53,10 @@ export class PositionsApiRepository implements IRepository {
     try {
       const created = await fetchHelper<PositionsEntity>(positionsApi, {
         method: 'POST',
-        headers: this.commonHeader,
+        headers: {
+          ...this.commonHeader,
+          Authorization: `Bearer ${await this.auth()}`,
+        },
         body: JSON.stringify(data),
       });
 
@@ -62,7 +75,10 @@ export class PositionsApiRepository implements IRepository {
         `${positionsApi}/${id}`,
         {
           method: 'PATCH',
-          headers: this.commonHeader,
+          headers: {
+            ...this.commonHeader,
+            Authorization: `Bearer ${await this.auth()}`,
+          },
           body: JSON.stringify(data),
         }
       );
@@ -81,6 +97,7 @@ export class PositionsApiRepository implements IRepository {
         method: 'DELETE',
         headers: {
           accept: '*/*',
+          Authorization: `Bearer ${await this.auth()}`,
         },
       });
     } catch (error) {
