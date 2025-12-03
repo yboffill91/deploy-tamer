@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   ColumnDef,
@@ -8,7 +8,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from '@tanstack/react-table';
+} from "@tanstack/react-table";
 
 import {
   Table,
@@ -17,7 +17,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 
 import {
   Badge,
@@ -40,7 +40,7 @@ import {
   SelectTrigger,
   SelectValue,
   Checkbox,
-} from '@/components/ui';
+} from "@/components/ui";
 
 import {
   ChevronDown,
@@ -53,14 +53,15 @@ import {
   Plus,
   Search,
   SlidersHorizontal,
-} from 'lucide-react';
+} from "lucide-react";
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState } from "react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   onAdd?(): void;
+  pageSize?: number;
 
   /** NUEVO: permitir activar selección */
   enableSelection?: boolean;
@@ -71,31 +72,32 @@ export function DataTable<TData, TValue>({
   data,
   onAdd,
   enableSelection = false,
+  pageSize = 20,
 }: DataTableProps<TData, TValue>) {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 20,
+    pageSize: pageSize,
   });
   const [columnVisibility, setColumnVisibility] = useState({});
   const [sortColumn, setSortColumn] = useState([]);
-  const [filtering, setFiltering] = useState('');
+  const [filtering, setFiltering] = useState("");
   const [rowSelection, setRowSelection] = useState({});
 
   /** --- Columna de selección --- */
   const selectionColumn: ColumnDef<TData> = {
-    id: 'select',
+    id: "select",
     header: ({ table }) => (
       <Checkbox
         checked={table.getIsAllPageRowsSelected()}
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label='Select all'
+        aria-label="Select all"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label='Select row'
+        aria-label="Select row"
       />
     ),
     enableSorting: false,
@@ -136,60 +138,60 @@ export function DataTable<TData, TValue>({
   const totalRows = table.getFilteredRowModel().rows.length;
 
   return (
-    <Card className='overflow-hidden rounded-xl shadow-md border bg-card py-0!'>
+    <Card className="overflow-hidden rounded-xl shadow-md border bg-card py-0!">
       {/* HEADER / FILTER TOOLBAR */}
-      <CardHeader className='p-3 border-b bg-muted/20'>
-        <div className='flex flex-col md:flex-row md:items-center justify-between gap-3'>
+      <CardHeader className="p-3 border-b bg-muted/20">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           {/* LEFT SIDE ACTIONS */}
-          <div className='flex items-center gap-2 w-full md:w-auto'>
+          <div className="flex items-center gap-2 w-full md:w-auto">
             <InputGroup>
               <InputGroupInput
-                placeholder='Filter data'
+                placeholder="Filter data"
                 value={filtering}
                 onChange={(e) => setFiltering(e.target.value)}
-                className='rounded-md'
+                className="rounded-md"
               />
 
               <InputGroupAddon>
-                <Search className='size-4' />
+                <Search className="size-4" />
               </InputGroupAddon>
 
               <InputGroupButton
-                onClick={() => setFiltering('')}
+                onClick={() => setFiltering("")}
                 disabled={!filtering.length}
               >
-                <FilterX className='size-4' />
+                <FilterX className="size-4" />
               </InputGroupButton>
             </InputGroup>
           </div>
 
           {/* RIGHT SIDE ACTIONS */}
-          <div className='flex items-center gap-2'>
+          <div className="flex items-center gap-2">
             {/* ROW SIZE SELECT */}
-            <div className='flex items-center gap-2'>
-              <span className='text-sm text-muted-foreground'>Rows:</span>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Rows:</span>
 
               <Select
                 value={String(pagination.pageSize)}
                 onValueChange={(value) => {
-                  if (value === 'all') {
+                  if (value === "all") {
                     table.setPageSize(totalRows);
                   } else {
                     table.setPageSize(Number(value));
                   }
                 }}
               >
-                <SelectTrigger className='w-[90px] h-9' size='sm'>
+                <SelectTrigger className="w-[90px] h-9" size="sm">
                   <SelectValue defaultValue={pagination.pageSize} />
                 </SelectTrigger>
 
                 <SelectContent>
-                  <SelectItem value='5'>5</SelectItem>
-                  <SelectItem value='10'>10</SelectItem>
-                  <SelectItem value='20'>20</SelectItem>
-                  <SelectItem value='50'>50</SelectItem>
-                  <SelectItem value='100'>100</SelectItem>
-                  <SelectItem value='all'>All</SelectItem>
+                  <SelectItem value="5">5</SelectItem>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="20">20</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                  <SelectItem value="100">100</SelectItem>
+                  <SelectItem value="all">All</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -197,13 +199,13 @@ export function DataTable<TData, TValue>({
             {/* COLUMN VISIBILITY */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button size='sm' variant='outline' className='gap-1'>
-                  <SlidersHorizontal className='size-4' />
+                <Button size="sm" variant="outline" className="gap-1">
+                  <SlidersHorizontal className="size-4" />
                   Columns
                 </Button>
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent align='end' className='w-40'>
+              <DropdownMenuContent align="end" className="w-40">
                 {table
                   .getAllColumns()
                   .filter((column) => column.getCanHide())
@@ -214,7 +216,7 @@ export function DataTable<TData, TValue>({
                       onCheckedChange={(value) =>
                         column.toggleVisibility(!!value)
                       }
-                      className='capitalize'
+                      className="capitalize"
                     >
                       {column.id}
                     </DropdownMenuCheckboxItem>
@@ -224,8 +226,8 @@ export function DataTable<TData, TValue>({
 
             {/* ADD BUTTON */}
             {onAdd && (
-              <Button onClick={onAdd} size='sm' className='gap-1'>
-                <Plus className='size-4' />
+              <Button onClick={onAdd} size="sm" className="gap-1">
+                <Plus className="size-4" />
                 Add
               </Button>
             )}
@@ -234,18 +236,18 @@ export function DataTable<TData, TValue>({
       </CardHeader>
 
       {/* TABLE */}
-      <CardContent className=''>
-        <Table className='rounded-xl overflow-hidden border-separate border-spacing-0 border'>
-          <TableHeader className='bg-muted text-muted-foreground '>
+      <CardContent className="">
+        <Table className="rounded-xl overflow-hidden border-separate border-spacing-0 border">
+          <TableHeader className="bg-muted text-muted-foreground ">
             {table.getHeaderGroups().map((headerGroup, idx) => (
               <TableRow key={idx}>
                 {headerGroup.headers.map((header, idx) => (
                   <TableHead
                     key={idx}
                     onClick={header.column.getToggleSortingHandler()}
-                    className='cursor-pointer select-none py-3 font-semibold text-sm border-b'
+                    className="cursor-pointer select-none py-3 font-semibold text-sm border-b"
                   >
-                    <div className='flex items-center gap-1'>
+                    <div className="flex items-center gap-1">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -253,12 +255,12 @@ export function DataTable<TData, TValue>({
                             header.getContext()
                           )}
 
-                      {header.column.getIsSorted() === 'asc' && (
-                        <ChevronUp className='size-4 opacity-70' />
+                      {header.column.getIsSorted() === "asc" && (
+                        <ChevronUp className="size-4 opacity-70" />
                       )}
 
-                      {header.column.getIsSorted() === 'desc' && (
-                        <ChevronDown className='size-4 opacity-70' />
+                      {header.column.getIsSorted() === "desc" && (
+                        <ChevronDown className="size-4 opacity-70" />
                       )}
                     </div>
                   </TableHead>
@@ -272,12 +274,12 @@ export function DataTable<TData, TValue>({
               table.getRowModel().rows.map((row, idx) => (
                 <TableRow
                   key={idx}
-                  className='hover:bg-muted/30 transition-colors duration-100 ease-out '
+                  className="hover:bg-muted/30 transition-colors duration-100 ease-out "
                 >
                   {row.getVisibleCells().map((cell, idx) => (
                     <TableCell
                       key={idx}
-                      className='py-3 border-b border-muted/30'
+                      className="py-3 border-b border-muted/30"
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
@@ -291,7 +293,7 @@ export function DataTable<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={finalColumns.length}
-                  className='text-center py-6 text-muted-foreground'
+                  className="text-center py-6 text-muted-foreground"
                 >
                   No results found.
                 </TableCell>
@@ -302,17 +304,17 @@ export function DataTable<TData, TValue>({
       </CardContent>
 
       {/* FOOTER / PAGINATION */}
-      <CardFooter className='flex items-center justify-between py-3 border-t bg-muted/20'>
-        <Badge variant='secondary'>
-          Page {table.getState().pagination.pageIndex + 1} of{' '}
+      <CardFooter className="flex items-center justify-between py-3 border-t bg-muted/20">
+        <Badge variant="secondary">
+          Page {table.getState().pagination.pageIndex + 1} of{" "}
           {table.getPageCount()}
         </Badge>
 
         {(table.getCanNextPage() || table.getCanPreviousPage()) && (
-          <div className='flex items-center gap-1'>
+          <div className="flex items-center gap-1">
             <Button
-              size='sm'
-              variant='outline'
+              size="sm"
+              variant="outline"
               onClick={() => table.setPageIndex(0)}
               disabled={!table.getCanPreviousPage()}
             >
@@ -320,8 +322,8 @@ export function DataTable<TData, TValue>({
             </Button>
 
             <Button
-              size='sm'
-              variant='outline'
+              size="sm"
+              variant="outline"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
             >
@@ -329,8 +331,8 @@ export function DataTable<TData, TValue>({
             </Button>
 
             <Button
-              size='sm'
-              variant='outline'
+              size="sm"
+              variant="outline"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
             >
@@ -338,8 +340,8 @@ export function DataTable<TData, TValue>({
             </Button>
 
             <Button
-              size='sm'
-              variant='outline'
+              size="sm"
+              variant="outline"
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
               disabled={!table.getCanNextPage()}
             >

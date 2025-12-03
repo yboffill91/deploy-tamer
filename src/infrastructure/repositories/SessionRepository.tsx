@@ -71,7 +71,6 @@ export class SessionRepository implements ISessionRepository {
 
   async autorization(): Promise<string> {
     const token = await this.getToken();
-    console.log(token);
     return token;
   }
 }

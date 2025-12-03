@@ -62,19 +62,32 @@ export async function fetchHelper<T>(
       throw new Error(message);
     }
 
-    const contentLength = response.headers.get("content-length");
-    if (response.status === 204 || contentLength === "0") {
+    const contentLength = response.headers.get('content-length');
+    if (response.status === 204 || contentLength === '0') {
       return;
     }
 
     const text = await response.text();
     if (!text) return;
 
-    const data = JSON.parse(text) as T;
-    return data;
+    const contentType = response.headers.get('content-type') || '';
+
+    // Si el content-type indica JSON, parseamos directamente
+    if (contentType.includes('application/json')) {
+      return JSON.parse(text) as T;
+    }
+
+    // Si el content-type no indica JSON, intentamos parsear igualmente
+    try {
+      const json = JSON.parse(text);
+      return json as T;
+    } catch {
+      // No es JSON → devolver como string
+      return text as unknown as T;
+    }
   } catch (error: unknown) {
-    if (error instanceof DOMException && error.name === "AbortError") {
-      throw new Error("Request was aborted by the user");
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      throw new Error('Request was aborted by the user');
     }
 
     if (error instanceof Error) {

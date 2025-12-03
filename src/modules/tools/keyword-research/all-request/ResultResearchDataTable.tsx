@@ -1,20 +1,40 @@
+// TODO:  Continuar
+
 import { ColumnDef } from '@tanstack/react-table';
 
 import { Badge } from '@/components/ui/badge';
 
 import { KeywordResultEntity } from '@/core/entities';
 
-import { ActionsButtonSet } from '@/components/data-table/ActionsButtons';
-import { ChartArea } from 'lucide-react';
 import { DataTable } from '@/components/data-table/DataTable';
-import { ResponsiveContainer, XAxis, YAxis, Line, LineChart } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
 import Image from 'next/image';
+import { ActionsButtonSet } from '@/components/data-table/ActionsButtons';
+import {
+  ArrowLeftCircle,
+  ArrowRight,
+  ArrowRightCircle,
+  Eye,
+} from 'lucide-react';
+import { KeywordResearchApiRepository } from '@/infrastructure/repositories';
+import { useEffect, useState } from 'react';
+import { showToast } from '@/components/CustomToaster';
+import { CustomLoading } from '@/components/CustomLoading';
+import { useRouter } from 'next/navigation';
+import { useKeywordStore } from './context/KeywordSelectionStore';
 
 interface Props {
   data: KeywordResultEntity[];
 }
 export const ResultResearchDataTable = ({ data }: Props) => {
+  const [image, setImage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState('');
+
+  const router = useRouter();
+  const setUnselect = useKeywordStore((st) => st.setUnSelec);
+  const unSelected = useKeywordStore((st) => st.unSelect);
+
   const formatNumberAbbreviated = (num) => {
     const number = Number(num);
     if (isNaN(number) || number === 0) {
@@ -45,10 +65,41 @@ export const ResultResearchDataTable = ({ data }: Props) => {
     return number.toLocaleString('es-ES', { maximumFractionDigits: 0 });
   };
 
+  // handlers
+
+  const onShow = async (item: KeywordResultEntity) => {
+    const REPO = new KeywordResearchApiRepository();
+    try {
+      setIsError('');
+      setIsLoading(true);
+      const response = await REPO.googleSearchWord(item.keyword);
+      console.log('🧮', response);
+      setImage(response);
+    } catch (error) {
+      setIsError(
+        error instanceof Error ? error.message : 'Error getting the Google Snap'
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isError) {
+      showToast({
+        message: 'Error Getting Google Snap',
+        description: isError,
+        type: 'error',
+      });
+    }
+    if (data.length === 0) {
+      router.push('/tools/seo/keyword-research');
+    }
+  }, [isError, data]);
+
   // --> ColumnDef
 
   const columns: ColumnDef<KeywordResultEntity>[] = [
-    // KEYWORD
     {
       accessorKey: 'keyword',
       header: 'Keyword',
@@ -58,7 +109,6 @@ export const ResultResearchDataTable = ({ data }: Props) => {
       },
     },
 
-    // COMPETITION
     {
       accessorKey: 'competition',
       header: 'Competition',
@@ -78,7 +128,6 @@ export const ResultResearchDataTable = ({ data }: Props) => {
       },
     },
 
-    // CPC
     {
       accessorKey: 'cpc',
       header: 'CPC',
@@ -89,224 +138,87 @@ export const ResultResearchDataTable = ({ data }: Props) => {
       },
     },
 
-    // SEARCH VOLUME
     {
       accessorKey: 'search_volume',
       header: 'Search Volume',
       cell: ({ row }) => {
-        // 1. Obtener el valor de la fila
         const vol = row.original.search_volume ?? 0;
 
-        // 2. Aplicar la función de formateo
         const formattedVolume = formatNumberAbbreviated(vol);
 
-        // 3. Devolver el valor formateado
         return <span className='font-semibold'>{formattedVolume}</span>;
       },
     },
+    {
+      id: 'actions',
+      header: 'Actions',
+      cell: ({ row }) => {
+        const item = row.original;
+        return (
+          <ActionsButtonSet
+            item={item}
+            actions={[
+              {
+                icon: Eye,
+                label: 'View Details',
+                onClick: async (item) => {
+                  console.log(item);
+                  await onShow(item);
+                },
+              },
 
-    // BIDS (LOW / HIGH)
-    // {
-    //   id: 'bids',
-    //   header: 'Low / High Bid',
-    //   cell: ({ row }) => {
-    //     const low = row.original.low_top_of_page_bid;
-    //     const high = row.original.high_top_of_page_bid;
-
-    //     const getColor = (v?: number | null) => {
-    //       if (v == null) return 'bg-gray-400/10 text-gray-500';
-    //       if (v < 0.1) return 'bg-red-500/10 text-red-500';
-    //       if (v < 0.5) return 'bg-orange-500/10 text-orange-500';
-    //       return 'bg-green-500/10 text-green-500';
-    //     };
-
-    //     return (
-    //       <div className='flex flex-col gap-1'>
-    //         <Badge className={getColor(low)}>
-    //           Low: {low == null ? '—' : `$${low.toFixed(2)}`}
-    //         </Badge>
-
-    //         <Badge className={getColor(high)}>
-    //           High: {high == null ? '—' : `$${high.toFixed(2)}`}
-    //         </Badge>
-    //       </div>
-    //     );
-    //   },
-    // },
-
-    // TREND (monthly_searches)
-
-    // {
-    //   accessorKey: 'monthly_searches',
-    //   header: 'Trend',
-    //   cell: ({ row }) => {
-    //     const monthly = row.original.monthly_searches;
-
-    //     if (!monthly || monthly.length === 0) {
-    //       return <span className='text-muted-foreground text-xs'>No data</span>;
-    //     }
-
-    //     const chartData = monthly.map((m) => ({
-    //       month: m.month ? m.month : 1,
-    //       value: m.search_volume,
-    //       max: Math.max(m.search_volume),
-    //       min: Math.min(m.search_volume),
-    //     }));
-
-    //     return (
-    //       <ResponsiveContainer width={320} height={80}>
-    //         <LineChart data={chartData}>
-    //           <XAxis dataKey='month' tick={{ fontSize: 6 }} />
-    //           <YAxis domain={['min', 'max']} tick={{ fontSize: 7 }} />
-    //           <Line
-    //             type='basis'
-    //             dataKey='value'
-    //             stroke='currentColor'
-    //             strokeWidth={1}
-    //             dot={false}
-    //           />
-    //         </LineChart>
-    //       </ResponsiveContainer>
-    //     );
-    //   },
-    // },
-
-    // {
-    //   id: 'actions',
-    //   header: 'Actions',
-    //   cell: ({ row }) => {
-    //     const item = row.original;
-    //     return (
-    //       <ActionsButtonSet
-    //         item={item}
-    //         actions={[
-    //           {
-    //             icon: ChartArea,
-    //             label: 'View Details',
-    //             onClick: (item) => onShowChart(item),
-    //           },
-    //         ]}
-    //       />
-    //     );
-    //   },
-    //   enableSorting: false,
-    //   enableHiding: false,
-    // },
+              {
+                icon: ArrowRightCircle,
+                label: 'Delete',
+                onClick: () => setUnselect(item),
+                variant: 'destructive',
+              },
+            ]}
+          />
+        );
+      },
+      enableSorting: false,
+      enableHiding: false,
+    },
   ];
 
-  // const columns: ColumnDef<KeywordResultEntity>[] = [
-  //   {
-  //     accessorKey: 'keyword',
-  //     header: 'Keyword',
-  //     cell: ({ row }) => {
-  //       const value = row.getValue('keyword') as string;
-  //       return <span className='font-medium'>{value}</span>;
-  //     },
-  //   },
+  const columnsUnSelected: ColumnDef<KeywordResultEntity>[] = [
+    {
+      accessorKey: 'keyword',
+      header: 'Keyword',
+      cell: ({ row }) => {
+        const value = row.original.keyword ?? 'N/A';
+        return <span className='font-medium'>{value}</span>;
+      },
+    },
+    {
+      id: 'actions',
+      header: 'Actions',
+      cell: ({ row }) => {
+        const item = row.original;
+        return (
+          <ActionsButtonSet
+            item={item}
+            actions={[
+              {
+                icon: ArrowLeftCircle,
+                label: 'Delete',
+                onClick: () => setUnselect(item),
+              },
+            ]}
+          />
+        );
+      },
+      enableSorting: false,
+      enableHiding: false,
+    },
+  ];
 
-  //   {
-  //     accessorKey: 'competition',
-  //     header: 'Competition',
-  //     cell: ({ row }) => {
-  //       const value = row.getValue('competition') as number;
-  //       const badgeColor = getCompetitionColor(value);
-
-  //       return (
-  //         <Badge className={badgeColor}>{(value * 100).toFixed(0)}%</Badge>
-  //       );
-  //     },
-  //   },
-
-  //   {
-  //     accessorKey: 'cpc',
-  //     header: 'CPC',
-  //     cell: ({ row }) => {
-  //       const value: KeywordResultEntity['cpc'] = row.getValue('cpc');
-  //       return <span>${value}</span>;
-  //     },
-  //   },
-
-  //   {
-  //     accessorKey: 'search_volume',
-  //     header: 'Search Volume',
-  //     cell: ({ row }) => {
-  //       const value: KeywordResultEntity['search_volume'] =
-  //         row.getValue('search_volume');
-  //       return <span className='font-semibold'>{value}</span>;
-  //     },
-  //   },
-
-  //   {
-  //     id: 'bids',
-  //     header: 'Low / High Bid',
-  //     cell: ({ row }) => {
-  //       const low: KeywordResultEntity['low_top_of_page_bid'] =
-  //         row.getValue('low_top_of_page_bid') ?? 0;
-  //       const high: KeywordResultEntity['high_top_of_page_bid'] =
-  //         row.getValue('high_top_of_page_bid') ?? 0;
-
-  //       const lowColor = getBidColor(low);
-  //       const highColor = getBidColor(high);
-
-  //       return (
-  //         <div className='flex flex-col gap-1'>
-  //           <Badge className={lowColor}>Low: ${low.toFixed(2)}</Badge>
-  //           <Badge className={highColor}>High: ${high.toFixed(2)}</Badge>
-  //         </div>
-  //       );
-  //     },
-  //   },
-
-  //   {
-  //     accessorKey: 'monthly_searches',
-  //     header: 'Trend',
-  //     cell: ({ row }) => {
-  //       const data = row.getValue('monthly_searches') as {
-  //         month: string;
-  //         value: number;
-  //       }[];
-
-  //       const readableData = data.map((d) => ({
-  //         month: d.month.slice(0, 1).toUpperCase(),
-  //         value: d.value,
-  //       }));
-
-  //       return (
-  //         <ResponsiveContainer width={120} height={40}>
-  //           <LineChart data={readableData}>
-  //             <XAxis
-  //               dataKey='month'
-  //               hide={false}
-  //               axisLine={false}
-  //               tickLine={false}
-  //               tick={{ fontSize: 10 }}
-  //             />
-  //             <Line
-  //               type='monotone'
-  //               dataKey='value'
-  //               stroke='currentColor'
-  //               strokeWidth={2}
-  //               dot={false}
-  //             />
-  //           </LineChart>
-  //         </ResponsiveContainer>
-  //       );
-  //     },
-  //   },
-
-  //   {
-  //     accessorKey: 'search_volume',
-  //     header: 'Volume',
-  //     cell: ({ row }) => {
-  //       const value: KeywordResultEntity['search_volume'] =
-  //         row.getValue('search_volume');
-  //       return <span>{value}</span>;
-  //     },
-  //   },
-  // ];
   return (
-    <div className='grid md:grid-cols-2 gap-2'>
-      <DataTable columns={columns} data={data} enableSelection />
+    <div className='grid md:grid-cols-3 gap-2'>
+      <DataTable columns={columns} data={data} pageSize={100} />
+      <DataTable columns={columnsUnSelected} data={unSelected} pageSize={100} />
+
       <Card>
         <CardHeader>
           <CardTitle>
@@ -322,7 +234,26 @@ export const ResultResearchDataTable = ({ data }: Props) => {
               <h2 className='texl-xl'>Google Snap</h2>
             </div>
           </CardTitle>
-          <CardContent className='bg-muted w-full min-h-64'></CardContent>
+          <CardContent className=' w-full min-h-64'>
+            {isLoading ? (
+              <div>
+                <CustomLoading message='Getting Google Snapshot' />
+              </div>
+            ) : (
+              <Image
+                src={
+                  image.length === 0
+                    ? '/placeholder.png'
+                    : `data:image/jpeg;base64, ${image}`
+                }
+                alt={image.length === 0 ? 'Placeholder Image' : 'Google Snap'}
+                width={1920}
+                height={1080}
+                className='w-full rounded-md'
+                loading='eager'
+              />
+            )}
+          </CardContent>
         </CardHeader>
       </Card>
     </div>

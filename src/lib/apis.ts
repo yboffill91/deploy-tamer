@@ -22,3 +22,4 @@ export const brandsApi = ApiStudio + 'brands';
 export const keywordResearchApi = ApiStudio + 'keywordrequests';
 export const suggestWordsApi = keywordResearchApi + '/suggest/ai';
 export const brandsSuggestApi = suggestWordsApi + '/brands';
+export const googleSearchApi = keywordResearchApi + '/google/search';
