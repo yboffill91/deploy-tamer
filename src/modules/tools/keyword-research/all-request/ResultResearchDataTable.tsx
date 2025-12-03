@@ -4,7 +4,7 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { Badge } from '@/components/ui/badge';
 
-import { KeywordResultEntity } from '@/core/entities';
+import { KeywordResearchEntity, KeywordResultEntity } from '@/core/entities';
 
 import { DataTable } from '@/components/data-table/DataTable';
 import {
@@ -45,12 +45,14 @@ export const ResultResearchDataTable = ({ data }: Props) => {
   const [image, setImage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState('');
+  const [isLoadingDownload, setIsLoadingDownload] = useState(false);
 
   const router = useRouter();
   const setUnselect = useKeywordStore((st) => st.setUnSelec);
   const unSelected = useKeywordStore((st) => st.unSelect);
+  const selectedResearch = useKeywordStore((st) => st.selectedResearch);
 
-  const formatNumberAbbreviated = (num) => {
+  const formatNumberAbbreviated = (num: number) => {
     const number = Number(num);
     if (isNaN(number) || number === 0) {
       return '0';
@@ -96,6 +98,22 @@ export const ResultResearchDataTable = ({ data }: Props) => {
       );
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const onExport = async () => {
+    try {
+      setIsLoadingDownload(true);
+      const REPO = new KeywordResearchApiRepository();
+      await REPO.exportExcel(selectedResearch);
+    } catch (error) {
+      setIsError(
+        error instanceof Error
+          ? error.message
+          : 'Unexpected Error Downloading Report'
+      );
+    } finally {
+      setIsLoadingDownload(false);
     }
   };
 
@@ -312,9 +330,21 @@ export const ResultResearchDataTable = ({ data }: Props) => {
           />
         </TabsContent>
       </Tabs>
-      <div className='h-12 p-2 bg-card border-t backdrop-blur-md w-full sticky bottom-0 flex items-center justify-end gap-6'>
-        <Button variant='secondary' className='w-64'>
-          Download Report <FileText />
+      <div className='h-12 p-2 bg-card border-t backdrop-blur-md w-full sticky bottom-0 flex items-center justify-end gap-6 '>
+        <Button
+          variant='secondary'
+          className='w-48'
+          onClick={() => onExport()}
+          disabled={isLoadingDownload}
+        >
+          {isLoadingDownload ? (
+            <CustomLoading message='Generating Report' />
+          ) : (
+            <>
+              {' '}
+              Download Report <FileText />{' '}
+            </>
+          )}
         </Button>
         <Button>
           Save <SaveAll />

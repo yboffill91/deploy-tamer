@@ -23,6 +23,7 @@ export const KeywordsResearchDataTable = () => {
   const getKeywordsResearch = useResearchStore((st) => st.getAllResearch);
 
   const setResultSelected = useKeywordStore((st) => st.setSelection);
+  const setSelectedResearch = useKeywordStore((st) => st.setSelectedResearch);
   const router = useRouter();
 
   console.log(keywordsResearch);
@@ -42,6 +43,7 @@ export const KeywordsResearchDataTable = () => {
 
   const onShow = (item: KeywordResearchEntity) => {
     setResultSelected(item.result!);
+    setSelectedResearch(String(item.id));
     router.push('/tools/seo/keyword-result');
   };
 
