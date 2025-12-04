@@ -161,7 +161,7 @@ export const GenerateWordsWithAiButton = ({
             });
           }
         }}
-        className={cn(' w-full flex-1', isBrandButton && 'rounded-e-none')}
+        className={cn(' w-full', isBrandButton && 'rounded-e-none')}
         type='button'
       >
         {isLoading ? (
