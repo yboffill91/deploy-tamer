@@ -86,7 +86,7 @@ export const GenerateWordsWithAiButton = ({
           ) : (
             <>
               <Bot className='dark:text-green-500 bg-green-500/10 rounded text-green-700 ' />
-              {type}
+              A.I Gen {type}
             </>
           )}
         </Button>

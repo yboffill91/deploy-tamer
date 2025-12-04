@@ -22,8 +22,11 @@ import {
   RegionStepController,
   StateSelector,
 } from './regions-selector';
-import { CustomTooltipContent } from '@/components/CustomTooltipContentArray';
-import { RegionsTrigguer } from './RegionsTrigguer';
+import {
+  BrandsTooltipContent,
+  CustomTooltipContent,
+} from '@/components/CustomTooltipContentArray';
+import { BrandsTrigger, RegionsTrigger } from './RegionsTrigguer';
 import { BrandsSelectorComponent } from './BrandsSelectorComponent';
 
 interface Props {
@@ -112,7 +115,7 @@ export const KeywordResearchDetailsCard = ({ control, errors }: Props) => {
             description='  You can find and add Search for regions like countries, states
                 or cities'
             trigger={
-              <RegionsTrigguer
+              <RegionsTrigger
                 icon={Globe2}
                 label='Region'
                 loadingState={isLoadingRegions}
@@ -125,7 +128,15 @@ export const KeywordResearchDetailsCard = ({ control, errors }: Props) => {
             {Step === 'State' && <StateSelector />}
             {Step === 'Cities' && <CitiesSelector />}
           </CustomSheet>
-          <BrandsSelectorComponent />
+          <CustomSheet
+            title='Generate and Select Brands'
+            description='Generate and select the brands associated with your Keyword Research using artificial intelligence'
+            trigger={<BrandsTrigger icon={Tags} label='Brands' />}
+            tooltipContentElement={<BrandsTooltipContent />}
+            showClose
+          >
+            <BrandsSelectorComponent />
+          </CustomSheet>
         </div>
       </div>
     </CustomCard>

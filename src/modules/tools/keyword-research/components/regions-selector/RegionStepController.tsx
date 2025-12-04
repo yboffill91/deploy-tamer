@@ -92,7 +92,7 @@ export const RegionStepController = () => {
                     </>
                   ) : (
                     <>
-                      Use All Country{' '}
+                      Use All States in{' '}
                       <span className='font-black flex items-center justify-center gap-2 ml-2'>
                         {' '}
                         {selectedCountry}
