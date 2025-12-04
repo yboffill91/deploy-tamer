@@ -182,9 +182,9 @@ export const KeywordsResearchDataTable = () => {
           />
         </>
       )}
-      {!isLoading && (keywordsResearch.length === 0 || !keywordsResearch) && (
+      {/* {!isLoading && (keywordsResearch.length === 0 || !keywordsResearch) && (
         <div>Empty</div>
-      )}
+      )} */}
     </>
   );
 };
