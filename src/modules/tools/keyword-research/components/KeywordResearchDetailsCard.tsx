@@ -1,7 +1,7 @@
 import { Control, Controller, FieldErrors } from 'react-hook-form';
 import { CustomCard } from '@/components/CustomCard';
 import { CustomControllerInput } from '@/components/CustomControllerInput';
-import { Bell, Globe2, Languages, List, Tags } from 'lucide-react';
+import { Bell, Globe2, Languages, List } from 'lucide-react';
 import { KeywordResearchFormInput } from '../../utils/models';
 import {
   Button,
@@ -22,13 +22,15 @@ import {
   RegionStepController,
   StateSelector,
 } from './regions-selector';
-import {
-  BrandsTooltipContent,
-  CustomTooltipContent,
-} from '@/components/CustomTooltipContentArray';
-import { BrandsTrigger, RegionsTrigger } from './RegionsTrigguer';
-import { BrandsSelectorComponent } from './BrandsSelectorComponent';
+import { CustomTooltipContent } from '@/components/CustomTooltipContentArray';
+import { RegionsTrigger } from './RegionsTrigguer';
 import { GenerateWordsWithAiButton } from './GenerateWordsWithAiButton';
+import {
+  useBrandStore,
+  useExtraPositiveStore,
+  useNegativeStore,
+  usePositiveStore,
+} from '../context/WordsStoreFactory';
 
 interface Props {
   control: Control<KeywordResearchFormInput>;
@@ -41,6 +43,7 @@ export const KeywordResearchDetailsCard = ({ control, errors }: Props) => {
   const isError = useRegionStore((st) => st.error);
   const isLoadingRegions = useRegionStore((st) => st.isLoading);
   const Step = useRegionStore((st) => st.step);
+  const isLoadingBrands = useBrandStore((st) => st.isLoading);
 
   useEffect(() => {
     getCountries();
@@ -57,15 +60,7 @@ export const KeywordResearchDetailsCard = ({ control, errors }: Props) => {
   }, [isError]);
 
   return (
-    <CustomCard
-      title='Research Details'
-      icon={List}
-      action={
-        <Button type='button' size={'icon'} variant={'outline'}>
-          <Bell />
-        </Button>
-      }
-    >
+    <CustomCard title='Research Details' icon={List} action={<Notifications />}>
       <div className='flex flex-col lg:flex-row items-start justify-start gap-2'>
         <div className='grid grid-cols-12 gap-2 w-full lg:w-3xl'>
           <div className=' col-span-10'>
@@ -129,9 +124,51 @@ export const KeywordResearchDetailsCard = ({ control, errors }: Props) => {
             {Step === 'State' && <StateSelector />}
             {Step === 'Cities' && <CitiesSelector />}
           </CustomSheet>
-          <GenerateWordsWithAiButton type='Brands' isLoading={false} />
+          <GenerateWordsWithAiButton
+            type='Brands'
+            isLoading={isLoadingBrands}
+          />
         </div>
       </div>
     </CustomCard>
+  );
+};
+
+const Notifications = () => {
+  const isFinishedWords = usePositiveStore((st) => st.isFinished);
+  const isFinishedNegative = useNegativeStore((st) => st.isFinished);
+  const isFinishedExtra = useExtraPositiveStore((st) => st.isFinished);
+  const isFinishedBrands = useBrandStore((st) => st.isFinished);
+
+  console.log(
+    isFinishedBrands,
+    isFinishedExtra,
+    isFinishedNegative,
+    isFinishedWords
+  );
+  return (
+    <div className='relative'>
+      {!isFinishedBrands &&
+      !isFinishedWords &&
+      !isFinishedExtra &&
+      !isFinishedNegative ? (
+        <Button type='button' size={'icon'} variant={'outline'} disabled>
+          <Bell />
+        </Button>
+      ) : (
+        <>
+          <Button
+            type='button'
+            size={'icon'}
+            variant={'outline'}
+            className=' text-green-700'
+          >
+            <Bell />
+          </Button>
+          <span className='rounded-full size-3  absolute -top-1 -right-1 bg-green-500/50 animate-ping' />
+          <span className='rounded-full size-2    absolute -top-0.5 -right-0.5 bg-green-500 ' />
+        </>
+      )}
+    </div>
   );
 };

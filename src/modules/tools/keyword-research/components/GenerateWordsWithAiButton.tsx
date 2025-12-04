@@ -24,6 +24,7 @@ import { CreateSuggestDTO } from '@/core/dto';
 import { cn } from '@/lib/utils';
 import { showToast } from '@/components/CustomToaster';
 import { CustomSheet } from '@/components/CustomSheet';
+import { CustomPageLoader } from '@/components/CustomPageLoader';
 
 interface Props {
   isLoading: boolean;
@@ -39,7 +40,7 @@ export const GenerateWordsWithAiButton = ({
   const words = usePositiveStore((st) => st.words);
   const negative = useNegativeStore((st) => st.words);
   const extra = useExtraPositiveStore((st) => st.words);
-  const brands = useExtraPositiveStore((st) => st.words);
+  const brands = useBrandStore((st) => st.words);
 
   const removeWords = usePositiveStore((st) => st.deleteWord);
   const removeNegative = useNegativeStore((st) => st.deleteWord);
@@ -110,7 +111,8 @@ export const GenerateWordsWithAiButton = ({
       }
     >
       <div className='min-h-[80dvh] w-full overflow-y-auto'>
-        {evalType.length === 0 && (
+        {isLoading && <CustomPageLoader message={`Generating ${type}`} />}
+        {evalType.length === 0 && !isLoading && (
           <Empty>
             <EmptyHeader>
               <EmptyTitle>{`No ${type} Generated`}</EmptyTitle>
@@ -118,7 +120,7 @@ export const GenerateWordsWithAiButton = ({
             </EmptyHeader>
           </Empty>
         )}
-        {evalType.length > 0 && (
+        {evalType.length > 0 && !isLoading && (
           <Table className='mt-6'>
             <TableHeader>
               <TableRow>
@@ -185,7 +187,7 @@ const ToolTipContent = ({
   const words = usePositiveStore((st) => st.words);
   const negative = useNegativeStore((st) => st.words);
   const extra = useExtraPositiveStore((st) => st.words);
-  const brands = useExtraPositiveStore((st) => st.words);
+  const brands = useBrandStore((st) => st.words);
 
   const evalType =
     type === 'Brands'

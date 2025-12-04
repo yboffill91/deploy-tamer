@@ -47,7 +47,9 @@ export const RegionsTrigger = ({
 
   return (
     <>
-      <div className='w-full grid grid-cols-5'>
+      <div
+        className={cn('w-full ', selectedList.size !== 0 && 'grid grid-cols-5')}
+      >
         <Button
           asChild
           variant='secondary'

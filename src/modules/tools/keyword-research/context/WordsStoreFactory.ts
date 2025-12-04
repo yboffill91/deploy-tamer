@@ -7,6 +7,7 @@ interface WordsStore {
   words: string[];
   isLoading: boolean;
   isError: string;
+  isFinished: boolean;
   getSuggestedWords(
     keywords: CreateSuggestDTO,
     language?: Languages,
@@ -22,7 +23,7 @@ function createWordsStore(defaultEndpoint: Endpoint) {
     words: [],
     isLoading: false,
     isError: '',
-
+    isFinished: false,
     getSuggestedWords: async (
       keywords,
       language = 'english',
@@ -33,6 +34,7 @@ function createWordsStore(defaultEndpoint: Endpoint) {
 
       try {
         set({ isLoading: true, isError: '' });
+        set({ isFinished: false });
 
         const Response = await REPO.getSugguest(keywords, language, endpoint);
 
@@ -42,6 +44,7 @@ function createWordsStore(defaultEndpoint: Endpoint) {
         }
 
         set({ words: [...Response.suggested_keywords] });
+        set({ isFinished: true });
       } catch (error) {
         set({ isError: error instanceof Error ? error.message : 'Error' });
       } finally {
