@@ -5,6 +5,9 @@ import { Bell, Globe2, Languages, List } from 'lucide-react';
 import { KeywordResearchFormInput } from '../../utils/models';
 import {
   Button,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   Select,
   SelectContent,
   SelectItem,
@@ -157,14 +160,30 @@ const Notifications = () => {
         </Button>
       ) : (
         <>
-          <Button
-            type='button'
-            size={'icon'}
-            variant={'outline'}
-            className=' text-green-700'
-          >
-            <Bell />
-          </Button>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                type='button'
+                size={'icon'}
+                variant={'outline'}
+                className=' text-green-700'
+              >
+                <Bell />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className='text-xs'>
+              {isFinishedBrands && <p> Brands Was Generated Successfully </p>}
+              {isFinishedExtra && (
+                <p>Extra POsitive Words Was Generated Successfully </p>
+              )}
+              {isFinishedNegative && (
+                <p>Negative Keywords Was Generated Successfully</p>
+              )}
+              {isFinishedWords && (
+                <p>Positive Keywords Was Generated Successfully</p>
+              )}
+            </PopoverContent>
+          </Popover>
           <span className='rounded-full size-3  absolute -top-1 -right-1 bg-green-500/50 animate-ping' />
           <span className='rounded-full size-2    absolute -top-0.5 -right-0.5 bg-green-500 ' />
         </>
