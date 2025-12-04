@@ -1,4 +1,10 @@
-import { ChevronDown, List, LucideIcon, Trash2 } from 'lucide-react';
+import {
+  ChevronDown,
+  ChevronRight,
+  List,
+  LucideIcon,
+  Trash2,
+} from 'lucide-react';
 import { useRegionStore } from '../context/RegionStore';
 import { CustomLoading } from '@/components/CustomLoading';
 import { showToast } from '@/components/CustomToaster';
@@ -41,14 +47,15 @@ export const RegionsTrigger = ({
 
   return (
     <>
-      <ButtonGroup className='w-full'>
+      <div className='w-full grid grid-cols-5'>
         <Button
           asChild
           variant='secondary'
           type='button'
           disabled={loadingState}
           className={cn(
-            selectedList.size === 0 ? 'w-full' : 'flex-1 rounded-e-none'
+            'justify-between',
+            selectedList.size === 0 ? 'w-full' : 'col-span-4 rounded-e-none'
           )}
         >
           <SheetTrigger>
@@ -56,7 +63,8 @@ export const RegionsTrigger = ({
               <CustomLoading message={label} />
             ) : (
               <>
-                <Icon /> <span className='capitalize'>{label}</span>
+                <Icon /> <span className='capitalize'>{label}</span>{' '}
+                <ChevronRight />
               </>
             )}
           </SheetTrigger>
@@ -69,7 +77,7 @@ export const RegionsTrigger = ({
               <Button
                 size='icon'
                 variant='secondary'
-                className={'opacity-90 rounded-s-none flex-2 w-full'}
+                className={'opacity-90 rounded-s-none col-span-1 w-full'}
                 type='button'
                 asChild
               >
@@ -116,7 +124,7 @@ export const RegionsTrigger = ({
             </div>
           </CustomSheet>
         )}
-      </ButtonGroup>
+      </div>
     </>
   );
 };

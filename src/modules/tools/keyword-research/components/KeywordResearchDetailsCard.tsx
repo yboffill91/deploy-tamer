@@ -28,6 +28,7 @@ import {
 } from '@/components/CustomTooltipContentArray';
 import { BrandsTrigger, RegionsTrigger } from './RegionsTrigguer';
 import { BrandsSelectorComponent } from './BrandsSelectorComponent';
+import { GenerateWordsWithAiButton } from './GenerateWordsWithAiButton';
 
 interface Props {
   control: Control<KeywordResearchFormInput>;
@@ -128,14 +129,7 @@ export const KeywordResearchDetailsCard = ({ control, errors }: Props) => {
             {Step === 'State' && <StateSelector />}
             {Step === 'Cities' && <CitiesSelector />}
           </CustomSheet>
-          <CustomSheet
-            title='Generate and Select Brands'
-            description='Generate and select the brands associated with your Keyword Research using artificial intelligence'
-            trigger={<BrandsTrigger icon={Tags} label='Brands' />}
-            tooltipContentElement={<BrandsTooltipContent />}
-          >
-            <BrandsSelectorComponent />
-          </CustomSheet>
+          <GenerateWordsWithAiButton type='Brands' isLoading={false} />
         </div>
       </div>
     </CustomCard>

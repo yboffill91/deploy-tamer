@@ -62,8 +62,8 @@ export const KeywordsResearchDataTable = () => {
         return value.length === 0
           ? 'No Positive Kywords'
           : value.slice(0, 3).map((item, index) => (
-              <Badge key={index} variant='secondary' className='mx-1'>
-                {item}
+              <Badge key={index} variant='secondary' className='mx-1 text-xs'>
+                {index === 2 ? `And ${value.length - 3} more` : item}
               </Badge>
             ));
       },
@@ -79,8 +79,8 @@ export const KeywordsResearchDataTable = () => {
           : Object.entries(value)
               .slice(0, 3)
               .map((item, index) => (
-                <Badge key={index}>
-                  {index === 3 ? `... ${value.length - 3} more` : item}
+                <Badge key={index} variant='secondary' className='mx-1 text-xs'>
+                  {index === 2 ? `And ${value.length - 3} more` : item}
                 </Badge>
               ));
       },
@@ -182,9 +182,9 @@ export const KeywordsResearchDataTable = () => {
           />
         </>
       )}
-      {/* {!isLoading && (keywordsResearch.length === 0 || !keywordsResearch) && (
+      {!isLoading && (keywordsResearch.length === 0 || !keywordsResearch) && (
         <div>Empty</div>
-      )} */}
+      )}
     </>
   );
 };
