@@ -8,6 +8,7 @@ import {
 } from '@/lib/apis';
 import { fetchHelper } from '@/lib/fetch-helper';
 import { SessionRepository } from './SessionRepository';
+import { KeywordResearchFormInput } from '@/modules/tools/utils';
 
 export class KeywordResearchApiRepository implements IRepository {
   private mapToDto(data: KeywordResearchDTO): Partial<KeywordResearchDTO> {
@@ -91,15 +92,29 @@ export class KeywordResearchApiRepository implements IRepository {
     }
   }
 
-  async create(data: KeywordResearchDTO): Promise<void> {
+  async create(data: KeywordResearchFormInput): Promise<void> {
+    const payload = {
+      title: data.title,
+      searchVolume: Number(data.searchVolume),
+      positiveKeywords: data.positiveKeywords as object,
+      extraPositiveKeywords: data.extraPositiveKeywords as object,
+      negativeKeywords: data.negativeKeywords as object,
+      city: data.city as object,
+      region: data.region as object,
+      requestLanguage: data.requestLanguage === 'en' ? 'english' : 'español',
+      brand: data.brand as object,
+      type: data.type.toUpperCase(),
+      allCitys: false,
+    };
+    console.log(JSON.stringify(payload));
     try {
       const response = await fetchHelper(keywordResearchApi, {
+        method: 'POST',
         headers: {
-          method: 'POST',
           'Content-Type': 'application/json',
           Authorization: `Bearer ${await this.auth()}`,
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
       if (!response) {
         throw new Error('Error creating new Keyword Research Report');

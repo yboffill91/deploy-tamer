@@ -133,7 +133,6 @@ export const KeywordResearchDetailsCard = ({ control, errors }: Props) => {
             description='Generate and select the brands associated with your Keyword Research using artificial intelligence'
             trigger={<BrandsTrigger icon={Tags} label='Brands' />}
             tooltipContentElement={<BrandsTooltipContent />}
-            showClose
           >
             <BrandsSelectorComponent />
           </CustomSheet>

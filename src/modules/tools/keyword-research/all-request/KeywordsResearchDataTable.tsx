@@ -76,11 +76,13 @@ export const KeywordsResearchDataTable = () => {
           row.getValue('negativeKeywords');
         return Object.entries(value).length === 0
           ? 'No Negative Keywords'
-          : Object.entries(value).map((item, index) => (
-              <Badge key={index}>
-                {index === 3 ? `... ${value.length - 3} more` : item}
-              </Badge>
-            ));
+          : Object.entries(value)
+              .slice(0, 3)
+              .map((item, index) => (
+                <Badge key={index}>
+                  {index === 3 ? `... ${value.length - 3} more` : item}
+                </Badge>
+              ));
       },
     },
     {

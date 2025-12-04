@@ -78,7 +78,6 @@ export const RegionsTrigger = ({
                 </SheetTrigger>
               </Button>
             }
-            showClose
           >
             <div className=' min-h-[80vh] overflow-y-auto'>
               <Table className='mt-6'>

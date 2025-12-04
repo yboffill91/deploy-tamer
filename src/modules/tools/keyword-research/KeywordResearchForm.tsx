@@ -9,7 +9,7 @@ import {
 } from './components';
 import { Button, Label, RadioGroup, RadioGroupItem } from '@/components/ui';
 import { Focus, Send } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { KeywordPositiveNegativeWords } from './components/KeywordPositiveNegativeWords';
 import { KeywordResearchCityComponent } from './components/KeywordResearchCityComponent';
 import { KeywordExtraPositive } from './components/KeywordExtraPositiveComponent';
@@ -21,13 +21,17 @@ import {
   useNegativeStore,
   usePositiveStore,
 } from './context/WordsStoreFactory';
+import { KeywordResearchApiRepository } from '@/infrastructure/repositories/KaywordResearchApiRepository';
+import { showToast } from '@/components/CustomToaster';
+import { CustomLoading } from '@/components/CustomLoading';
 
 export const KeywordResearchForm = () => {
   const {
     control,
     setValue,
     handleSubmit,
-    formState: { errors, isValid },
+    reset,
+    formState: { errors, isValid, isSubmitting },
   } = useForm<KeywordResearchFormInput>({
     resolver: zodResolver(KeywordResearchSchema),
     mode: 'onBlur',
@@ -49,8 +53,25 @@ export const KeywordResearchForm = () => {
     },
   });
 
-  const onSubmitHandler = (data: KeywordResearchFormInput) => {
-    console.log(data);
+  const [isError, setIsError] = useState('');
+
+  const onSubmitHandler = async (data: KeywordResearchFormInput) => {
+    const REPO = new KeywordResearchApiRepository();
+    try {
+      await REPO.create(data);
+      showToast({
+        message: 'Created New Keyword Research',
+        type: 'success',
+        description: '',
+      });
+      reset();
+    } catch (error) {
+      setIsError(
+        error instanceof Error
+          ? error.message
+          : 'Unexpected Error Submiting The Form'
+      );
+    }
   };
 
   const finalValues = useRegionStore((st) => st.finalValue);
@@ -76,7 +97,16 @@ export const KeywordResearchForm = () => {
     setValue('extraPositiveKeywords', extraPositiveWords);
 
     setValue('brand', brands);
+
+    if (isError) {
+      showToast({
+        message: 'Error',
+        description: isError,
+        type: 'error',
+      });
+    }
   }, [
+    isError,
     setValue,
     selectedRegions,
     negativeCities,
@@ -131,11 +161,19 @@ export const KeywordResearchForm = () => {
               type='submit'
               className=' w-full '
               size={'lg'}
-              disabled={!isValid}
-              variant={isValid ? 'default' : 'ghost'}
+              disabled={!isValid && positiveWords.length === 0}
+              variant={
+                isValid && positiveWords.length > 0 ? 'default' : 'ghost'
+              }
             >
-              <Send />
-              Run Research
+              {isSubmitting ? (
+                <CustomLoading message='Creating Research' />
+              ) : (
+                <>
+                  <Send />
+                  Run Research{' '}
+                </>
+              )}
             </Button>
           </div>
         </div>

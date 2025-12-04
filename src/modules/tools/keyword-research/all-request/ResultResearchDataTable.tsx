@@ -342,7 +342,7 @@ export const ResultResearchDataTable = ({ data }: Props) => {
           ) : (
             <>
               {' '}
-              Download Report <FileText />{' '}
+              Download Report <FileText /> showClose
             </>
           )}
         </Button>
