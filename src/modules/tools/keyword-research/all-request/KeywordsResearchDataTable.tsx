@@ -15,6 +15,7 @@ import { TypeBadge } from './TypesBadge';
 import { StatusBadge } from './StatusBadge';
 import { useKeywordStore } from './context/KeywordSelectionStore';
 import { useRouter } from 'next/navigation';
+import { RotatingBadge } from '@/components/RotatingBadge';
 
 export const KeywordsResearchDataTable = () => {
   const keywordsResearch = useResearchStore((st) => st.allResearch);
@@ -26,7 +27,6 @@ export const KeywordsResearchDataTable = () => {
   const setSelectedResearch = useKeywordStore((st) => st.setSelectedResearch);
   const router = useRouter();
 
-  console.log(keywordsResearch);
   useEffect(() => {
     getKeywordsResearch();
   }, [getKeywordsResearch]);
@@ -59,13 +59,17 @@ export const KeywordsResearchDataTable = () => {
       cell: ({ row }) => {
         const value: KeywordResearchEntity['positiveKeywords'] =
           row.getValue('positiveKeywords');
-        return value.length === 0
-          ? 'No Positive Kywords'
-          : value.slice(0, 3).map((item, index) => (
-              <Badge key={index} variant='secondary' className='mx-1 text-xs'>
-                {index === 2 ? `And ${value.length - 3} more` : item}
-              </Badge>
-            ));
+        return value.length === 0 ? (
+          <Badge
+            variant='secondary'
+            className='bg-transparent! text-muted-foreground'
+          >
+            {' '}
+            No Positive Kywords
+          </Badge>
+        ) : (
+          <RotatingBadge items={value} />
+        );
       },
     },
     {
@@ -74,20 +78,30 @@ export const KeywordsResearchDataTable = () => {
       cell: ({ row }) => {
         const value: KeywordResearchEntity['negativeKeywords'] =
           row.getValue('negativeKeywords');
-        return Object.entries(value).length === 0
-          ? 'No Negative Keywords'
-          : Object.entries(value)
-              .slice(0, 3)
-              .map((item, index) => (
-                <Badge key={index} variant='secondary' className='mx-1 text-xs'>
-                  {index === 2 ? `And ${value.length - 3} more` : item}
-                </Badge>
-              ));
+        const arr = Object.entries(value).map(([_, val]) => val);
+        return arr.length === 0 ? (
+          <Badge
+            variant='destructive'
+            className='bg-transparent! text-muted-foreground'
+          >
+            No Negative Keywords
+          </Badge>
+        ) : (
+          <RotatingBadge items={arr} />
+        );
       },
     },
     {
       accessorKey: 'region',
       header: 'Regions',
+      cell: ({ row }) => {
+        const values: KeywordResearchEntity['region'] = row.getValue('region');
+        return Array.isArray(values) && values.length > 1 ? (
+          <RotatingBadge items={values} />
+        ) : (
+          <span>{values}</span>
+        );
+      },
     },
     {
       accessorKey: 'result',
