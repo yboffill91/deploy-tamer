@@ -54,6 +54,11 @@ export const KeywordResearchForm = () => {
   });
 
   const [isError, setIsError] = useState('');
+  const resetWords = usePositiveStore((st) => st.resetWords);
+  const resetNegative = useNegativeStore((st) => st.resetWords);
+  const resetExtraPositive = useExtraPositiveStore((st) => st.resetWords);
+  const resetBrands = useBrandStore((st) => st.resetWords);
+  const resetNegativeCities = useRegionStore((st) => st.resetNegativesCities);
 
   const onSubmitHandler = async (data: KeywordResearchFormInput) => {
     const REPO = new KeywordResearchApiRepository();
@@ -65,6 +70,11 @@ export const KeywordResearchForm = () => {
         description: '',
       });
       reset();
+      resetWords();
+      resetNegative();
+      resetExtraPositive();
+      resetBrands();
+      resetNegativeCities();
     } catch (error) {
       setIsError(
         error instanceof Error

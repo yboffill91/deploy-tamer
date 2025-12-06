@@ -26,6 +26,7 @@ interface RegionStore {
   setSelectedStateCode(state: StatesEntity): void;
   negativeCities: string[];
   setNegativeCities(city: string): void;
+  resetNegativesCities(): void;
 
   // Cities
   citiesByState: CitiesEntity[] | null;
@@ -233,5 +234,8 @@ export const useRegionStore = create<RegionStore>((set, get) => ({
       ? negativeCities.filter((value) => city !== value)
       : [...negativeCities, city];
     set({ negativeCities: newArr });
+  },
+  resetNegativesCities: () => {
+    set({ negativeCities: [] });
   },
 }));

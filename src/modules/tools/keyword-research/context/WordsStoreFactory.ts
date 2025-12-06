@@ -16,6 +16,7 @@ interface WordsStore {
   addWord(keyword: string): void;
   addWords(keywords: string[]): void;
   deleteWord(keyword: string): void;
+  resetWords(): void;
 }
 
 function createWordsStore(defaultEndpoint: Endpoint) {
@@ -68,6 +69,9 @@ function createWordsStore(defaultEndpoint: Endpoint) {
     deleteWord: (keyword) => {
       const { words } = get();
       set({ words: words.filter((w) => w !== keyword) });
+    },
+    resetWords: () => {
+      set({ words: [] });
     },
   }));
 }
