@@ -3,12 +3,15 @@
 import { CustomPageLoader } from '@/components/CustomPageLoader';
 import { showToast } from '@/components/CustomToaster';
 import { DataTable } from '@/components/data-table/DataTable';
-import { Badge } from '@/components/ui';
-import { KeywordResearchEntity } from '@/core/entities';
+import { Badge, Button } from '@/components/ui';
+import {
+  KeywordAnnotationEntity,
+  KeywordResearchEntity,
+} from '@/core/entities';
 import { CommonHeader } from '@/modules/users/admin';
 import { ColumnDef } from '@tanstack/react-table';
 import { Eye, List, Pencil, Trash2 } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useResearchStore } from './context/ResearchStore';
 import { ActionsButtonSet } from '@/components/data-table/ActionsButtons';
 import { TypeBadge } from './TypesBadge';
@@ -16,6 +19,9 @@ import { StatusBadge } from './StatusBadge';
 import { useKeywordStore } from './context/KeywordSelectionStore';
 import { useRouter } from 'next/navigation';
 import { RotatingBadge } from '@/components/RotatingBadge';
+import { KeywordResearchApiRepository } from '@/infrastructure/repositories';
+import { ControlledDialog } from '@/components/ControlledDialog';
+import { CustomLoading } from '@/components/CustomLoading';
 
 export const KeywordsResearchDataTable = () => {
   const keywordsResearch = useResearchStore((st) => st.allResearch);
@@ -25,7 +31,41 @@ export const KeywordsResearchDataTable = () => {
 
   const setResultSelected = useKeywordStore((st) => st.setSelection);
   const setSelectedResearch = useKeywordStore((st) => st.setSelectedResearch);
+  const selectedResearch = useKeywordStore((st) => st.selectedResearch);
   const router = useRouter();
+
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
+  const [componentError, setComponentError] = useState('');
+
+  const handleShowConfirm = (el: KeywordResearchEntity) => {
+    setSelectedResearch(String(el.id));
+    setShowDialog(!showDialog);
+  };
+
+  const onConfirm = async (id: string) => {
+    const REPO = new KeywordResearchApiRepository();
+    try {
+      setConfirmLoading(true);
+      setComponentError('');
+      await REPO.delete(id);
+      getKeywordsResearch();
+      showToast({
+        message: 'Keyword Research Deleted',
+        description: 'The Keyword Research was successfully removed',
+        type: 'success',
+      });
+    } catch (error) {
+      setComponentError(
+        error instanceof Error
+          ? error.message
+          : 'Unexpected Error deleting the keyword research'
+      );
+    } finally {
+      setShowDialog(false);
+      setConfirmLoading(false);
+    }
+  };
 
   useEffect(() => {
     getKeywordsResearch();
@@ -39,7 +79,14 @@ export const KeywordsResearchDataTable = () => {
         type: 'error',
       });
     }
-  }, [isError]);
+    if (componentError) {
+      showToast({
+        message: 'Error',
+        description: componentError,
+        type: 'error',
+      });
+    }
+  }, [isError, componentError]);
 
   const onShow = (item: KeywordResearchEntity) => {
     setResultSelected(item.result!);
@@ -167,7 +214,7 @@ export const KeywordsResearchDataTable = () => {
               {
                 icon: Trash2,
                 label: 'Delete',
-                onClick: () => console.log(item),
+                onClick: () => handleShowConfirm(item),
                 variant: 'destructive',
               },
             ]}
@@ -194,6 +241,40 @@ export const KeywordsResearchDataTable = () => {
             columns={columns}
             onAdd={() => console.log('Add')}
           />
+          <ControlledDialog
+            open={showDialog}
+            onOpenChange={setShowDialog}
+            title='Confirm Delete Keyword Research'
+          >
+            <h3>
+              Please confirm that you wish to remove the Keyword Research; this
+              action will be irreversible.
+            </h3>
+            <div className=' mt-4 w-full grid grid-cols-2 gap-2 p-2'>
+              <Button
+                variant={'secondary'}
+                onClick={() => {
+                  setShowDialog(false);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant='destructive'
+                onClick={() => onConfirm(selectedResearch)}
+              >
+                {confirmLoading ? (
+                  <CustomLoading message='Deleting Keyword Research' />
+                ) : (
+                  <>
+                    {' '}
+                    <Trash2 />
+                    Confirm
+                  </>
+                )}
+              </Button>
+            </div>
+          </ControlledDialog>
         </>
       )}
       {/* {!isLoading && (keywordsResearch.length === 0 || !keywordsResearch) && (
