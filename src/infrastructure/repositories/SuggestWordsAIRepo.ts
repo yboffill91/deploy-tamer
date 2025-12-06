@@ -30,7 +30,6 @@ export class SuggestWordsApi implements IGeneratedRepository {
           body: JSON.stringify(keyword),
         }
       );
-      console.log('Response :', Response);
 
       if (!Response) throw new Error('Error genereting sugguested words');
       if (Array.isArray(Response)) return Response;

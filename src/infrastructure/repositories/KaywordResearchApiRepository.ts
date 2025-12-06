@@ -106,7 +106,6 @@ export class KeywordResearchApiRepository implements IRepository {
       type: data.type.toUpperCase(),
       allCitys: false,
     };
-    console.log(JSON.stringify(payload));
     try {
       const response = await fetchHelper(keywordResearchApi, {
         method: 'POST',

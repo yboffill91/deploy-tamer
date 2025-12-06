@@ -52,10 +52,8 @@ export class SessionVerificationRepository implements IOtpRepository {
   }
   async verifyCode(code: string, token: string): Promise<void> {
     try {
-      const response = await fetchHelper(`${verifyUserOtp}/${code}`, {
-        headers: {
-          Authorization: 'Bearer ' + token,
-        },
+      const response = await fetch(`${verifyUserOtp}/${code}`, {
+        headers: { Authorization: 'Bearer ' + token },
       });
 
       if (!response) {

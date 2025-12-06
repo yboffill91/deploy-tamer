@@ -143,12 +143,7 @@ const Notifications = () => {
   const isFinishedExtra = useExtraPositiveStore((st) => st.isFinished);
   const isFinishedBrands = useBrandStore((st) => st.isFinished);
 
-  console.log(
-    isFinishedBrands,
-    isFinishedExtra,
-    isFinishedNegative,
-    isFinishedWords
-  );
+ 
   return (
     <div className='relative'>
       {!isFinishedBrands &&

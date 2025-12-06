@@ -37,7 +37,6 @@ interface AuthContextType {
 const ManageAuthAndToken = async (user: UsersEntity) => {
   const SESSION_REPOSITORY = new SessionVerificationRepository();
   const COOKIES_MANAGER_REPOSITORY = new SessionRepository();
-  console.log(user);
   try {
     const userToken = await SESSION_REPOSITORY.sendEmailUuid(
       user.email!,

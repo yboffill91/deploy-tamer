@@ -4,7 +4,7 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { Badge } from '@/components/ui/badge';
 
-import { KeywordResearchEntity, KeywordResultEntity } from '@/core/entities';
+import { KeywordResultEntity } from '@/core/entities';
 
 import { DataTable } from '@/components/data-table/DataTable';
 import {
@@ -16,7 +16,6 @@ import {
   Tabs,
   TabsContent,
   TabsList,
-  TabsTrigger,
 } from '@/components/ui';
 import Image from 'next/image';
 import { ActionsButtonSet } from '@/components/data-table/ActionsButtons';
@@ -27,7 +26,6 @@ import {
   FileText,
   ListCheck,
   ListMinus,
-  Save,
   SaveAll,
 } from 'lucide-react';
 import { KeywordResearchApiRepository } from '@/infrastructure/repositories';
@@ -47,7 +45,6 @@ export const ResultResearchDataTable = ({ data }: Props) => {
   const [isError, setIsError] = useState('');
   const [isLoadingDownload, setIsLoadingDownload] = useState(false);
 
-  const router = useRouter();
   const setUnselect = useKeywordStore((st) => st.setUnSelec);
   const unSelected = useKeywordStore((st) => st.unSelect);
   const selectedResearch = useKeywordStore((st) => st.selectedResearch);
@@ -90,7 +87,6 @@ export const ResultResearchDataTable = ({ data }: Props) => {
       setIsError('');
       setIsLoading(true);
       const response = await REPO.googleSearchWord(item.keyword);
-      console.log('🧮', response);
       setImage(response);
     } catch (error) {
       setIsError(
@@ -116,6 +112,7 @@ export const ResultResearchDataTable = ({ data }: Props) => {
       setIsLoadingDownload(false);
     }
   };
+  const router = useRouter();
 
   useEffect(() => {
     if (isError) {
@@ -128,7 +125,7 @@ export const ResultResearchDataTable = ({ data }: Props) => {
     if (data.length === 0) {
       router.push('/tools/seo/keyword-research');
     }
-  }, [isError, data]);
+  }, [isError, data, router]);
 
   // --> ColumnDef
 
@@ -263,7 +260,7 @@ export const ResultResearchDataTable = ({ data }: Props) => {
   ];
 
   return (
-    <>
+    <div className='relative'>
       <Tabs defaultValue='results'>
         <TabsList className='w-full container mx-auto max-w-7xl flex shrink-0 items-center justify-start lg:justify-center   p-0 mb-2 rounded-none overflow-x-auto snap-none md:snap-x md:snap-mandatory snap-always bg-transparent'>
           <CustomTabTrigger
@@ -330,7 +327,7 @@ export const ResultResearchDataTable = ({ data }: Props) => {
           />
         </TabsContent>
       </Tabs>
-      <div className='h-12 p-2 bg-card border-t backdrop-blur-md w-full sticky bottom-0 flex items-center justify-end gap-6 '>
+      <div className='h-12 p-2 bg-card border-t w-full sticky bottom-0 right-0 flex items-center justify-end gap-6 '>
         <Button
           variant='secondary'
           className='w-48'
@@ -342,7 +339,7 @@ export const ResultResearchDataTable = ({ data }: Props) => {
           ) : (
             <>
               {' '}
-              Download Report <FileText /> showClose
+              Download Report <FileText />
             </>
           )}
         </Button>
@@ -350,6 +347,6 @@ export const ResultResearchDataTable = ({ data }: Props) => {
           Save <SaveAll />
         </Button>
       </div>
-    </>
+    </div>
   );
 };

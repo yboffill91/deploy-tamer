@@ -1,7 +1,8 @@
-import {  LucideIcon } from 'lucide-react';
-import {  Card, CardContent, CardHeader, CardTitle } from './ui';
+import { type ReactNode } from 'react';
+import { type LucideIcon } from 'lucide-react';
+
 import { cn } from '@/lib/utils';
-import { ReactNode } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from './ui';
 
 interface Props {
   title: string;

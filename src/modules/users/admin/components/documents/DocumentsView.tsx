@@ -1,16 +1,16 @@
-"use client";
-import { CustomEmpty } from "@/components/CustomEmpty";
-import { CustomPageLoader } from "@/components/CustomPageLoader";
-import { GenericDataTable } from "@/components/GenericDataTable";
-import { DocumentsEntity, TeamsEntity, UsersEntity } from "@/core/entities";
-import { DocumentsApiRepository } from "@/infrastructure/repositories/DocumentsApiRepository";
-import { FileText } from "lucide-react";
-import { useEffect, useState } from "react";
-import { DocumentsDataTable } from "../dataTables/DocumetsDataTable";
+'use client';
+import { CustomEmpty } from '@/components/CustomEmpty';
+import { CustomPageLoader } from '@/components/CustomPageLoader';
+import { GenericDataTable } from '@/components/GenericDataTable';
+import { DocumentsEntity, TeamsEntity, UsersEntity } from '@/core/entities';
+import { DocumentsApiRepository } from '@/infrastructure/repositories/DocumentsApiRepository';
+import { FileText } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { DocumentsDataTable } from '../dataTables/DocumetsDataTable';
 import {
   TeamsApiRepository,
   UsersApiRepository,
-} from "@/infrastructure/repositories";
+} from '@/infrastructure/repositories';
 
 export const DocumentsView = () => {
   const [documents, setDocuments] = useState<DocumentsEntity[] | null>(null);
@@ -35,7 +35,7 @@ export const DocumentsView = () => {
         setTeams(teams_list);
       } catch (error) {
         setIsError(
-          error instanceof Error ? error.message : "Error fetching documents"
+          error instanceof Error ? error.message : 'Error fetching documents'
         );
       } finally {
         setIsLoading(false);
@@ -46,13 +46,13 @@ export const DocumentsView = () => {
 
   return (
     <>
-      {isLoading && <CustomPageLoader message="Getting Uploaded Documents" />}
+      {isLoading && <CustomPageLoader message='Getting Uploaded Documents' />}
       {!isLoading && documents && documents.length === 0 && (
         <CustomEmpty
-          description="No Documents Uploaded Yet"
+          description='No Documents Uploaded Yet'
           icon={FileText}
-          title="No Documents Uploaded Yet"
-          onClick={() => console.log("Create Document")}
+          title='No Documents Uploaded Yet'
+          onClick={() => console.log('Create Document')}
         />
       )}
       {!isLoading && documents && documents.length > 0 && (
