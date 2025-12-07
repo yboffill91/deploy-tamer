@@ -17,7 +17,7 @@ interface FormStore {
   language: () => string;
   getKeyWordResearch: (id: string) => Promise<void>;
   title: () => string;
-  regions: () => Map<number, string[]>;
+  regions: () => void;
   positive: () => void;
   negative: () => void;
   extraPositive: () => void;
@@ -64,7 +64,7 @@ export const useFormStore = create<FormStore>((set, get) => ({
     set({ mode: 'edit' });
   },
 
-  regions: (): Map<number, string[]> => {
+  regions: () => {
     const { mode, keywordResearch } = get();
 
     const reBuildedMap = new Map<number, string[]>(
@@ -75,7 +75,7 @@ export const useFormStore = create<FormStore>((set, get) => ({
     );
 
     return mode === 'create'
-      ? new Map<number, string[]>()
+      ? ''
       : useRegionStore.getState().hidrateFinalValue(reBuildedMap);
   },
   positive: () => {

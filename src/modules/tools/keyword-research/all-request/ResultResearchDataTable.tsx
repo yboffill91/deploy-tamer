@@ -298,20 +298,7 @@ export const ResultResearchDataTable = ({ data }: Props) => {
                       <CustomLoading message='Getting Google Snapshot' />
                     </div>
                   ) : (
-                    <Image
-                      src={
-                        image.length === 0
-                          ? '/placeholder.png'
-                          : `data:image/jpeg;base64, ${image}`
-                      }
-                      alt={
-                        image.length === 0 ? 'Placeholder Image' : 'Google Snap'
-                      }
-                      width={1920}
-                      height={1080}
-                      className='w-full rounded-md'
-                      loading='eager'
-                    />
+                    <></>
                   )}
                 </CardContent>
               </CardHeader>
