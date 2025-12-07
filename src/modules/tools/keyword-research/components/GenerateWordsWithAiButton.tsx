@@ -93,89 +93,122 @@ export const GenerateWordsWithAiButton = ({
   };
 
   return (
-    <CustomSheet
-      title={`Generate and Select ${type}`}
-      tooltipContentElement={<ToolTipContent type={type} />}
-      trigger={
-        <SheetTrigger asChild>
+    <>
+      {words ? (
+        <Button
+          onClick={() => {
+            if (!evalDisabled) {
+              clickHandler();
+              return;
+            } else {
+              showToast({
+                message: 'Alert',
+                description:
+                  'To make the AI-generated result more reliable, please add at least two positive keywords.',
+                type: 'error',
+              });
+            }
+          }}
+          className={cn(' w-full', isBrandButton && 'rounded-e-none')}
+          type='button'
+        >
+          {isLoading ? (
+            <>
+              <CustomLoading message='Thinking...' />
+            </>
+          ) : (
+            <>
+              <Bot className='dark:text-green-500 bg-green-500/10 rounded text-green-700 ' />
+              Generate {type}
+            </>
+          )}
+        </Button>
+      ) : (
+        <CustomSheet
+          title={`Generate and Select ${type}`}
+          tooltipContentElement={<ToolTipContent type={type} />}
+          trigger={
+            <SheetTrigger asChild>
+              <Button
+                variant={'secondary'}
+                className={cn(' w-full flex-1 justify-between')}
+                type='button'
+              >
+                <Bot className='dark:text-green-500 bg-green-500/10 rounded text-green-700 ' />
+                {type === 'Brands' ? type : `Generate ${type} With A.I.`}
+                <ChevronRight />
+              </Button>
+            </SheetTrigger>
+          }
+        >
+          <div className='min-h-[80dvh] w-full overflow-y-auto'>
+            {isLoading && <CustomPageLoader message={`Generating ${type}`} />}
+            {evalType.length === 0 && !isLoading && (
+              <Empty>
+                <EmptyHeader>
+                  <EmptyTitle>{`No ${type} Generated`}</EmptyTitle>
+                  <EmptyDescription>{`Use the Generate ${type} Button Bellow to Start`}</EmptyDescription>
+                </EmptyHeader>
+              </Empty>
+            )}
+            {evalType.length > 0 && !isLoading && (
+              <Table className='mt-6'>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Brand</TableHead>
+                    <TableHead>Action</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {evalType.map((brand, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{brand}</TableCell>
+                      <TableCell className='flex items-center justify-end'>
+                        <Button
+                          onClick={() => handleDelete(brand)}
+                          variant='destructive'
+                          size='xs'
+                        >
+                          <Trash2 />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </div>
           <Button
-            variant={'secondary'}
-            className={cn(' w-full flex-1 justify-between')}
+            onClick={() => {
+              if (!evalDisabled) {
+                clickHandler();
+                return;
+              } else {
+                showToast({
+                  message: 'Alert',
+                  description:
+                    'To make the AI-generated result more reliable, please add at least two positive keywords.',
+                  type: 'error',
+                });
+              }
+            }}
+            className={cn(' w-full', isBrandButton && 'rounded-e-none')}
             type='button'
           >
-            <Bot className='dark:text-green-500 bg-green-500/10 rounded text-green-700 ' />
-            {type === 'Brands' ? type : `Generate ${type} With A.I.`}
-            <ChevronRight />
+            {isLoading ? (
+              <>
+                <CustomLoading message='Thinking...' />
+              </>
+            ) : (
+              <>
+                <Bot className='dark:text-green-500 bg-green-500/10 rounded text-green-700 ' />
+                Generate {type}
+              </>
+            )}
           </Button>
-        </SheetTrigger>
-      }
-    >
-      <div className='min-h-[80dvh] w-full overflow-y-auto'>
-        {isLoading && <CustomPageLoader message={`Generating ${type}`} />}
-        {evalType.length === 0 && !isLoading && (
-          <Empty>
-            <EmptyHeader>
-              <EmptyTitle>{`No ${type} Generated`}</EmptyTitle>
-              <EmptyDescription>{`Use the Generate ${type} Button Bellow to Start`}</EmptyDescription>
-            </EmptyHeader>
-          </Empty>
-        )}
-        {evalType.length > 0 && !isLoading && (
-          <Table className='mt-6'>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Brand</TableHead>
-                <TableHead>Action</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {evalType.map((brand, index) => (
-                <TableRow key={index}>
-                  <TableCell>{brand}</TableCell>
-                  <TableCell className='flex items-center justify-end'>
-                    <Button
-                      onClick={() => handleDelete(brand)}
-                      variant='destructive'
-                      size='xs'
-                    >
-                      <Trash2 />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
-      </div>
-      <Button
-        onClick={() => {
-          if (!evalDisabled) {
-            clickHandler();
-            return;
-          } else {
-            showToast({
-              message: 'Alert',
-              description:
-                'To make the AI-generated result more reliable, please add at least two positive keywords.',
-              type: 'error',
-            });
-          }
-        }}
-        className={cn(' w-full', isBrandButton && 'rounded-e-none')}
-        type='button'
-      >
-        {isLoading ? (
-          <>
-            <CustomLoading message='Thinking...' />
-          </>
-        ) : (
-          <>
-            <Bot className='dark:text-green-500 bg-green-500/10 rounded text-green-700 ' />
-            Generate {type}
-          </>
-        )}
-      </Button>
-    </CustomSheet>
+        </CustomSheet>
+      )}
+    </>
   );
 };
 

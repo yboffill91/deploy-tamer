@@ -63,7 +63,7 @@ export const KeywordResearchDetailsCard = ({ control, errors }: Props) => {
   }, [isError]);
 
   return (
-    <CustomCard title='Research Details' icon={List} action={<Notifications />}>
+    <CustomCard title='Research Details' icon={List}>
       <div className='flex flex-col lg:flex-row items-start justify-start gap-2'>
         <div className='grid grid-cols-12 gap-2 w-full lg:w-3xl'>
           <div className=' col-span-10'>
@@ -134,55 +134,5 @@ export const KeywordResearchDetailsCard = ({ control, errors }: Props) => {
         </div>
       </div>
     </CustomCard>
-  );
-};
-
-const Notifications = () => {
-  const isFinishedWords = usePositiveStore((st) => st.isFinished);
-  const isFinishedNegative = useNegativeStore((st) => st.isFinished);
-  const isFinishedExtra = useExtraPositiveStore((st) => st.isFinished);
-  const isFinishedBrands = useBrandStore((st) => st.isFinished);
-
- 
-  return (
-    <div className='relative'>
-      {!isFinishedBrands &&
-      !isFinishedWords &&
-      !isFinishedExtra &&
-      !isFinishedNegative ? (
-        <Button type='button' size={'icon'} variant={'outline'} disabled>
-          <Bell />
-        </Button>
-      ) : (
-        <>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                type='button'
-                size={'icon'}
-                variant={'outline'}
-                className=' text-green-700'
-              >
-                <Bell />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className='text-xs'>
-              {isFinishedBrands && <p> Brands Was Generated Successfully </p>}
-              {isFinishedExtra && (
-                <p>Extra POsitive Words Was Generated Successfully </p>
-              )}
-              {isFinishedNegative && (
-                <p>Negative Keywords Was Generated Successfully</p>
-              )}
-              {isFinishedWords && (
-                <p>Positive Keywords Was Generated Successfully</p>
-              )}
-            </PopoverContent>
-          </Popover>
-          <span className='rounded-full size-3  absolute -top-1 -right-1 bg-green-500/50 animate-ping' />
-          <span className='rounded-full size-2    absolute -top-0.5 -right-0.5 bg-green-500 ' />
-        </>
-      )}
-    </div>
   );
 };

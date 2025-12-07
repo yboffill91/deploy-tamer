@@ -46,6 +46,7 @@ interface RegionStore {
   resetState(): void;
 
   finalValue: Map<number, string[]>;
+  hidrateFinalValue: (values: Map<number, string[]>) => void;
   setFinalValue(): void;
   deleteEntryFinalValue(entry: number): void;
 }
@@ -237,5 +238,8 @@ export const useRegionStore = create<RegionStore>((set, get) => ({
   },
   resetNegativesCities: () => {
     set({ negativeCities: [] });
+  },
+  hidrateFinalValue: (data) => {
+    set({ finalValue: data });
   },
 }));

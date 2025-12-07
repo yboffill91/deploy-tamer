@@ -78,8 +78,8 @@ export const RegionsTrigger = ({
             trigger={
               <Button
                 size='icon'
-                variant='secondary'
-                className={'opacity-90 rounded-s-none col-span-1 w-full'}
+                variant='default'
+                className={'opacity-70 rounded-s-none col-span-1 w-full'}
                 type='button'
                 asChild
               >
