@@ -8,11 +8,13 @@ interface WordsStore {
   isLoading: boolean;
   isError: string;
   isFinished: boolean;
+  sugguestedWords: string[];
   getSuggestedWords(
     keywords: CreateSuggestDTO,
     language?: Languages,
     endpointOverride?: Endpoint
   ): Promise<void>;
+  clearSuggestedWords(): void;
   addWord(keyword: string): void;
   addWords(keywords: string[]): void;
   deleteWord(keyword: string): void;
@@ -26,6 +28,8 @@ function createWordsStore(defaultEndpoint: Endpoint) {
     isLoading: false,
     isError: '',
     isFinished: false,
+    sugguestedWords: [],
+
     getSuggestedWords: async (
       keywords,
       language = 'english',
@@ -41,11 +45,11 @@ function createWordsStore(defaultEndpoint: Endpoint) {
         const Response = await REPO.getSugguest(keywords, language, endpoint);
 
         if (Array.isArray(Response)) {
-          set({ words: [...Response] });
+          set({ sugguestedWords: [...Response] });
           return;
         }
 
-        set({ words: [...Response.suggested_keywords] });
+        set({ sugguestedWords: [...Response.suggested_keywords] });
         set({ isFinished: true });
       } catch (error) {
         set({ isError: error instanceof Error ? error.message : 'Error' });
@@ -76,6 +80,9 @@ function createWordsStore(defaultEndpoint: Endpoint) {
     },
     resetWords: () => {
       set({ words: [] });
+    },
+    clearSuggestedWords: () => {
+      set({ sugguestedWords: [] });
     },
   }));
 }

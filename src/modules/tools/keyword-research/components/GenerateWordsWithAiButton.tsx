@@ -1,9 +1,11 @@
+'use client';
 import {
   Button,
   Empty,
   EmptyDescription,
   EmptyHeader,
   EmptyTitle,
+  SheetClose,
   SheetTrigger,
   Table,
   TableBody,
@@ -19,33 +21,51 @@ import {
   usePositiveStore,
 } from '../context/WordsStoreFactory';
 import { CustomLoading } from '@/components/CustomLoading';
-import { Bot, ChevronRight, Trash2 } from 'lucide-react';
+import { Bot, Check, ChevronRight, Plus, Trash2 } from 'lucide-react';
 import { CreateSuggestDTO } from '@/core/dto';
 import { cn } from '@/lib/utils';
 import { showToast } from '@/components/CustomToaster';
 import { CustomSheet } from '@/components/CustomSheet';
 import { CustomPageLoader } from '@/components/CustomPageLoader';
+import { useState } from 'react';
 
 interface Props {
   isLoading: boolean;
   type: 'Positive Words' | 'Negative Words' | 'Extra Positive Words' | 'Brands';
-  isBrandButton?: boolean;
 }
 
-export const GenerateWordsWithAiButton = ({
-  isLoading,
-  type,
-  isBrandButton = false,
-}: Props) => {
+export const GenerateWordsWithAiButton = ({ isLoading, type }: Props) => {
+  const [showNotification, setShowNotification] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
+
+  const addWords = usePositiveStore((st) => st.addWord);
+  const addNegative = useNegativeStore((st) => st.addWord);
+  const addExtra = useExtraPositiveStore((st) => st.addWord);
+  const addBrand = useBrandStore((st) => st.addWord);
+
+  const deleteWords = usePositiveStore((st) => st.deleteWord);
+  const deleteNegative = useNegativeStore((st) => st.deleteWord);
+  const deleteExtra = useExtraPositiveStore((st) => st.deleteWord);
+  const deleteBrand = useBrandStore((st) => st.deleteWord);
+
+  const suggestedWords = usePositiveStore((st) => st.sugguestedWords);
+  const suggestedNegative = useNegativeStore((st) => st.sugguestedWords);
+  const suggestedExtra = useExtraPositiveStore((st) => st.sugguestedWords);
+  const suggestedBrands = useBrandStore((st) => st.sugguestedWords);
+
+  const clearSuggestedWords = usePositiveStore((st) => st.clearSuggestedWords);
+  const clearSuggestedNegative = useNegativeStore(
+    (st) => st.clearSuggestedWords
+  );
+  const clearSuggestedExtra = useExtraPositiveStore(
+    (st) => st.clearSuggestedWords
+  );
+  const clearSuggestedBrands = useBrandStore((st) => st.clearSuggestedWords);
+
   const words = usePositiveStore((st) => st.words);
   const negative = useNegativeStore((st) => st.words);
   const extra = useExtraPositiveStore((st) => st.words);
   const brands = useBrandStore((st) => st.words);
-
-  const removeWords = usePositiveStore((st) => st.deleteWord);
-  const removeNegative = useNegativeStore((st) => st.deleteWord);
-  const removeExtra = useExtraPositiveStore((st) => st.deleteWord);
-  const removeBrands = useBrandStore((st) => st.deleteWord);
 
   const getSuggestedPositiveWords = usePositiveStore(
     (st) => st.getSuggestedWords
@@ -72,11 +92,33 @@ export const GenerateWordsWithAiButton = ({
     if (type === 'Positive Words') {
       getSuggestedPositiveWords(payLoad);
     }
+    setShowNotification(true);
+  };
+
+  const handleAdd = (word: string) => {
+    if (type === 'Brands') addBrand(word);
+    if (type === 'Extra Positive Words') addExtra(word);
+    if (type === 'Negative Words') addNegative(word);
+    if (type === 'Positive Words') addWords(word);
+  };
+  const handleDelete = (word: string) => {
+    if (type === 'Brands') deleteBrand(word);
+    if (type === 'Extra Positive Words') deleteExtra(word);
+    if (type === 'Negative Words') deleteNegative(word);
+    if (type === 'Positive Words') deleteWords(word);
   };
 
   const evalDisabled = words.length <= 1;
 
   const evalType =
+    type === 'Brands'
+      ? suggestedBrands
+      : type === 'Extra Positive Words'
+      ? suggestedExtra
+      : type === 'Negative Words'
+      ? suggestedNegative
+      : suggestedWords;
+  const Words =
     type === 'Brands'
       ? brands
       : type === 'Extra Positive Words'
@@ -85,17 +127,18 @@ export const GenerateWordsWithAiButton = ({
       ? negative
       : words;
 
-  const handleDelete = (word: string) => {
-    if (type === 'Brands') removeBrands(word);
-    if (type === 'Extra Positive Words') removeExtra(word);
-    if (type === 'Negative Words') removeNegative(word);
-    if (type === 'Positive Words') removeWords(word);
+  const handleClear = () => {
+    if (type === 'Brands') clearSuggestedBrands();
+    if (type === 'Extra Positive Words') clearSuggestedExtra();
+    if (type === 'Negative Words') clearSuggestedNegative();
+    if (type === 'Positive Words') clearSuggestedWords();
   };
 
   return (
     <>
-      {words ? (
+      {evalType.length === 0 ? (
         <Button
+          variant='secondary'
           onClick={() => {
             if (!evalDisabled) {
               clickHandler();
@@ -109,7 +152,7 @@ export const GenerateWordsWithAiButton = ({
               });
             }
           }}
-          className={cn(' w-full', isBrandButton && 'rounded-e-none')}
+          className={cn(' w-full')}
           type='button'
         >
           {isLoading ? (
@@ -118,8 +161,8 @@ export const GenerateWordsWithAiButton = ({
             </>
           ) : (
             <>
-              <Bot className='dark:text-green-500 bg-green-500/10 rounded text-green-700 ' />
-              Generate {type}
+              <Bot className='dark:text-green-500 text-green-700 ' />
+              {type === 'Brands' ? 'Gen Brands' : `Generate ${type} with A.I.`}
             </>
           )}
         </Button>
@@ -131,12 +174,21 @@ export const GenerateWordsWithAiButton = ({
             <SheetTrigger asChild>
               <Button
                 variant={'secondary'}
-                className={cn(' w-full flex-1 justify-between')}
+                className={cn(
+                  ' w-full flex-1 justify-between relative bg-green-500/10'
+                )}
                 type='button'
+                onClick={() => setShowNotification(false)}
               >
                 <Bot className='dark:text-green-500 bg-green-500/10 rounded text-green-700 ' />
                 {type === 'Brands' ? type : `Generate ${type} With A.I.`}
                 <ChevronRight />
+                {showNotification && (
+                  <>
+                    <span className='rounded-full size-3  absolute -top-1 -right-1 bg-green-500/50 animate-ping' />
+                    <span className='rounded-full size-2    absolute -top-0.5 -right-0.5 bg-green-500 ' />
+                  </>
+                )}
               </Button>
             </SheetTrigger>
           }
@@ -155,22 +207,34 @@ export const GenerateWordsWithAiButton = ({
               <Table className='mt-6'>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Brand</TableHead>
+                    <TableHead>{type}</TableHead>
                     <TableHead>Action</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {evalType.map((brand, index) => (
+                  {evalType.map((word, index) => (
                     <TableRow key={index}>
-                      <TableCell>{brand}</TableCell>
+                      <TableCell>{word}</TableCell>
                       <TableCell className='flex items-center justify-end'>
-                        <Button
-                          onClick={() => handleDelete(brand)}
-                          variant='destructive'
-                          size='xs'
-                        >
-                          <Trash2 />
-                        </Button>
+                        {Words.includes(word) ? (
+                          <Button
+                            size={'xs'}
+                            variant='ghost'
+                            className='bg-destructive/10 text-destructive'
+                            onClick={() => handleDelete(word)}
+                          >
+                            <Trash2 />
+                          </Button>
+                        ) : (
+                          <Button
+                            size={'xs'}
+                            variant='ghost'
+                            className='bg-green-500/10 text-green-500'
+                            onClick={() => handleAdd(word)}
+                          >
+                            <Plus />
+                          </Button>
+                        )}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -178,34 +242,9 @@ export const GenerateWordsWithAiButton = ({
               </Table>
             )}
           </div>
-          <Button
-            onClick={() => {
-              if (!evalDisabled) {
-                clickHandler();
-                return;
-              } else {
-                showToast({
-                  message: 'Alert',
-                  description:
-                    'To make the AI-generated result more reliable, please add at least two positive keywords.',
-                  type: 'error',
-                });
-              }
-            }}
-            className={cn(' w-full', isBrandButton && 'rounded-e-none')}
-            type='button'
-          >
-            {isLoading ? (
-              <>
-                <CustomLoading message='Thinking...' />
-              </>
-            ) : (
-              <>
-                <Bot className='dark:text-green-500 bg-green-500/10 rounded text-green-700 ' />
-                Generate {type}
-              </>
-            )}
-          </Button>
+          <SheetClose asChild>
+            <Button onClick={handleClear}> Finish {type} Selection</Button>
+          </SheetClose>
         </CustomSheet>
       )}
     </>
