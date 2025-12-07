@@ -21,7 +21,7 @@ export function ActionsButtonSet<T>({
   className = '',
 }: ActionsButtonSetProps<T>) {
   return (
-    <div className='flex gap-2 items-center justify-end'>
+    <div className='flex gap-1 items-center justify-end    rounded'>
       {actions
         .filter((a) => (a.show ? a.show(item) : true))
         .map(({ icon: Icon, label, onClick, variant }, idx) => (

@@ -34,7 +34,7 @@ export function RotatingBadge({ items, interval = 3000 }: RotatingBadgeProps) {
   }
 
   return (
-    <div className='min-w-64'>
+    <div className='min-w-60'>
       <style>{`
         @keyframes fadeInScale {
           from {
@@ -66,14 +66,13 @@ export function RotatingBadge({ items, interval = 3000 }: RotatingBadgeProps) {
           animation: fadeOutScale 0.3s ease-in forwards;
         }
       `}</style>
-      <Badge
-        variant='secondary'
-        className={`text-xs  min-w-max ${
+      <span
+        className={`text-xs  min-w-max bg-transparent!] ${
           isVisible ? 'rotating-badge-enter' : 'rotating-badge-exit'
         }`}
       >
         {items[currentIndex]}
-      </Badge>
+      </span>
     </div>
   );
 }

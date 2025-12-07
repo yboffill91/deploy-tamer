@@ -192,7 +192,6 @@ export const ResultResearchDataTable = ({ data }: Props) => {
                 icon: Eye,
                 label: 'View Details',
                 onClick: async (item) => {
-                  console.log(item);
                   await onShow(item);
                 },
               },

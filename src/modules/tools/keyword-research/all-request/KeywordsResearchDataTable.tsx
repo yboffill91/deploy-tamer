@@ -193,7 +193,9 @@ export const KeywordsResearchDataTable = () => {
     },
     {
       id: 'actions',
-      header: 'Actions',
+      header: () => (
+        <span className=' w-full flex items-center justify-end'> Actions </span>
+      ),
       cell: ({ row }) => {
         const item = row.original;
         return (
