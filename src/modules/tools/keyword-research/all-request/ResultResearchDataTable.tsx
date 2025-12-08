@@ -97,6 +97,7 @@ export const ResultResearchDataTable = ({ data }: Props) => {
     }
   };
 
+  console.log(image);
   const onExport = async () => {
     try {
       setIsLoadingDownload(true);
@@ -298,7 +299,13 @@ export const ResultResearchDataTable = ({ data }: Props) => {
                       <CustomLoading message='Getting Google Snapshot' />
                     </div>
                   ) : (
-                    <></>
+                    <Image
+                      src={`data:image/jpeg; base64, ${image}`}
+                      width={1920}
+                      height={2800}
+                      alt='Google Snapshot'
+                      className='w-full rounded-lg'
+                    ></Image>
                   )}
                 </CardContent>
               </CardHeader>

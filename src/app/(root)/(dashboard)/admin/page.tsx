@@ -1,5 +1,6 @@
-"use client";
+'use client';
 
+import { LoadingBase } from '@/components/LoadingBase';
 import {
   Empty,
   EmptyContent,
@@ -7,10 +8,10 @@ import {
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from "@/components/ui/empty";
-import { useIsMobile } from "@/hooks/use-mobile";
+} from '@/components/ui/empty';
+import { useIsMobile } from '@/hooks/use-mobile';
 
-import { Settings2 } from "lucide-react";
+import { Settings2 } from 'lucide-react';
 
 const AdminPage = () => {
   const {} = useIsMobile();
@@ -18,7 +19,7 @@ const AdminPage = () => {
     <>
       <Empty>
         <EmptyHeader>
-          <EmptyMedia variant="icon">
+          <EmptyMedia variant='icon'>
             <Settings2 />
           </EmptyMedia>
           <EmptyTitle>Administration module under development.</EmptyTitle>

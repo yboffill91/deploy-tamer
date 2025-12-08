@@ -139,6 +139,7 @@ export const GenerateWordsWithAiButton = ({ isLoading, type }: Props) => {
       {evalType.length === 0 ? (
         <Button
           variant='secondary'
+          disabled={isLoading}
           onClick={() => {
             if (!evalDisabled) {
               clickHandler();
@@ -181,7 +182,9 @@ export const GenerateWordsWithAiButton = ({ isLoading, type }: Props) => {
                 onClick={() => setShowNotification(false)}
               >
                 <Bot className='dark:text-green-500 bg-green-500/10 rounded text-green-700 ' />
-                {type === 'Brands' ? type : `Generate ${type} With A.I.`}
+                {type === 'Brands'
+                  ? type
+                  : `Review ${type} Generated with A.I.`}
                 <ChevronRight />
                 {showNotification && (
                   <>
