@@ -175,7 +175,9 @@ export const ResultResearchDataTable = ({ data }: Props) => {
     }
   };
 
-  const handleEdit = (item: KeywordResearchEntity) => {
+  const handleEdit = async (item: KeywordResearchEntity) => {
+    console.log(item);
+    await onSave(item);
     setFormMode('create');
     setFormSelectedResearch(String(item.id));
     router.push('/tools/seo/keyword-research');
@@ -313,7 +315,7 @@ export const ResultResearchDataTable = ({ data }: Props) => {
                     type: 'success',
                   });
                 },
-                tooltipMessage: 'Add to discerd list',
+                tooltipMessage: 'Add to Discard List',
                 variant: 'destructive',
               },
             ]}
@@ -522,7 +524,14 @@ export const ResultResearchDataTable = ({ data }: Props) => {
             variant='secondary'
             onClick={() => handleEdit(selectedResearch)}
           >
-            Run New Keyword Research <SendToBack />
+            {isLoadingSave ? (
+              <CustomLoading message='Saving Change on Report' />
+            ) : (
+              <>
+                {' '}
+                Run New Research <SendToBack />
+              </>
+            )}
           </Button>
         )}
       </div>

@@ -78,6 +78,7 @@ function createWordsStore(defaultEndpoint: Endpoint) {
     hidrateWords: (newWords: string[]) => {
       set({ words: [...newWords] });
     },
+
     resetWords: () => {
       set({ words: [] });
     },

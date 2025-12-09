@@ -250,6 +250,7 @@ export const KeywordsResearchDataTable = ({
                 label: 'Edit',
                 onClick: () => handleEdit(item),
                 tooltipMessage: 'Edit Keyword Research',
+                show: (item) => item.status === 'CREATED',
               },
               {
                 icon: Trash2,

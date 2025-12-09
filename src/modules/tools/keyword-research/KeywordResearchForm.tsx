@@ -40,6 +40,7 @@ export const KeywordResearchForm = () => {
   const hidrateNegative = useNegativeStore((st) => st.hidrateWords);
   const hidrateNegativeCities = useFormStore((st) => st.city);
   const hidratePositive = usePositiveStore((st) => st.hidrateWords);
+
   const initialValues = getInitialValues();
   const isLoading = useFormStore((st) => st.isLoading);
   const keywordResearch = useFormStore((st) => st.keywordResearch);
@@ -62,12 +63,12 @@ export const KeywordResearchForm = () => {
   const regionValues = selectedRegions.map((region) => region.value.join(', '));
 
   const resetForm = () => {
-    reset();
     resetWords();
     resetNegative();
     resetExtraPositive();
     resetBrands();
     resetNegativeCities();
+    reset();
   };
 
   // --> Inicializacoin del formulario
@@ -143,12 +144,27 @@ export const KeywordResearchForm = () => {
     }
 
     if (mode === 'create' && keywordResearch) {
-      const generatedWords =
+      const positiveWordsFromKeyword =
         keywordResearch.generatedPositiveKeywords?.map((el) => el.keyword) ||
         [];
+      const negativeWordsFromKeyword =
+        (Array.isArray(keywordResearch.negativeKeywords) &&
+          keywordResearch.negativeKeywords.map((el) => el)) ||
+        [];
 
-      if (generatedWords.length > 0) {
-        hidratePositive(generatedWords);
+      const extraPositiveWordsFromKeywords =
+        (Array.isArray(keywordResearch.extraPositiveKeywords) &&
+          keywordResearch.extraPositiveKeywords?.map((el) => el)) ||
+        [];
+
+      if (
+        positiveWordsFromKeyword.length > 0 ||
+        extraPositiveWordsFromKeywords.length > 0 ||
+        negativeWordsFromKeyword.length > 0
+      ) {
+        hidratePositive(positiveWordsFromKeyword);
+        hidrateNegative(negativeWordsFromKeyword);
+        hidrateExtraPositive(extraPositiveWordsFromKeywords);
       }
 
       if (Array.isArray(keywordResearch.negativeKeywords))
