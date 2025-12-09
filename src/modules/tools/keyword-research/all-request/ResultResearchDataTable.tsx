@@ -37,6 +37,7 @@ import { useRouter } from 'next/navigation';
 import { useKeywordStore } from './context/KeywordSelectionStore';
 import { CustomTabTrigger } from '../../components';
 import { CreateKeywordResearchDTO } from '@/core/dto';
+import { useFormStore } from '../context/FormStore';
 
 interface Props {
   data: KeywordResultEntity[];
@@ -47,6 +48,9 @@ export const ResultResearchDataTable = ({ data }: Props) => {
   const [isError, setIsError] = useState('');
   const [isLoadingDownload, setIsLoadingDownload] = useState(false);
   const [isLoadingSave, setIsLoadingSave] = useState(false);
+
+  const setFormMode = useFormStore((st) => st.setMode);
+  const setFormSelectedResearch = useFormStore((st) => st.getKeyWordResearch);
 
   const setUnselect = useKeywordStore((st) => st.setUnSelec);
   const unSelected = useKeywordStore((st) => st.unSelect);
@@ -169,6 +173,12 @@ export const ResultResearchDataTable = ({ data }: Props) => {
     } finally {
       setIsLoadingSave(false);
     }
+  };
+
+  const handleEdit = (item: KeywordResearchEntity) => {
+    setFormMode('edit');
+    setFormSelectedResearch(String(item.id));
+    router.push('/tools/seo/keyword-research');
   };
 
   // TODO: Hidratacion de los datos precargados
@@ -510,7 +520,10 @@ export const ResultResearchDataTable = ({ data }: Props) => {
           </Button>
         )}
         {positivesToNewKeyword.length > 0 && (
-          <Button variant='secondary'>
+          <Button
+            variant='secondary'
+            onClick={() => handleEdit(selectedResearch)}
+          >
             Run New Keyword Research <SendToBack />
           </Button>
         )}

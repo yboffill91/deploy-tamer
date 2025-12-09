@@ -7,7 +7,7 @@ import { Badge, Button } from '@/components/ui';
 import { KeywordResearchEntity } from '@/core/entities';
 import { CommonHeader } from '@/modules/users/admin';
 import { ColumnDef } from '@tanstack/react-table';
-import { Eye, List, Pencil, Trash2 } from 'lucide-react';
+import { Eye, FileText, List, Loader, Pencil, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useResearchStore } from './context/ResearchStore';
 import { ActionsButtonSet } from '@/components/data-table/ActionsButtons';
@@ -21,7 +21,11 @@ import { ControlledDialog } from '@/components/ControlledDialog';
 import { CustomLoading } from '@/components/CustomLoading';
 import { useFormStore } from '../context/FormStore';
 
-export const KeywordsResearchDataTable = () => {
+export const KeywordsResearchDataTable = ({
+  onChangeTab,
+}: {
+  onChangeTab(): void;
+}) => {
   const keywordsResearch = useResearchStore((st) => st.allResearch);
   const isLoading = useResearchStore((st) => st.isLoadingResearchs);
   const isError = useResearchStore((st) => st.isErrorGettingResearch);
@@ -37,6 +41,8 @@ export const KeywordsResearchDataTable = () => {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
   const [componentError, setComponentError] = useState('');
+  const [loadingDownload, setIsLoadingDownload] = useState(false);
+  const [dwError, setDwError] = useState('');
 
   const handleShowConfirm = (el: KeywordResearchEntity) => {
     setSelectedResearch(el);
@@ -46,7 +52,23 @@ export const KeywordsResearchDataTable = () => {
   const handleEdit = (item: KeywordResearchEntity) => {
     setFormMode('edit');
     setFormSelectedResearch(String(item.id));
+    onChangeTab();
     router.push('/tools/seo/keyword-research');
+  };
+  const onExport = async (item: KeywordResearchEntity) => {
+    try {
+      setIsLoadingDownload(true);
+      const REPO = new KeywordResearchApiRepository();
+      await REPO.exportExcel(String(item.id));
+    } catch (error) {
+      setDwError(
+        error instanceof Error
+          ? error.message
+          : 'Unexpected Error Downloading Report'
+      );
+    } finally {
+      setIsLoadingDownload(false);
+    }
   };
 
   const onConfirm = async (id: string) => {
@@ -208,6 +230,13 @@ export const KeywordsResearchDataTable = () => {
           <ActionsButtonSet
             item={item}
             actions={[
+              {
+                icon: FileText,
+                label: 'View Details',
+                onClick: onExport,
+                show: (item) => Array.isArray(item.result),
+                tooltipMessage: 'Download Result Inform',
+              },
               {
                 icon: Eye,
                 label: 'View Details',

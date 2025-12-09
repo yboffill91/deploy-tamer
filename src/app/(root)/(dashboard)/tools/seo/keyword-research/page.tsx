@@ -1,28 +1,38 @@
+'use client';
 import { Tabs, TabsContent, TabsList } from '@/components/ui';
-import { TabsLists } from '@/modules/tools/utils/key_research_data';
+import { FileText, List } from 'lucide-react';
+import { KeywordResearchForm } from '@/modules/tools/keyword-research/KeywordResearchForm';
+import { KeywordsResearchDataTable } from '@/modules/tools/keyword-research/all-request/KeywordsResearchDataTable';
 import { CustomTabTrigger } from '@/modules/tools/components';
+import { useState } from 'react';
 
 const KeywordResearchPage = () => {
+  const [selectedTab, setSelectedTab] = useState('form');
   return (
-    <div className=''>
-      <Tabs defaultValue={TabsLists[0].tab_value}>
+    <>
+      <Tabs value={selectedTab} onValueChange={setSelectedTab}>
         <TabsList className='w-full container mx-auto max-w-7xl flex shrink-0 items-center justify-start lg:justify-center   p-0 mb-2 rounded-none overflow-x-auto snap-none md:snap-x md:snap-mandatory snap-always bg-transparent'>
-          {TabsLists.map((tab) => (
-            <CustomTabTrigger
-              key={tab.tab_value}
-              tab_name={tab.tab_name}
-              tab_value={tab.tab_value}
-              icon={tab.icon}
-            />
-          ))}
+          <CustomTabTrigger
+            icon={FileText}
+            tab_name='Keyword Research Form'
+            tab_value='form'
+          />
+          <CustomTabTrigger
+            icon={List}
+            tab_name='All Researchs'
+            tab_value='researchs'
+          />
         </TabsList>
-        {TabsLists.map((tab) => (
-          <TabsContent value={tab.tab_value} key={tab.tab_value}>
-            {tab.component}
-          </TabsContent>
-        ))}
+        <TabsContent value='form'>
+          <KeywordResearchForm />
+        </TabsContent>
+        <TabsContent value='researchs'>
+          <KeywordsResearchDataTable
+            onChangeTab={() => setSelectedTab('form')}
+          />
+        </TabsContent>
       </Tabs>
-    </div>
+    </>
   );
 };
 

@@ -124,7 +124,7 @@ export class KeywordResearchApiRepository implements IRepository {
   }
   async update(
     id: string,
-    data: Partial<CreateKeywordResearchDTO>
+    data: Partial<CreateKeywordResearchDTO> | Partial<KeywordResearchFormInput>
   ): Promise<void> {
     const payload = {
       title: data.title,

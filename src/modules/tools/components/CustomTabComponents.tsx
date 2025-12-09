@@ -1,12 +1,16 @@
 import { TabsTrigger } from '@/components/ui';
-import { TabsLists } from '@/modules/tools/utils/key_research_data';
 import { cn } from '@/lib/utils';
+import { LucideIcon } from 'lucide-react';
 
 export const CustomTabTrigger = ({
   tab_name,
   tab_value,
   icon: IconElement,
-}: Pick<(typeof TabsLists)[number], 'tab_name' | 'tab_value' | 'icon'>) => {
+}: {
+  tab_name: string;
+  tab_value: string;
+  icon: LucideIcon;
+}) => {
   return (
     <TabsTrigger
       value={tab_value}

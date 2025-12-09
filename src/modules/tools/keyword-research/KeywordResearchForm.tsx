@@ -29,29 +29,30 @@ import { CustomPageLoader } from '@/components/CustomPageLoader';
 
 export const KeywordResearchForm = () => {
   const [isError, setIsError] = useState('');
-  const resetWords = usePositiveStore((st) => st.resetWords);
-  const hidratePositive = usePositiveStore((st) => st.hidrateWords);
-  const resetNegative = useNegativeStore((st) => st.resetWords);
-  const hidrateNegative = useNegativeStore((st) => st.hidrateWords);
-  const resetExtraPositive = useExtraPositiveStore((st) => st.resetWords);
-  const hidrateExtraPositive = useExtraPositiveStore((st) => st.hidrateWords);
-  const resetBrands = useBrandStore((st) => st.resetWords);
-  const hidrateBrands = useBrandStore((st) => st.hidrateWords);
-  const resetNegativeCities = useRegionStore((st) => st.resetNegativesCities);
   // const hidrateRegions = useFormStore((st) => st.regions);
-  const hidrateNegativeCities = useFormStore((st) => st.city);
+  const brands = useBrandStore((st) => st.words);
   const errorLoadingData = useFormStore((st) => st.error);
+  const extraPositiveWords = useExtraPositiveStore((st) => st.words);
+  const finalValues = useRegionStore((st) => st.finalValue);
   const getInitialValues = useFormStore((st) => st.getInitialValues);
+  const hidrateBrands = useBrandStore((st) => st.hidrateWords);
+  const hidrateExtraPositive = useExtraPositiveStore((st) => st.hidrateWords);
+  const hidrateNegative = useNegativeStore((st) => st.hidrateWords);
+  const hidrateNegativeCities = useFormStore((st) => st.city);
+  const hidratePositive = usePositiveStore((st) => st.hidrateWords);
+  const initialValues = getInitialValues();
   const isLoading = useFormStore((st) => st.isLoading);
   const keywordResearch = useFormStore((st) => st.keywordResearch);
   const mode = useFormStore((st) => st.mode);
-  const finalValues = useRegionStore((st) => st.finalValue);
   const negativeCities = useRegionStore((st) => st.negativeCities);
-  const positiveWords = usePositiveStore((st) => st.words);
   const negativeWords = useNegativeStore((st) => st.words);
-  const brands = useBrandStore((st) => st.words);
-  const extraPositiveWords = useExtraPositiveStore((st) => st.words);
-  const initialValues = getInitialValues();
+  const positiveWords = usePositiveStore((st) => st.words);
+  const resetBrands = useBrandStore((st) => st.resetWords);
+  const resetExtraPositive = useExtraPositiveStore((st) => st.resetWords);
+  const resetNegative = useNegativeStore((st) => st.resetWords);
+  const resetNegativeCities = useRegionStore((st) => st.resetNegativesCities);
+  const resetWords = usePositiveStore((st) => st.resetWords);
+  const setMode = useFormStore((st) => st.setMode);
 
   const selectedRegions = Array.from(finalValues, ([key, value]) => ({
     key,
@@ -74,6 +75,7 @@ export const KeywordResearchForm = () => {
     control,
     handleSubmit,
     reset,
+    trigger,
     formState: { errors, isValid, isSubmitting },
   } = useForm<KeywordResearchFormInput>({
     resolver: zodResolver(KeywordResearchSchema),
@@ -85,6 +87,7 @@ export const KeywordResearchForm = () => {
   const onSubmitHandler = async (data: KeywordResearchFormInput) => {
     const payload = {
       ...data,
+
       region: regionValues,
       city: negativeCities,
       positiveKeywords: positiveWords,
@@ -92,14 +95,28 @@ export const KeywordResearchForm = () => {
       extraPositiveKeywords: extraPositiveWords,
       brand: brands,
     };
+
+    const updatePayload: Partial<KeywordResearchFormInput> = {
+      ...payload,
+    };
     const REPO = new KeywordResearchApiRepository();
     try {
-      await REPO.create(payload);
-      showToast({
-        message: 'Created New Keyword Research',
-        type: 'success',
-        description: '',
-      });
+      if (mode === 'edit') {
+        await REPO.update(String(keywordResearch.id), updatePayload);
+        showToast({
+          message: 'Updated  Keyword Research',
+          type: 'success',
+          description: '',
+        });
+      } else {
+        await REPO.create(payload);
+        showToast({
+          message: 'Created New Keyword Research',
+          type: 'success',
+          description: '',
+        });
+      }
+      setMode('create');
       resetForm();
     } catch (error) {
       setIsError(
@@ -121,10 +138,21 @@ export const KeywordResearchForm = () => {
         hidrateBrands(initialValues.brand);
       // if (Array.isArray(initialValues.region)) hidrateRegions();
       if (Array.isArray(initialValues.city)) hidrateNegativeCities();
-
       reset(getInitialValues());
+      trigger();
+      console.log('Errores de Zod después de trigger:', errors);
     }
-  }, [keywordResearch, mode, reset, getInitialValues]);
+  }, [
+    keywordResearch,
+    mode,
+    reset,
+    getInitialValues,
+    hidratePositive,
+    hidrateNegative,
+    hidrateExtraPositive,
+    hidrateBrands,
+    hidrateNegativeCities,
+  ]);
 
   useEffect(() => {
     if (isError) {

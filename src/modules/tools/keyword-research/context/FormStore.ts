@@ -71,7 +71,7 @@ export const useFormStore = create<FormStore>((set, get) => ({
       allCitys: keywordResearch.allCitys || false,
       brand: keywordResearch.brand || [],
       city: keywordResearch.city || [],
-      companyId: keywordResearch.companyId,
+      companyId: keywordResearch.companyId || 0,
       extraPositiveKeywords: keywordResearch.extraPositiveKeywords || [],
       generatedNegativeKeywords:
         keywordResearch.generatedNegativeKeywords || [],
