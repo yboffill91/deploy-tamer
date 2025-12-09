@@ -290,7 +290,10 @@ export const KeywordsResearchDataTable = ({
           />
           <ControlledDialog
             open={showDialog}
-            onOpenChange={setShowDialog}
+            onOpenChange={() => {
+              setShowDialog(!showDialog);
+              setFiedValue('');
+            }}
             title='Confirm Delete Keyword Research'
           >
             <h3>
@@ -304,7 +307,7 @@ export const KeywordsResearchDataTable = ({
               </h4>
               <InputGroup>
                 <InputGroupInput
-                  placeholder='Keyword Research Title'
+                  placeholder='Write the title here'
                   value={fieldValue}
                   onChange={(e) => {
                     e.preventDefault();
