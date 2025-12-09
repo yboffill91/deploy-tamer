@@ -136,16 +136,36 @@ export const KeywordResearchForm = () => {
         hidrateExtraPositive(initialValues.extraPositiveKeywords);
       if (Array.isArray(initialValues.brand))
         hidrateBrands(initialValues.brand);
-      // if (Array.isArray(initialValues.region)) hidrateRegions();
       if (Array.isArray(initialValues.city)) hidrateNegativeCities();
+
       reset(getInitialValues());
       trigger();
-      console.log('Errores de Zod después de trigger:', errors);
+    }
+
+    if (mode === 'create' && keywordResearch) {
+      const generatedWords =
+        keywordResearch.generatedPositiveKeywords?.map((el) => el.keyword) ||
+        [];
+
+      if (generatedWords.length > 0) {
+        hidratePositive(generatedWords);
+      }
+
+      if (Array.isArray(keywordResearch.negativeKeywords))
+        hidrateNegative(keywordResearch.negativeKeywords);
+      if (Array.isArray(keywordResearch.extraPositiveKeywords))
+        hidrateExtraPositive(keywordResearch.extraPositiveKeywords);
+      if (Array.isArray(keywordResearch.brand))
+        hidrateBrands(keywordResearch.brand);
+      if (Array.isArray(keywordResearch.city)) hidrateNegativeCities(); // Usar la entidad, no initialValues.city
+
+      reset(getInitialValues());
     }
   }, [
     keywordResearch,
     mode,
     reset,
+    trigger, // Añadir trigger
     getInitialValues,
     hidratePositive,
     hidrateNegative,

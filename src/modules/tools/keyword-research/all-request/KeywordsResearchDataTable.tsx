@@ -280,7 +280,7 @@ export const KeywordsResearchDataTable = ({
           <DataTable
             data={keywordsResearch}
             columns={columns}
-            onAdd={() => console.log('Add')}
+            onAdd={() => router.push('/tools/seo/keyword-research')}
           />
           <ControlledDialog
             open={showDialog}

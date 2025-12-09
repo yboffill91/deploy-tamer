@@ -176,7 +176,7 @@ export const ResultResearchDataTable = ({ data }: Props) => {
   };
 
   const handleEdit = (item: KeywordResearchEntity) => {
-    setFormMode('edit');
+    setFormMode('create');
     setFormSelectedResearch(String(item.id));
     router.push('/tools/seo/keyword-research');
   };
@@ -407,8 +407,6 @@ export const ResultResearchDataTable = ({ data }: Props) => {
     },
   ];
 
-  console.log(dataToshow);
-  console.log(discardsAndPositivesToNKR);
   return (
     <div className='relative'>
       <Tabs defaultValue='results'>
