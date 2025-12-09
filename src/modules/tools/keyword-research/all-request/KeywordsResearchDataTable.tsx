@@ -233,14 +233,14 @@ export const KeywordsResearchDataTable = ({
             actions={[
               {
                 icon: FileText,
-                label: 'View Details',
+                label: 'Download Full Research Reposrt',
                 onClick: onExport,
                 show: (item) => Array.isArray(item.result),
                 tooltipMessage: 'Download Result Inform',
               },
               {
                 icon: Eye,
-                label: 'View Details',
+                label: 'View Result',
                 onClick: onShow,
                 show: (item) => Array.isArray(item.result),
                 tooltipMessage: 'View Details',
@@ -248,7 +248,7 @@ export const KeywordsResearchDataTable = ({
 
               {
                 icon: Pencil,
-                label: 'Edit',
+                label: 'Edit Keyword Research',
                 onClick: () => handleEdit(item),
                 tooltipMessage: 'Edit Keyword Research',
                 show: (item) => item.status === 'CREATED',

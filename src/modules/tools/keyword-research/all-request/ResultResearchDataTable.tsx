@@ -20,11 +20,13 @@ import { ActionsButtonSet } from '@/components/data-table/ActionsButtons';
 import {
   ArrowLeftCircle,
   ArrowRightCircle,
+  CircleMinusIcon,
   Eye,
   FileText,
   ListCheck,
   ListMinus,
   ListPlus,
+  Minus,
   PlusCircle,
   Save,
   SendToBack,
@@ -283,7 +285,7 @@ export const ResultResearchDataTable = ({ data }: Props) => {
             actions={[
               {
                 icon: Eye,
-                label: 'View Details',
+                label: 'View Google Snapshot',
                 onClick: async (item) => {
                   await onShow(item);
                 },
@@ -291,7 +293,7 @@ export const ResultResearchDataTable = ({ data }: Props) => {
               },
               {
                 icon: PlusCircle,
-                label: 'Add to new Keyword Research',
+                label: 'Add to new Keyword Research List',
                 onClick: () => {
                   setPositivesToNewKeyword(item);
                   showToast({
@@ -301,12 +303,11 @@ export const ResultResearchDataTable = ({ data }: Props) => {
                   });
                 },
                 tooltipMessage: 'Add to New Research List',
-                variant: 'success',
               },
 
               {
-                icon: ArrowRightCircle,
-                label: 'Delete',
+                icon: CircleMinusIcon,
+                label: 'Add to Discard List',
                 onClick: () => {
                   setUnselect(item);
                   showToast({
@@ -316,7 +317,6 @@ export const ResultResearchDataTable = ({ data }: Props) => {
                   });
                 },
                 tooltipMessage: 'Add to Discard List',
-                variant: 'destructive',
               },
             ]}
           />
@@ -347,7 +347,7 @@ export const ResultResearchDataTable = ({ data }: Props) => {
             actions={[
               {
                 icon: ArrowLeftCircle,
-                label: 'Delete',
+                label: 'Send Back to Result List',
                 onClick: () => {
                   setUnselect(item);
                   showToast({
