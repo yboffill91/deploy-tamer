@@ -1,120 +1,126 @@
 import { KeywordResearchEntity } from '@/core/entities';
-import { KeywordResearchApiRepository } from '@/infrastructure/repositories';
+import { KeywordResearchFormInput } from '../../utils';
 import { create } from 'zustand';
+import { KeywordResearchApiRepository } from '@/infrastructure/repositories';
 import { useRegionStore } from './RegionStore';
-import {
-  useBrandStore,
-  useExtraPositiveStore,
-  useNegativeStore,
-  usePositiveStore,
-} from './WordsStoreFactory';
+
+type InitialFormValues = KeywordResearchFormInput | null;
 
 interface FormStore {
   mode: 'create' | 'edit';
-  keywordResearch: KeywordResearchEntity;
+  keywordResearch: KeywordResearchEntity | null;
   error: string;
-  searchVolume: () => string;
-  language: () => string;
+  setMode: (mode: 'create' | 'edit') => void;
   getKeyWordResearch: (id: string) => Promise<void>;
-  title: () => string;
-  regions: () => void;
-  positive: () => void;
-  negative: () => void;
-  extraPositive: () => void;
-  brands: () => void;
+  isLoading: boolean;
+  getInitialValues: () => InitialFormValues;
+  // regions: () => void;
   city: () => void;
-  type: () => void;
-  setMode: () => void;
 }
 
 export const useFormStore = create<FormStore>((set, get) => ({
   mode: 'create',
   keywordResearch: null,
   error: '',
+  isLoading: false,
+
+  setMode: (mode) => {
+    set({ mode });
+  },
 
   getKeyWordResearch: async (id) => {
-    const { mode } = get();
-    if (mode === 'create') return null;
     try {
+      set({ isLoading: true });
       const REPO = new KeywordResearchApiRepository();
       const Data = await REPO.findById(id);
       set({ keywordResearch: Data });
-    } catch (err) {
-      set({ error: err as string });
+    } catch (error) {
+      set({ error: error as string });
+    } finally {
+      set({ isLoading: false });
     }
   },
 
-  title: () => {
-    const { mode, keywordResearch } = get();
-    if (mode === 'create') return '';
-    return keywordResearch.title;
-  },
-
-  searchVolume: () => {
-    const { mode, keywordResearch } = get();
-    return mode === 'create' ? '0' : String(keywordResearch.searchVolume);
-  },
-
-  language: () => {
-    const { mode, keywordResearch } = get();
-    return mode === 'create' ? 'EN' : String(keywordResearch.requestLanguage);
-  },
-
-  setMode: () => {
-    set({ mode: 'edit' });
-  },
-
-  regions: () => {
+  getInitialValues: () => {
     const { mode, keywordResearch } = get();
 
-    const reBuildedMap = new Map<number, string[]>(
-      keywordResearch.region!.map((value, index) => [
-        index,
-        value.split(/\s*,\s*/),
-      ])
-    );
+    if (mode === 'create' || !keywordResearch) {
+      return {
+        allCitys: false,
+        brand: [],
+        city: [],
+        companyId: 0,
+        extraPositiveKeywords: [],
+        generatedNegativeKeywords: [],
+        generatedPositiveKeywords: [],
+        negativeKeywords: [],
+        positiveKeywords: [],
+        region: [],
+        requestLanguage: 'EN',
+        searchVolume: '0',
+        title: '',
+        type: 'TRANSACTIONAL',
+      };
+    }
 
-    return mode === 'create'
-      ? ''
-      : useRegionStore.getState().hidrateFinalValue(reBuildedMap);
+    // const reBuildedRegions = keywordResearch.region!.flatMap((value) =>
+    //   value.split(/\s*,\s*/)
+    // );
+
+    return {
+      allCitys: keywordResearch.allCitys || false,
+      brand: keywordResearch.brand || [],
+      city: keywordResearch.city || [],
+      companyId: keywordResearch.companyId,
+      extraPositiveKeywords: keywordResearch.extraPositiveKeywords || [],
+      generatedNegativeKeywords:
+        keywordResearch.generatedNegativeKeywords || [],
+      generatedPositiveKeywords:
+        keywordResearch.generatedPositiveKeywords || [],
+      negativeKeywords: keywordResearch.negativeKeywords || [],
+      positiveKeywords: keywordResearch.positiveKeywords || [],
+      region: keywordResearch.region,
+      requestLanguage: keywordResearch.requestLanguage,
+      searchVolume: String(keywordResearch.searchVolume),
+      title: keywordResearch.title,
+      type: keywordResearch.type,
+    } as KeywordResearchFormInput;
   },
-  positive: () => {
-    const { mode, keywordResearch } = get();
-    return mode === 'create'
-      ? []
-      : usePositiveStore
-          .getState()
-          .hidrateWords(keywordResearch.positiveKeywords);
-  },
-  negative: () => {
-    const { mode, keywordResearch } = get();
-    return mode === 'create'
-      ? []
-      : useNegativeStore
-          .getState()
-          .hidrateWords(keywordResearch.negativeKeywords);
-  },
-  extraPositive: () => {
-    const { mode, keywordResearch } = get();
-    return mode === 'create'
-      ? []
-      : useExtraPositiveStore
-          .getState()
-          .hidrateWords(keywordResearch.extraPositiveKeywords);
-  },
-  brands: () => {
-    const { mode, keywordResearch } = get();
-    return mode === 'create'
-      ? []
-      : useBrandStore.getState().hidrateWords(keywordResearch.brand);
-  },
+  // regions: () => {
+  //   const { mode, keywordResearch } = get();
+
+  //   if (mode === 'create' || !keywordResearch || !keywordResearch.region)
+  //     return;
+
+  //   // 1. Reconstruir el Map a partir del arreglo de strings de la API
+  //   // El .reverse() es CRUCIAL aquí para que coincida con la lógica de .toReversed()
+  //   // que usas en setFinalValue.
+  //   const reBuildedMap = new Map<number, string[]>(
+  //     keywordResearch.region.map((value, index) => [
+  //       index,
+  //       value.split(/\s*,\s*/).reverse(),
+  //     ])
+  //   );
+
+  //   // 2. Hidratar la useRegionStore
+  //   useRegionStore.getState().hidrateFinalValue(reBuildedMap);
+  // },
   city: () => {
     const { mode, keywordResearch } = get();
-    return mode === 'create' ? [] : [...keywordResearch.city];
-  },
 
-  type: () => {
-    const { mode, keywordResearch } = get();
-    return mode === 'create' ? 'TRANSACTIONAL' : keywordResearch.type;
+    if (mode === 'create' || !keywordResearch || !keywordResearch.city) {
+      // Si estamos creando o no hay data, devolvemos un arreglo vacío.
+      return [];
+    }
+
+    const citiesFromEntity = keywordResearch.city;
+
+    // 1. Hidratar la useRegionStore:
+    // Llamamos directamente a la función que maneja el estado de ciudades negativas
+    // (Asumimos que necesitas un hidrateNegativeCities en useRegionStore)
+    useRegionStore.getState().hidrateNegativeCities(citiesFromEntity);
+
+    // 2. Devolver el valor para que sea usado en getInitialValues (para RHF)
+    return citiesFromEntity;
   },
 }));

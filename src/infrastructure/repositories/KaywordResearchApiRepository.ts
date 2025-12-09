@@ -122,19 +122,40 @@ export class KeywordResearchApiRepository implements IRepository {
       throw error;
     }
   }
-  async update(id: string, data: KeywordResearchDTO): Promise<void> {
+  async update(
+    id: string,
+    data: Partial<CreateKeywordResearchDTO>
+  ): Promise<void> {
+    const payload = {
+      title: data.title,
+      searchVolume: Number(data.searchVolume),
+      positiveKeywords: data.positiveKeywords as object,
+      extraPositiveKeywords: data.extraPositiveKeywords as object,
+      negativeKeywords: data.negativeKeywords as object,
+      city: data.city as object,
+      region: data.region as object,
+      requestLanguage: data.requestLanguage === 'en' ? 'english' : 'español',
+      brand: data.brand as object,
+      type: data.type.toUpperCase(),
+      allCitys: false,
+      generatedNegativeKeywords: data.generatedNegativeKeywords,
+      generatedPositiveKeywords: data.generatedPositiveKeywords,
+    };
+    console.log(payload);
+
     try {
       const response = await fetchHelper(keywordResearchApi + `/${id}`, {
+        method: 'PATCH',
         headers: {
-          method: 'PATCH',
           'Content-Type': 'application/json',
           Authorization: `Bearer ${await this.auth()}`,
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
       if (!response) {
         throw new Error('Error creating new Keyword Research Report');
       }
+      console.log('Response --->', response);
     } catch (error) {
       throw error;
     }

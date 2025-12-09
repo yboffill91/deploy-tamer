@@ -35,6 +35,7 @@ interface RegionStore {
   setSelectedCities(city: CitiesEntity): void;
   cumulativeSelectedCities: string[];
   setCumululativeSelectedCities(values: string[]): void;
+  hidrateNegativeCities(data: string[]): void;
 
   error: string;
 
@@ -242,4 +243,5 @@ export const useRegionStore = create<RegionStore>((set, get) => ({
   hidrateFinalValue: (data) => {
     set({ finalValue: data });
   },
+  hidrateNegativeCities: (data) => set({ negativeCities: data }),
 }));

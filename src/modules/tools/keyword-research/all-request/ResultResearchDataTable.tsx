@@ -1,10 +1,8 @@
-// TODO:  Continuar
-
 import { ColumnDef } from '@tanstack/react-table';
 
 import { Badge } from '@/components/ui/badge';
 
-import { KeywordResultEntity } from '@/core/entities';
+import { KeywordResearchEntity, KeywordResultEntity } from '@/core/entities';
 
 import { DataTable } from '@/components/data-table/DataTable';
 import {
@@ -26,7 +24,10 @@ import {
   FileText,
   ListCheck,
   ListMinus,
-  SaveAll,
+  ListPlus,
+  PlusCircle,
+  Save,
+  SendToBack,
 } from 'lucide-react';
 import { KeywordResearchApiRepository } from '@/infrastructure/repositories';
 import { useEffect, useState } from 'react';
@@ -35,6 +36,7 @@ import { CustomLoading } from '@/components/CustomLoading';
 import { useRouter } from 'next/navigation';
 import { useKeywordStore } from './context/KeywordSelectionStore';
 import { CustomTabTrigger } from '../../components';
+import { CreateKeywordResearchDTO } from '@/core/dto';
 
 interface Props {
   data: KeywordResultEntity[];
@@ -44,10 +46,25 @@ export const ResultResearchDataTable = ({ data }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState('');
   const [isLoadingDownload, setIsLoadingDownload] = useState(false);
+  const [isLoadingSave, setIsLoadingSave] = useState(false);
 
   const setUnselect = useKeywordStore((st) => st.setUnSelec);
   const unSelected = useKeywordStore((st) => st.unSelect);
   const selectedResearch = useKeywordStore((st) => st.selectedResearch);
+  const positivesToNewKeyword = useKeywordStore(
+    (st) => st.positivesToNewKeyword
+  );
+  const setPositivesToNewKeyword = useKeywordStore(
+    (st) => st.setPositiveToNewKeyword
+  );
+  const unselectPositivesToNewKeyword = useKeywordStore(
+    (st) => st.setUnselectPositiveToKeyword
+  );
+  const selection = useKeywordStore((st) => st.selection);
+  const hidrateDiscards = useKeywordStore((st) => st.hidrateUnSelect);
+  const hidratePositiveToNewKeyword = useKeywordStore(
+    (st) => st.hidratePositiveToNewKeyword
+  );
 
   const formatNumberAbbreviated = (num: number) => {
     const number = Number(num);
@@ -97,12 +114,11 @@ export const ResultResearchDataTable = ({ data }: Props) => {
     }
   };
 
-  console.log(image);
   const onExport = async () => {
     try {
       setIsLoadingDownload(true);
       const REPO = new KeywordResearchApiRepository();
-      await REPO.exportExcel(selectedResearch);
+      await REPO.exportExcel(String(selectedResearch.id));
     } catch (error) {
       setIsError(
         error instanceof Error
@@ -113,7 +129,71 @@ export const ResultResearchDataTable = ({ data }: Props) => {
       setIsLoadingDownload(false);
     }
   };
+
   const router = useRouter();
+
+  const onSave = async (selected: KeywordResearchEntity) => {
+    try {
+      setIsLoadingSave(true);
+      setIsError('');
+      const REPO = new KeywordResearchApiRepository();
+      const payload: Partial<CreateKeywordResearchDTO> = {
+        title: selected.title,
+        allCitys: selected.allCitys,
+        brand: selected.brand,
+        city: selected.city,
+        companyId: selected.companyId,
+        extraPositiveKeywords: selected.extraPositiveKeywords,
+        negativeKeywords: selected.negativeKeywords,
+        region: selected.region,
+        requestLanguage: selected.requestLanguage,
+        searchVolume: selected.searchVolume,
+        type: selected.type,
+        positiveKeywords: selection.map((el) => el.keyword),
+        generatedNegativeKeywords: unSelected, //TODO: Cambiar en el backend a una nueva tabla de discards
+        generatedPositiveKeywords: positivesToNewKeyword, //TODO: Cambiar en el backend a una nueva tabla de palabras seleccionadas para correr un nuevo research
+      };
+
+      await REPO.update(String(selected.id), payload);
+      showToast({
+        message: 'Updated Successfully',
+        description: 'The Keyword Research was successfully updated',
+        type: 'success',
+      });
+    } catch (error) {
+      setIsError(
+        error instanceof Error
+          ? error.message
+          : 'Error updating the keyword research'
+      );
+    } finally {
+      setIsLoadingSave(false);
+    }
+  };
+
+  // TODO: Hidratacion de los datos precargados
+
+  useEffect(() => {
+    const hidrateDiscardsFromData = selectedResearch.generatedNegativeKeywords;
+    const hidratePositivesNewResearch =
+      selectedResearch.generatedPositiveKeywords;
+    if (Array.isArray(hidrateDiscardsFromData)) {
+      hidrateDiscards(hidrateDiscardsFromData);
+    }
+
+    if (Array.isArray(hidratePositivesNewResearch)) {
+      hidratePositiveToNewKeyword(hidratePositivesNewResearch);
+    }
+    const hidrate = () => {};
+    hidrate();
+  }, []);
+  const discardsAndPositivesToNKR = new Set([
+    ...unSelected.map((el) => el.keyword),
+    ...positivesToNewKeyword.map((el) => el.keyword),
+  ]);
+  const dataToshow = data.filter(
+    (el) => !discardsAndPositivesToNKR.has(el.keyword)
+  );
 
   useEffect(() => {
     if (isError) {
@@ -195,6 +275,21 @@ export const ResultResearchDataTable = ({ data }: Props) => {
                 onClick: async (item) => {
                   await onShow(item);
                 },
+                tooltipMessage: 'View Google Snap',
+              },
+              {
+                icon: PlusCircle,
+                label: 'Add to new Keyword Research',
+                onClick: () => {
+                  setPositivesToNewKeyword(item);
+                  showToast({
+                    message: 'Successfully moved',
+                    description: `${item.keyword} It was correctly moved to the Run New Research Keyword list`,
+                    type: 'success',
+                  });
+                },
+                tooltipMessage: 'Add to New Research List',
+                variant: 'success',
               },
 
               {
@@ -208,6 +303,7 @@ export const ResultResearchDataTable = ({ data }: Props) => {
                     type: 'success',
                   });
                 },
+                tooltipMessage: 'Add to discerd list',
                 variant: 'destructive',
               },
             ]}
@@ -248,9 +344,10 @@ export const ResultResearchDataTable = ({ data }: Props) => {
                     type: 'success',
                   });
                 },
+                tooltipMessage: 'Move back to Positive Keywords List',
+                variant: 'success',
               },
             ]}
-            className='bg-green-500/10 text-green-500'
           />
         );
       },
@@ -259,6 +356,49 @@ export const ResultResearchDataTable = ({ data }: Props) => {
     },
   ];
 
+  const columnsPositiveToNewKeyword: ColumnDef<KeywordResultEntity>[] = [
+    {
+      accessorKey: 'keyword',
+      header: 'Keyword',
+      cell: ({ row }) => {
+        const value = row.original.keyword ?? 'N/A';
+        return <span className='font-medium'>{value}</span>;
+      },
+    },
+    {
+      id: 'actions',
+      header: 'Actions',
+      cell: ({ row }) => {
+        const item = row.original;
+        return (
+          <ActionsButtonSet
+            item={item}
+            actions={[
+              {
+                icon: ArrowLeftCircle,
+                label: 'Back to the positive keywords',
+                onClick: () => {
+                  unselectPositivesToNewKeyword(item);
+                  showToast({
+                    message: 'Successfully moved',
+                    description: `${item.keyword} It was correctly moved to the Positive Keywords list`,
+                    type: 'success',
+                  });
+                },
+                tooltipMessage: 'Move back to Positive Keywords list',
+                variant: 'success',
+              },
+            ]}
+          />
+        );
+      },
+      enableSorting: false,
+      enableHiding: false,
+    },
+  ];
+
+  console.log(dataToshow);
+  console.log(discardsAndPositivesToNKR);
   return (
     <div className='relative'>
       <Tabs defaultValue='results'>
@@ -266,17 +406,26 @@ export const ResultResearchDataTable = ({ data }: Props) => {
           <CustomTabTrigger
             tab_value='results'
             icon={ListCheck}
-            tab_name={`Result Research (${data.length})`}
+            tab_name={`Result Research (${dataToshow.length})`}
           />
-          <CustomTabTrigger
-            tab_value='unSelected'
-            icon={ListMinus}
-            tab_name={`Discard Positive Words (${unSelected.length})`}
-          />
+          {unSelected.length > 0 && (
+            <CustomTabTrigger
+              tab_value='unSelected'
+              icon={ListMinus}
+              tab_name={`Discard Positive Words (${unSelected.length})`}
+            />
+          )}
+          {positivesToNewKeyword.length > 0 && (
+            <CustomTabTrigger
+              tab_value='positivesToNewKeywordResearch'
+              icon={ListPlus}
+              tab_name={`Run New KeywordResearch Research (${positivesToNewKeyword.length})`}
+            />
+          )}
         </TabsList>
         <TabsContent value='results'>
           <div className='grid md:grid-cols-2  gap-2'>
-            <DataTable columns={columns} data={data} pageSize={100} />
+            <DataTable columns={columns} data={dataToshow} pageSize={100} />
 
             <Card>
               <CardHeader>
@@ -299,13 +448,17 @@ export const ResultResearchDataTable = ({ data }: Props) => {
                       <CustomLoading message='Getting Google Snapshot' />
                     </div>
                   ) : (
-                    <Image
-                      src={`data:image/jpeg; base64, ${image}`}
-                      width={1920}
-                      height={2800}
-                      alt='Google Snapshot'
-                      className='w-full rounded-lg'
-                    ></Image>
+                    <>
+                      {image && (
+                        <Image
+                          src={`data:image/jpeg; base64, ${image}`}
+                          width={1920}
+                          height={2800}
+                          alt='Google Snapshot'
+                          className='w-full rounded-lg'
+                        ></Image>
+                      )}
+                    </>
                   )}
                 </CardContent>
               </CardHeader>
@@ -319,10 +472,17 @@ export const ResultResearchDataTable = ({ data }: Props) => {
             pageSize={100}
           />
         </TabsContent>
+        <TabsContent value='positivesToNewKeywordResearch'>
+          <DataTable
+            columns={columnsPositiveToNewKeyword}
+            data={positivesToNewKeyword}
+            pageSize={100}
+          />
+        </TabsContent>
       </Tabs>
       <div className='h-12 p-2 bg-card border-t w-full sticky bottom-0 right-0 flex items-center justify-end gap-6 '>
         <Button
-          variant='secondary'
+          variant='success'
           className='w-48'
           onClick={() => onExport()}
           disabled={isLoadingDownload}
@@ -336,9 +496,24 @@ export const ResultResearchDataTable = ({ data }: Props) => {
             </>
           )}
         </Button>
-        <Button>
-          Save <SaveAll />
-        </Button>
+        {unSelected.length > 0 && (
+          <Button variant='secondary' onClick={() => onSave(selectedResearch)}>
+            {isLoadingSave ? (
+              <>
+                <CustomLoading message='Saving Keyword' />
+              </>
+            ) : (
+              <>
+                Save Result <Save />
+              </>
+            )}
+          </Button>
+        )}
+        {positivesToNewKeyword.length > 0 && (
+          <Button variant='secondary'>
+            Run New Keyword Research <SendToBack />
+          </Button>
+        )}
       </div>
     </div>
   );

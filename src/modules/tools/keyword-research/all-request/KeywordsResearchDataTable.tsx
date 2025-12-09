@@ -4,10 +4,7 @@ import { CustomPageLoader } from '@/components/CustomPageLoader';
 import { showToast } from '@/components/CustomToaster';
 import { DataTable } from '@/components/data-table/DataTable';
 import { Badge, Button } from '@/components/ui';
-import {
-  KeywordAnnotationEntity,
-  KeywordResearchEntity,
-} from '@/core/entities';
+import { KeywordResearchEntity } from '@/core/entities';
 import { CommonHeader } from '@/modules/users/admin';
 import { ColumnDef } from '@tanstack/react-table';
 import { Eye, List, Pencil, Trash2 } from 'lucide-react';
@@ -22,6 +19,7 @@ import { RotatingBadge } from '@/components/RotatingBadge';
 import { KeywordResearchApiRepository } from '@/infrastructure/repositories';
 import { ControlledDialog } from '@/components/ControlledDialog';
 import { CustomLoading } from '@/components/CustomLoading';
+import { useFormStore } from '../context/FormStore';
 
 export const KeywordsResearchDataTable = () => {
   const keywordsResearch = useResearchStore((st) => st.allResearch);
@@ -32,6 +30,8 @@ export const KeywordsResearchDataTable = () => {
   const setResultSelected = useKeywordStore((st) => st.setSelection);
   const setSelectedResearch = useKeywordStore((st) => st.setSelectedResearch);
   const selectedResearch = useKeywordStore((st) => st.selectedResearch);
+  const setFormSelectedResearch = useFormStore((st) => st.getKeyWordResearch);
+  const setFormMode = useFormStore((st) => st.setMode);
   const router = useRouter();
 
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -39,8 +39,14 @@ export const KeywordsResearchDataTable = () => {
   const [componentError, setComponentError] = useState('');
 
   const handleShowConfirm = (el: KeywordResearchEntity) => {
-    setSelectedResearch(String(el.id));
+    setSelectedResearch(el);
     setShowDialog(!showDialog);
+  };
+
+  const handleEdit = (item: KeywordResearchEntity) => {
+    setFormMode('edit');
+    setFormSelectedResearch(String(item.id));
+    router.push('/tools/seo/keyword-research');
   };
 
   const onConfirm = async (id: string) => {
@@ -90,7 +96,7 @@ export const KeywordsResearchDataTable = () => {
 
   const onShow = (item: KeywordResearchEntity) => {
     setResultSelected(item.result!);
-    setSelectedResearch(String(item.id));
+    setSelectedResearch(item);
     router.push('/tools/seo/keyword-result');
   };
 
@@ -207,17 +213,21 @@ export const KeywordsResearchDataTable = () => {
                 label: 'View Details',
                 onClick: onShow,
                 show: (item) => Array.isArray(item.result),
+                tooltipMessage: 'View Details',
               },
+
               {
                 icon: Pencil,
                 label: 'Edit',
-                onClick: () => console.log(item),
+                onClick: () => handleEdit(item),
+                tooltipMessage: 'Edit Keyword Research',
               },
               {
                 icon: Trash2,
                 label: 'Delete',
                 onClick: () => handleShowConfirm(item),
                 variant: 'destructive',
+                tooltipMessage: 'Delete Keyword Research',
               },
             ]}
           />
@@ -263,7 +273,7 @@ export const KeywordsResearchDataTable = () => {
               </Button>
               <Button
                 variant='destructive'
-                onClick={() => onConfirm(selectedResearch)}
+                onClick={() => onConfirm(String(selectedResearch.id))}
               >
                 {confirmLoading ? (
                   <CustomLoading message='Deleting Keyword Research' />

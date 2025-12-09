@@ -1,11 +1,13 @@
+import { KeywordResultEntity } from '../entities';
+
 export class CreateKeywordResearchDTO {
   readonly title?: string;
   readonly searchVolume?: number;
   readonly positiveKeywords?: string[];
   readonly extraPositiveKeywords?: string[];
   readonly negativeKeywords?: string[];
-  readonly generatedPositiveKeywords?: string[];
-  readonly generatedNegativeKeywords?: string[];
+  readonly generatedPositiveKeywords?: KeywordResultEntity[];
+  readonly generatedNegativeKeywords?: KeywordResultEntity[];
   readonly city?: string[];
   readonly allCitys?: boolean;
   readonly region?: string[];
