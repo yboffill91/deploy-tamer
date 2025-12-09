@@ -3,7 +3,7 @@
 import { CustomPageLoader } from '@/components/CustomPageLoader';
 import { showToast } from '@/components/CustomToaster';
 import { DataTable } from '@/components/data-table/DataTable';
-import { Badge, Button } from '@/components/ui';
+import { Badge, Button, InputGroup, InputGroupInput } from '@/components/ui';
 import { KeywordResearchEntity } from '@/core/entities';
 import { CommonHeader } from '@/modules/users/admin';
 import { ColumnDef } from '@tanstack/react-table';
@@ -43,6 +43,7 @@ export const KeywordsResearchDataTable = ({
   const [componentError, setComponentError] = useState('');
   const [loadingDownload, setIsLoadingDownload] = useState(false);
   const [dwError, setDwError] = useState('');
+  const [fieldValue, setFiedValue] = useState('');
 
   const handleShowConfirm = (el: KeywordResearchEntity) => {
     setSelectedResearch(el);
@@ -281,7 +282,11 @@ export const KeywordsResearchDataTable = ({
           <DataTable
             data={keywordsResearch}
             columns={columns}
-            onAdd={() => router.push('/tools/seo/keyword-research')}
+            onAdd={() => {
+              setFormMode('create');
+              onChangeTab();
+              router.push('/tools/seo/keyword-research');
+            }}
           />
           <ControlledDialog
             open={showDialog}
@@ -289,9 +294,26 @@ export const KeywordsResearchDataTable = ({
             title='Confirm Delete Keyword Research'
           >
             <h3>
-              Please confirm that you wish to remove the Keyword Research; this
-              action will be irreversible.
+              Please confirm that you wish to delete Keyword Research; this step
+              will be irreversible and your used credits will be consumed.
             </h3>
+            <div className='flex gap-2 flex-col mt-4 text-sm text-muted-foreground bg-muted/30  p-4 rounded-md'>
+              <h4>
+                To confirm, please enter the keyword research title in the field
+                below. ( {selectedResearch.title} )
+              </h4>
+              <InputGroup>
+                <InputGroupInput
+                  placeholder='Keyword Research Title'
+                  value={fieldValue}
+                  onChange={(e) => {
+                    e.preventDefault();
+                    setFiedValue(e.target.value);
+                  }}
+                  className='ring-none focus:ting-none'
+                ></InputGroupInput>
+              </InputGroup>
+            </div>
             <div className=' mt-4 w-full grid grid-cols-2 gap-2 p-2'>
               <Button
                 variant={'secondary'}
@@ -304,6 +326,7 @@ export const KeywordsResearchDataTable = ({
               <Button
                 variant='destructive'
                 onClick={() => onConfirm(String(selectedResearch.id))}
+                disabled={fieldValue !== selectedResearch.title}
               >
                 {confirmLoading ? (
                   <CustomLoading message='Deleting Keyword Research' />
@@ -319,9 +342,10 @@ export const KeywordsResearchDataTable = ({
           </ControlledDialog>
         </>
       )}
-      {/* {!isLoading && (keywordsResearch.length === 0 || !keywordsResearch) && (
-        <div>Empty</div>
-      )} */}
+      {!isLoading &&
+        (!Array.isArray(keywordsResearch) ||
+          keywordsResearch.length === 0 ||
+          !keywordsResearch) && <div>Empty</div>}
     </>
   );
 };
