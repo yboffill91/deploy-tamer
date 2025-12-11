@@ -2,7 +2,11 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { Badge } from '@/components/ui/badge';
 
-import { KeywordResearchEntity, KeywordResultEntity } from '@/core/entities';
+import {
+  KeywordResearchEntity,
+  KeywordResultEntity,
+  KeywordStatus,
+} from '@/core/entities';
 
 import { DataTable } from '@/components/data-table/DataTable';
 import {
@@ -11,6 +15,13 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
   Tabs,
   TabsContent,
   TabsList,
@@ -19,14 +30,15 @@ import Image from 'next/image';
 import { ActionsButtonSet } from '@/components/data-table/ActionsButtons';
 import {
   ArrowLeftCircle,
-  ArrowRightCircle,
+  ChevronUp,
   CircleMinusIcon,
   Eye,
+  FileDown,
   FileText,
   ListCheck,
   ListMinus,
   ListPlus,
-  Minus,
+  Loader,
   PlusCircle,
   Save,
   SendToBack,
@@ -49,6 +61,8 @@ export const ResultResearchDataTable = ({ data }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState('');
   const [isLoadingDownload, setIsLoadingDownload] = useState(false);
+  const [isLoadingDownloadURL, setIsLoadingDownloadURL] = useState(false);
+
   const [isLoadingSave, setIsLoadingSave] = useState(false);
 
   const setFormMode = useFormStore((st) => st.setMode);
@@ -133,6 +147,21 @@ export const ResultResearchDataTable = ({ data }: Props) => {
       );
     } finally {
       setIsLoadingDownload(false);
+    }
+  };
+  const onExportURLS = async () => {
+    try {
+      setIsLoadingDownloadURL(true);
+      const REPO = new KeywordResearchApiRepository();
+      await REPO.exportExcelUrl(String(selectedResearch.id));
+    } catch (error) {
+      setIsError(
+        error instanceof Error
+          ? error.message
+          : 'Unexpected Error Downloading Report'
+      );
+    } finally {
+      setIsLoadingDownloadURL(false);
     }
   };
 
@@ -285,15 +314,14 @@ export const ResultResearchDataTable = ({ data }: Props) => {
             actions={[
               {
                 icon: Eye,
-                label: 'View Google Snapshot',
+                label: 'See Google screenshot',
                 onClick: async (item) => {
                   await onShow(item);
                 },
-                tooltipMessage: 'View Google Snap',
               },
               {
                 icon: PlusCircle,
-                label: 'Add to new Keyword Research List',
+                label: 'Add to generate new keyword research',
                 onClick: () => {
                   setPositivesToNewKeyword(item);
                   showToast({
@@ -302,7 +330,8 @@ export const ResultResearchDataTable = ({ data }: Props) => {
                     type: 'success',
                   });
                 },
-                tooltipMessage: 'Add to New Research List',
+                show: () =>
+                  selectedResearch.status === KeywordStatus.READY_TO_CHECK,
               },
 
               {
@@ -316,7 +345,8 @@ export const ResultResearchDataTable = ({ data }: Props) => {
                     type: 'success',
                   });
                 },
-                tooltipMessage: 'Add to Discard List',
+                show: () =>
+                  selectedResearch.status === KeywordStatus.READY_TO_CHECK,
               },
             ]}
           />
@@ -491,21 +521,59 @@ export const ResultResearchDataTable = ({ data }: Props) => {
         </TabsContent>
       </Tabs>
       <div className='h-12 p-2 bg-card border-t w-full sticky bottom-0 right-0 flex items-center justify-end gap-6 '>
-        <Button
-          variant='success'
-          className='w-48'
-          onClick={() => onExport()}
-          disabled={isLoadingDownload}
-        >
-          {isLoadingDownload ? (
-            <CustomLoading message='Generating Report' />
-          ) : (
-            <>
-              {' '}
-              Download Report <FileText />
-            </>
-          )}
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant='success'>
+              {isLoadingDownloadURL || isLoadingDownload ? (
+                <Loader className='animate-spin' />
+              ) : (
+                <FileText />
+              )}{' '}
+              Reports <ChevronUp />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuGroup>
+              <DropdownMenuLabel>Excel Reports</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Button
+                  variant='ghost'
+                  className='w-full justify-start capitalize'
+                  onClick={() => onExport()}
+                  disabled={isLoadingDownload || isLoadingDownloadURL}
+                >
+                  {isLoadingDownload ? (
+                    <CustomLoading message='Generating Report' />
+                  ) : (
+                    <>
+                      {' '}
+                      <FileDown /> Download results report
+                    </>
+                  )}
+                </Button>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Button
+                  variant='ghost'
+                  className='w-full justify-start capitalize'
+                  onClick={() => onExportURLS()}
+                  disabled={isLoadingDownloadURL || isLoadingDownload}
+                >
+                  {isLoadingDownloadURL ? (
+                    <CustomLoading message='Generating Report' />
+                  ) : (
+                    <>
+                      {' '}
+                      <FileDown /> Download the Organic URL report
+                    </>
+                  )}
+                </Button>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
         {unSelected.length > 0 && (
           <Button variant='secondary' onClick={() => onSave(selectedResearch)}>
             {isLoadingSave ? (

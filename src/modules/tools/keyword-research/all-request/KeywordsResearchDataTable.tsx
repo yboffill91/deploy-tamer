@@ -174,7 +174,11 @@ export const KeywordsResearchDataTable = ({
       await REPO.forceEnd(id);
       getKeywordsResearch();
     } catch (error) {
-      setComponentError('Error Finishing Keyword Research');
+      setComponentError(
+        error instanceof Error
+          ? error.message
+          : 'An unexpected error occurred while finishing the keyword research.'
+      );
     }
   };
 
@@ -290,59 +294,56 @@ export const KeywordsResearchDataTable = ({
                 actions={[
                   {
                     icon: Play,
-                    label: 'Run Keyword Research',
+                    label: 'Perform keyword research',
                     onClick: async () => await onRun(String(item.id)),
-                    tooltipMessage: 'Run Keyword Research',
                     variant: 'ghost',
-                    show: (item) => item.status === KeywordStatus.DRAFT,
-                  },
-                  {
-                    icon: Link,
-                    label: 'Download Organic URL inform',
-                    onClick: onExportURL,
-                    tooltipMessage: 'Download Organic URL inform',
-                    variant: 'ghost',
-                    show: (item) => item.status === KeywordStatus.FINISHED,
-                  },
-                  {
-                    icon: FileText,
-                    label: 'Download Full Research Report',
-                    onClick: onExport,
-                    show: (item) =>
-                      item.status === KeywordStatus.FINISHED ||
-                      item.status === KeywordStatus.READY_TO_CHECK,
-                    tooltipMessage: 'Download Result Inform',
-                  },
-                  {
-                    icon: Eye,
-                    label: 'View Result',
-                    onClick: onShow,
-                    show: (item) =>
-                      item.status === KeywordStatus.READY_TO_CHECK,
-                    tooltipMessage: 'View Details',
-                  },
-
-                  {
-                    icon: Pencil,
-                    label: 'Edit Keyword Research',
-                    onClick: () => handleEdit(item),
-                    tooltipMessage: 'Edit Keyword Research',
                     show: (item) => item.status === KeywordStatus.DRAFT,
                   },
                   {
                     icon: Goal,
                     label: 'Finish Keyword Research',
                     onClick: () => onFinish(String(item.id)),
-                    tooltipMessage: 'Finish Keyword Research',
+                    tooltipMessage: 'Complete the keyword research.',
                     show: (item) =>
                       item.status === KeywordStatus.READY_TO_CHECK,
                   },
                   {
+                    icon: Eye,
+                    label: 'Review the result',
+                    onClick: onShow,
+                    show: (item) =>
+                      item.status === KeywordStatus.READY_TO_CHECK ||
+                      item.status === KeywordStatus.FINISHED,
+                  },
+                  {
+                    icon: FileText,
+                    label: 'Download results report (Excel)',
+                    onClick: onExport,
+                    show: (item) =>
+                      item.status === KeywordStatus.FINISHED ||
+                      item.status === KeywordStatus.READY_TO_CHECK,
+                  },
+                  {
+                    icon: Link,
+                    label: 'Download the Organic URL report.',
+                    onClick: onExportURL,
+                    variant: 'ghost',
+                    show: (item) => item.status === KeywordStatus.FINISHED,
+                  },
+
+                  {
+                    icon: Pencil,
+                    label: 'Edit the result',
+                    onClick: () => handleEdit(item),
+                    tooltipMessage: 'Edit Keyword Research',
+                    show: (item) => item.status === KeywordStatus.DRAFT,
+                  },
+
+                  {
                     icon: Trash2,
-                    label: 'Delete',
+                    label: 'Eliminate keyword research',
                     onClick: () => handleShowConfirm(item),
                     variant: 'ghostDestructive',
-                    tooltipMessage: 'Delete Keyword Research',
                   },
                 ]}
               />
@@ -362,7 +363,9 @@ export const KeywordsResearchDataTable = ({
         desc='All Keyword Researchs'
         title='Keyword Researchs'
       />
-      {isLoading && <CustomPageLoader message='Getting Keywords Research' />}
+      {isLoading && (
+        <CustomPageLoader message='Obtaining the list of keyword research results.' />
+      )}
       {keywordsResearch && !isLoading && (
         <>
           <DataTable
@@ -380,7 +383,7 @@ export const KeywordsResearchDataTable = ({
               setShowDialog(!showDialog);
               setFiedValue('');
             }}
-            title='Confirm Delete Keyword Research'
+            title='Confirm deletion of keyword research'
           >
             <h3>
               Please confirm that you wish to delete Keyword Research; this step

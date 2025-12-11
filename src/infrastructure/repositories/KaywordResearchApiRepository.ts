@@ -2,10 +2,11 @@ import { IRepository } from '@/core';
 import { KeywordResearchDTO, CreateKeywordResearchDTO } from '@/core/dto';
 import { KeywordResearchEntity } from '@/core/entities';
 import {
-    downloadExcelApi,
-    downloadExcelUrlApi, forceEndApi,
-    googleSearchApi,
-    keywordResearchApi,
+  downloadExcelApi,
+  downloadExcelUrlApi,
+  forceEndApi,
+  googleSearchApi,
+  keywordResearchApi,
 } from '@/lib/apis';
 import { fetchHelper } from '@/lib/fetch-helper';
 import { SessionRepository } from './SessionRepository';
@@ -303,14 +304,14 @@ export class KeywordResearchApiRepository implements IRepository {
     }
   }
   async forceEnd(id: string): Promise<void> {
-      try {
-          await fetchHelper(forceEndApi + `/${id}`, {
-              headers: {
-                  Authorization: `Bearer ${await this.auth()}`,
-              }
-          })
-      } catch (error) {
-          throw error;
-      }
+    try {
+      await fetchHelper(forceEndApi + `/${id}`, {
+        headers: {
+          Authorization: `Bearer ${await this.auth()}`,
+        },
+      });
+    } catch (error) {
+      throw error;
+    }
   }
 }
