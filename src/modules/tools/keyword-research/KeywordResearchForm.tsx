@@ -7,8 +7,14 @@ import {
   KeywordResearchDetailsCard,
   KeywordResearchFormHeader,
 } from './components';
-import { Button, Label, RadioGroup, RadioGroupItem } from '@/components/ui';
-import { Focus, Save, SendHorizonal } from 'lucide-react';
+import {
+  Button,
+  ButtonGroup,
+  Label,
+  RadioGroup,
+  RadioGroupItem,
+} from '@/components/ui';
+import { Focus, RefreshCw, Save, SendHorizonal } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { KeywordPositiveNegativeWords } from './components/KeywordPositiveNegativeWords';
 import { KeywordResearchCityComponent } from './components/KeywordResearchCityComponent';
@@ -54,6 +60,8 @@ export const KeywordResearchForm = () => {
   const resetNegativeCities = useRegionStore((st) => st.resetNegativesCities);
   const resetWords = usePositiveStore((st) => st.resetWords);
   const setMode = useFormStore((st) => st.setMode);
+  const resetRegions = useRegionStore((st) => st.resetState);
+  const clearKeywordResearch = useFormStore((st) => st.clearKeywordResearch);
 
   const selectedRegions = Array.from(finalValues, ([key, value]) => ({
     key,
@@ -63,12 +71,13 @@ export const KeywordResearchForm = () => {
   const regionValues = selectedRegions.map((region) => region.value.join(', '));
 
   const resetForm = () => {
+    reset();
     resetWords();
     resetNegative();
     resetExtraPositive();
     resetBrands();
     resetNegativeCities();
-    reset();
+    resetRegions();
   };
 
   const {
@@ -228,7 +237,7 @@ export const KeywordResearchForm = () => {
         <CustomPageLoader message='Fetching Form Data to Edit' />
       ) : (
         <form
-          className='mx-auto container max-w-7xl flex flex-col items-center gap-4'
+          className='mx-auto container max-w-7xl flex flex-col items-center gap-4 relative'
           onSubmit={handleSubmit(onSubmitHandler)}
         >
           <KeywordResearchFormHeader />
@@ -267,37 +276,52 @@ export const KeywordResearchForm = () => {
                 />
               </div>
               <div className=' flex items-center justify-start'>
-                <Button
-                  type='submit'
-                  className=' w-full '
-                  size={'lg'}
-                  disabled={!isValid && positiveWords.length === 0}
-                  variant={
-                    isValid &&
-                    positiveWords.length > 0 &&
-                    regionValues.length > 0
-                      ? 'default'
-                      : 'outline'
-                  }
-                >
-                  {isSubmitting ? (
-                    <CustomLoading message='Creating Research' />
-                  ) : (
-                    <>
-                      {mode === 'create' ? (
-                        <>
-                          <Save />
-                          Save{' '}
-                        </>
-                      ) : (
-                        <>
-                          <SendHorizonal />
-                          Re Run Research
-                        </>
-                      )}
-                    </>
+                <ButtonGroup className='w-full'>
+                  <Button
+                    type='submit'
+                    className=' w-full flex-1 '
+                    size={'lg'}
+                    disabled={!isValid && positiveWords.length === 0}
+                    variant={
+                      isValid &&
+                      positiveWords.length > 0 &&
+                      regionValues.length > 0
+                        ? 'default'
+                        : 'outline'
+                    }
+                  >
+                    {isSubmitting ? (
+                      <CustomLoading message='Creating Research' />
+                    ) : (
+                      <>
+                        {mode === 'create' ? (
+                          <>
+                            <Save />
+                            Save{' '}
+                          </>
+                        ) : (
+                          <>
+                            <SendHorizonal />
+                            Re Run Research
+                          </>
+                        )}
+                      </>
+                    )}
+                  </Button>
+                  {mode === 'edit' && (
+                    <Button
+                      onClick={() => {
+                        resetForm();
+                        clearKeywordResearch();
+                        setMode('create');
+                      }}
+                      type='reset'
+                      size='lg'
+                    >
+                      <RefreshCw /> Reset Form
+                    </Button>
                   )}
-                </Button>
+                </ButtonGroup>
               </div>
             </div>
           </CustomCard>

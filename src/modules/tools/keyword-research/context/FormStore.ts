@@ -16,6 +16,7 @@ interface FormStore {
   getInitialValues: () => InitialFormValues;
   // regions: () => void;
   city: () => void;
+  clearKeywordResearch: () => void;
 }
 
 export const useFormStore = create<FormStore>((set, get) => ({
@@ -27,6 +28,7 @@ export const useFormStore = create<FormStore>((set, get) => ({
   setMode: (mode) => {
     set({ mode });
   },
+  clearKeywordResearch: () => set({ keywordResearch: null }),
 
   getKeyWordResearch: async (id) => {
     try {
@@ -62,10 +64,6 @@ export const useFormStore = create<FormStore>((set, get) => ({
         type: 'TRANSACTIONAL',
       };
     }
-
-    // const reBuildedRegions = keywordResearch.region!.flatMap((value) =>
-    //   value.split(/\s*,\s*/)
-    // );
 
     return {
       allCitys: keywordResearch.allCitys || false,
@@ -109,18 +107,13 @@ export const useFormStore = create<FormStore>((set, get) => ({
     const { mode, keywordResearch } = get();
 
     if (mode === 'create' || !keywordResearch || !keywordResearch.city) {
-      // Si estamos creando o no hay data, devolvemos un arreglo vacío.
       return [];
     }
 
     const citiesFromEntity = keywordResearch.city;
 
-    // 1. Hidratar la useRegionStore:
-    // Llamamos directamente a la función que maneja el estado de ciudades negativas
-    // (Asumimos que necesitas un hidrateNegativeCities en useRegionStore)
     useRegionStore.getState().hidrateNegativeCities(citiesFromEntity);
 
-    // 2. Devolver el valor para que sea usado en getInitialValues (para RHF)
     return citiesFromEntity;
   },
 }));
