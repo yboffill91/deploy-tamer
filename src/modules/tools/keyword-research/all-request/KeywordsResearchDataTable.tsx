@@ -4,15 +4,27 @@ import { CustomPageLoader } from '@/components/CustomPageLoader';
 import { showToast } from '@/components/CustomToaster';
 import { DataTable } from '@/components/data-table/DataTable';
 import { Badge, Button, InputGroup, InputGroupInput } from '@/components/ui';
-import { KeywordResearchEntity } from '@/core/entities';
+import { KeywordResearchEntity, KeywordStatus } from '@/core/entities';
 import { CommonHeader } from '@/modules/users/admin';
 import { ColumnDef } from '@tanstack/react-table';
-import { Eye, FileText, List, Loader, Pencil, Trash2 } from 'lucide-react';
+import {
+  CloudLightning,
+  Eye,
+  FileText,
+  Goal,
+  Link,
+  List,
+  Loader,
+  Pencil,
+  Play,
+  Replace,
+  Send,
+  Trash2,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useResearchStore } from './context/ResearchStore';
 import { ActionsButtonSet } from '@/components/data-table/ActionsButtons';
 import { TypeBadge } from './TypesBadge';
-import { StatusBadge } from './StatusBadge';
 import { useKeywordStore } from './context/KeywordSelectionStore';
 import { useRouter } from 'next/navigation';
 import { RotatingBadge } from '@/components/RotatingBadge';
@@ -20,6 +32,7 @@ import { KeywordResearchApiRepository } from '@/infrastructure/repositories';
 import { ControlledDialog } from '@/components/ControlledDialog';
 import { CustomLoading } from '@/components/CustomLoading';
 import { useFormStore } from '../context/FormStore';
+import { StatusBadge } from '../components/StatusBadge';
 
 export const KeywordsResearchDataTable = ({
   onChangeTab,
@@ -42,6 +55,8 @@ export const KeywordsResearchDataTable = ({
   const [showDialog, setShowDialog] = useState(false);
   const [componentError, setComponentError] = useState('');
   const [loadingDownload, setIsLoadingDownload] = useState(false);
+  const [laodingDownloadURL, setIsLoadingDownloadURL] = useState(false);
+
   const [dwError, setDwError] = useState('');
   const [fieldValue, setFiedValue] = useState('');
 
@@ -69,6 +84,21 @@ export const KeywordsResearchDataTable = ({
       );
     } finally {
       setIsLoadingDownload(false);
+    }
+  };
+  const onExportURL = async (item: KeywordResearchEntity) => {
+    try {
+      setIsLoadingDownloadURL(true);
+      const REPO = new KeywordResearchApiRepository();
+      await REPO.exportExcelUrl(String(item.id));
+    } catch (error) {
+      setDwError(
+        error instanceof Error
+          ? error.message
+          : 'Unexpected Error Downloading Report'
+      );
+    } finally {
+      setIsLoadingDownloadURL(false);
     }
   };
 
@@ -121,6 +151,31 @@ export const KeywordsResearchDataTable = ({
     setResultSelected(item.result!);
     setSelectedResearch(item);
     router.push('/tools/seo/keyword-result');
+  };
+
+  const onRun = async (id: string) => {
+    const REPO = new KeywordResearchApiRepository();
+    try {
+      setComponentError('');
+      await REPO.runKeyword(id);
+      getKeywordsResearch();
+    } catch (error) {
+      setComponentError(
+        error instanceof Error
+          ? error.message
+          : 'Unexpected Error Running Keyword Research'
+      );
+    }
+  };
+
+  const onFinish = async (id: string) => {
+    try {
+      const REPO = new KeywordResearchApiRepository();
+      await REPO.forceEnd(id);
+      getKeywordsResearch();
+    } catch (error) {
+      setComponentError('Error Finishing Keyword Research');
+    }
   };
 
   const columns: ColumnDef<KeywordResearchEntity>[] = [
@@ -200,7 +255,7 @@ export const KeywordsResearchDataTable = ({
       cell: ({ row }) => {
         const value: KeywordResearchEntity['status'] = row.getValue('status');
 
-        return <StatusBadge value={value} />;
+        return <StatusBadge status={value} />;
       },
     },
     {
@@ -228,40 +283,71 @@ export const KeywordsResearchDataTable = ({
       cell: ({ row }) => {
         const item = row.original;
         return (
-          <ActionsButtonSet
-            item={item}
-            actions={[
-              {
-                icon: FileText,
-                label: 'Download Full Research Reposrt',
-                onClick: onExport,
-                show: (item) => Array.isArray(item.result),
-                tooltipMessage: 'Download Result Inform',
-              },
-              {
-                icon: Eye,
-                label: 'View Result',
-                onClick: onShow,
-                show: (item) => Array.isArray(item.result),
-                tooltipMessage: 'View Details',
-              },
+          <>
+            {item.status !== KeywordStatus.KEYWORING && (
+              <ActionsButtonSet
+                item={item}
+                actions={[
+                  {
+                    icon: Play,
+                    label: 'Run Keyword Research',
+                    onClick: async () => await onRun(String(item.id)),
+                    tooltipMessage: 'Run Keyword Research',
+                    variant: 'ghost',
+                    show: (item) => item.status === KeywordStatus.DRAFT,
+                  },
+                  {
+                    icon: Link,
+                    label: 'Download Organic URL inform',
+                    onClick: onExportURL,
+                    tooltipMessage: 'Download Organic URL inform',
+                    variant: 'ghost',
+                    show: (item) => item.status === KeywordStatus.FINISHED,
+                  },
+                  {
+                    icon: FileText,
+                    label: 'Download Full Research Report',
+                    onClick: onExport,
+                    show: (item) =>
+                      item.status === KeywordStatus.FINISHED ||
+                      item.status === KeywordStatus.READY_TO_CHECK,
+                    tooltipMessage: 'Download Result Inform',
+                  },
+                  {
+                    icon: Eye,
+                    label: 'View Result',
+                    onClick: onShow,
+                    show: (item) =>
+                      item.status === KeywordStatus.READY_TO_CHECK,
+                    tooltipMessage: 'View Details',
+                  },
 
-              {
-                icon: Pencil,
-                label: 'Edit Keyword Research',
-                onClick: () => handleEdit(item),
-                tooltipMessage: 'Edit Keyword Research',
-                show: (item) => item.status === 'CREATED',
-              },
-              {
-                icon: Trash2,
-                label: 'Delete',
-                onClick: () => handleShowConfirm(item),
-                variant: 'destructive',
-                tooltipMessage: 'Delete Keyword Research',
-              },
-            ]}
-          />
+                  {
+                    icon: Pencil,
+                    label: 'Edit Keyword Research',
+                    onClick: () => handleEdit(item),
+                    tooltipMessage: 'Edit Keyword Research',
+                    show: (item) => item.status === KeywordStatus.DRAFT,
+                  },
+                  {
+                    icon: Goal,
+                    label: 'Finish Keyword Research',
+                    onClick: () => onFinish(String(item.id)),
+                    tooltipMessage: 'Finish Keyword Research',
+                    show: (item) =>
+                      item.status === KeywordStatus.READY_TO_CHECK,
+                  },
+                  {
+                    icon: Trash2,
+                    label: 'Delete',
+                    onClick: () => handleShowConfirm(item),
+                    variant: 'ghostDestructive',
+                    tooltipMessage: 'Delete Keyword Research',
+                  },
+                ]}
+              />
+            )}
+          </>
         );
       },
       enableSorting: false,

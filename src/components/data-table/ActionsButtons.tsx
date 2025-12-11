@@ -18,7 +18,12 @@ export interface ActionConfig<T> {
   label: string;
   onClick: (item: T) => void;
   show?: (item: T) => boolean;
-  variant?: 'ghost' | 'destructive' | 'success' | 'secondary';
+  variant?:
+    | 'ghost'
+    | 'destructive'
+    | 'success'
+    | 'secondary'
+    | 'ghostDestructive';
   tooltipMessage?: string;
 }
 

@@ -100,3 +100,11 @@ export interface OrganicItemEntity {
   readonly description?: string;
   readonly rank_absolute?: number;
 }
+
+export enum KeywordStatus {
+  DRAFT = 'DRAFT',
+  KEYWORING = 'KEYWORING',
+  READY_TO_CHECK = 'READY_TO_CHECK',
+  RE_KEYWORING = 'RE_KEYWORING',
+  FINISHED = 'FINISHED',
+}

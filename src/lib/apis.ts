@@ -24,3 +24,5 @@ export const suggestWordsApi = keywordResearchApi + '/suggest/ai';
 export const brandsSuggestApi = suggestWordsApi + '/brands';
 export const googleSearchApi = keywordResearchApi + '/google/search';
 export const downloadExcelApi = keywordResearchApi + '/export/excel';
+export const downloadExcelUrlApi = keywordResearchApi + '/export/organic/urls';
+export const forceEndApi = keywordResearchApi + '/force/end';

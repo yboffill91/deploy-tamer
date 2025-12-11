@@ -2,9 +2,10 @@ import { IRepository } from '@/core';
 import { KeywordResearchDTO, CreateKeywordResearchDTO } from '@/core/dto';
 import { KeywordResearchEntity } from '@/core/entities';
 import {
-  downloadExcelApi,
-  googleSearchApi,
-  keywordResearchApi,
+    downloadExcelApi,
+    downloadExcelUrlApi, forceEndApi,
+    googleSearchApi,
+    keywordResearchApi,
 } from '@/lib/apis';
 import { fetchHelper } from '@/lib/fetch-helper';
 import { SessionRepository } from './SessionRepository';
@@ -92,6 +93,18 @@ export class KeywordResearchApiRepository implements IRepository {
     }
   }
 
+  async runKeyword(id: string): Promise<void> {
+    try {
+      await fetchHelper(keywordResearchApi + `/execute/${id}`, {
+        headers: {
+          Authorization: `Bearer ${await this.auth()}`,
+        },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async create(data: KeywordResearchFormInput): Promise<void> {
     const payload = {
       title: data.title,
@@ -101,7 +114,7 @@ export class KeywordResearchApiRepository implements IRepository {
       negativeKeywords: data.negativeKeywords as object,
       city: data.city as object,
       region: data.region as object,
-      requestLanguage: data.requestLanguage === 'en' ? 'english' : 'español',
+      requestLanguage: data.requestLanguage,
       brand: data.brand as object,
       type: data.type.toUpperCase(),
       allCitys: false,
@@ -247,5 +260,57 @@ export class KeywordResearchApiRepository implements IRepository {
       console.error('Error exportando Excel:', error);
       throw error;
     }
+  }
+  async exportExcelUrl(id: string): Promise<void> {
+    try {
+      const token = await this.auth();
+
+      const response = await fetch(`${downloadExcelUrlApi}/${id}`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error descargando el archivo: ${response.statusText}`);
+      }
+
+      const blob = await response.blob();
+
+      let filename = 'Organic_URLs.xlsx';
+      const contentDisposition = response.headers.get('content-disposition');
+
+      if (contentDisposition) {
+        const match = contentDisposition.match(/filename="?([^"]+)"?/);
+        if (match) filename = match[1];
+      }
+
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+
+      link.click();
+
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error exportando Excel:', error);
+      throw error;
+    }
+  }
+  async forceEnd(id: string): Promise<void> {
+      try {
+          await fetchHelper(forceEndApi + `/${id}`, {
+              headers: {
+                  Authorization: `Bearer ${await this.auth()}`,
+              }
+          })
+      } catch (error) {
+          throw error;
+      }
   }
 }

@@ -1,13 +1,9 @@
 import { Control, Controller, FieldErrors } from 'react-hook-form';
 import { CustomCard } from '@/components/CustomCard';
 import { CustomControllerInput } from '@/components/CustomControllerInput';
-import { Bell, Globe2, Languages, List } from 'lucide-react';
+import { Globe2, Languages, List } from 'lucide-react';
 import { KeywordResearchFormInput } from '../../utils/models';
 import {
-  Button,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
   Select,
   SelectContent,
   SelectItem,
@@ -28,12 +24,7 @@ import {
 import { CustomTooltipContent } from '@/components/CustomTooltipContentArray';
 import { RegionsTrigger } from './RegionsTrigguer';
 import { GenerateWordsWithAiButton } from './GenerateWordsWithAiButton';
-import {
-  useBrandStore,
-  useExtraPositiveStore,
-  useNegativeStore,
-  usePositiveStore,
-} from '../context/WordsStoreFactory';
+import { useBrandStore } from '../context/WordsStoreFactory';
 
 interface Props {
   control: Control<KeywordResearchFormInput>;
@@ -98,11 +89,11 @@ export const KeywordResearchDetailsCard = ({ control, errors }: Props) => {
                     type='button'
                   >
                     <Languages className='' />
-                    <SelectValue placeholder='Select Language' />
+                    <SelectValue placeholder='Language' />
                   </SelectTrigger>
-                  <SelectContent className=' '>
-                    <SelectItem value='EN'>English</SelectItem>
-                    <SelectItem value='ES'>Spanish</SelectItem>
+                  <SelectContent>
+                    <SelectItem value='en'>English</SelectItem>
+                    <SelectItem value='es'>Spanish</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -111,7 +102,7 @@ export const KeywordResearchDetailsCard = ({ control, errors }: Props) => {
 
           <CustomSheet
             title='Select Region'
-            description='  You can find and add Search for regions like countries, states
+            description='You can find and add Search for regions like countries, states
                 or cities'
             trigger={
               <RegionsTrigger

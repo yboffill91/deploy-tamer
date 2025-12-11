@@ -56,7 +56,7 @@ export const useFormStore = create<FormStore>((set, get) => ({
         negativeKeywords: [],
         positiveKeywords: [],
         region: [],
-        requestLanguage: 'EN',
+        requestLanguage: '',
         searchVolume: '0',
         title: '',
         type: 'TRANSACTIONAL',

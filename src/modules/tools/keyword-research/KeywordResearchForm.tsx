@@ -8,7 +8,7 @@ import {
   KeywordResearchFormHeader,
 } from './components';
 import { Button, Label, RadioGroup, RadioGroupItem } from '@/components/ui';
-import { Focus, Send } from 'lucide-react';
+import { Focus, Save, Send, SendHorizonal } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { KeywordPositiveNegativeWords } from './components/KeywordPositiveNegativeWords';
 import { KeywordResearchCityComponent } from './components/KeywordResearchCityComponent';
@@ -71,7 +71,6 @@ export const KeywordResearchForm = () => {
     reset();
   };
 
-  // --> Inicializacoin del formulario
   const {
     control,
     handleSubmit,
@@ -84,11 +83,9 @@ export const KeywordResearchForm = () => {
     defaultValues: initialValues,
   });
 
-  // Submit handler
   const onSubmitHandler = async (data: KeywordResearchFormInput) => {
     const payload = {
       ...data,
-
       region: regionValues,
       city: negativeCities,
       positiveKeywords: positiveWords,
@@ -127,6 +124,7 @@ export const KeywordResearchForm = () => {
       );
     }
   };
+  console.log(initialValues);
   useEffect(() => {
     if (mode === 'edit' && keywordResearch) {
       if (Array.isArray(initialValues.positiveKeywords))
@@ -181,7 +179,7 @@ export const KeywordResearchForm = () => {
     keywordResearch,
     mode,
     reset,
-    trigger, // Añadir trigger
+    trigger,
     getInitialValues,
     hidratePositive,
     hidrateNegative,
@@ -258,15 +256,24 @@ export const KeywordResearchForm = () => {
                   size={'lg'}
                   disabled={!isValid && positiveWords.length === 0}
                   variant={
-                    isValid && positiveWords.length > 0 ? 'default' : 'ghost'
+                    isValid && positiveWords.length > 0 ? 'default' : 'outline'
                   }
                 >
                   {isSubmitting ? (
                     <CustomLoading message='Creating Research' />
                   ) : (
                     <>
-                      <Send />
-                      Run Research{' '}
+                      {mode === 'create' ? (
+                        <>
+                          <Save />
+                          Save{' '}
+                        </>
+                      ) : (
+                        <>
+                          <SendHorizonal />
+                          Re Run Research
+                        </>
+                      )}
                     </>
                   )}
                 </Button>
