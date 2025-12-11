@@ -4,6 +4,7 @@ import { CustomControllerInput } from '@/components/CustomControllerInput';
 import { Globe2, Languages, List } from 'lucide-react';
 import { KeywordResearchFormInput } from '../../utils/models';
 import {
+  Button,
   Select,
   SelectContent,
   SelectItem,
@@ -118,10 +119,12 @@ export const KeywordResearchDetailsCard = ({ control, errors }: Props) => {
             {Step === 'State' && <StateSelector />}
             {Step === 'Cities' && <CitiesSelector />}
           </CustomSheet>
-          <GenerateWordsWithAiButton
-            type='Brands'
-            isLoading={isLoadingBrands}
-          />
+          <div className='flex items-center group'>
+            <GenerateWordsWithAiButton
+              type='Brands'
+              isLoading={isLoadingBrands}
+            />
+          </div>
         </div>
       </div>
     </CustomCard>

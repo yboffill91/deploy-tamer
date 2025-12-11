@@ -14,7 +14,7 @@ interface FormStore {
   getKeyWordResearch: (id: string) => Promise<void>;
   isLoading: boolean;
   getInitialValues: () => InitialFormValues;
-  // regions: () => void;
+  regions: () => void;
   city: () => void;
   clearKeywordResearch: () => void;
 }
@@ -84,25 +84,19 @@ export const useFormStore = create<FormStore>((set, get) => ({
       type: keywordResearch.type,
     } as KeywordResearchFormInput;
   },
-  // regions: () => {
-  //   const { mode, keywordResearch } = get();
+  regions: () => {
+    const { mode, keywordResearch } = get();
 
-  //   if (mode === 'create' || !keywordResearch || !keywordResearch.region)
-  //     return;
-
-  //   // 1. Reconstruir el Map a partir del arreglo de strings de la API
-  //   // El .reverse() es CRUCIAL aquí para que coincida con la lógica de .toReversed()
-  //   // que usas en setFinalValue.
-  //   const reBuildedMap = new Map<number, string[]>(
-  //     keywordResearch.region.map((value, index) => [
-  //       index,
-  //       value.split(/\s*,\s*/).reverse(),
-  //     ])
-  //   );
-
-  //   // 2. Hidratar la useRegionStore
-  //   useRegionStore.getState().hidrateFinalValue(reBuildedMap);
-  // },
+    if (mode === 'create' || !keywordResearch || !keywordResearch.region)
+      return;
+    const reBuildedMap = new Map<number, string[]>(
+      keywordResearch.region.map((value, index) => [
+        index,
+        value.split(/\s*,\s*/).reverse(),
+      ])
+    );
+    useRegionStore.getState().hidrateFinalValue(reBuildedMap);
+  },
   city: () => {
     const { mode, keywordResearch } = get();
 

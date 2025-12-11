@@ -1,20 +1,10 @@
-import {
-  ChevronDown,
-  ChevronRight,
-  List,
-  LucideIcon,
-  Trash2,
-} from 'lucide-react';
+import { ChevronRight, List, LucideIcon, Trash2 } from 'lucide-react';
 import { useRegionStore } from '../context/RegionStore';
 import { CustomLoading } from '@/components/CustomLoading';
 import { showToast } from '@/components/CustomToaster';
 import {
   Button,
   SheetTrigger,
-  PopoverTrigger,
-  PopoverContent,
-  Popover,
-  ButtonGroup,
   Table,
   TableBody,
   TableCell,
@@ -25,7 +15,6 @@ import {
 
 import { cn } from '@/lib/utils';
 import { CustomSheet } from '@/components/CustomSheet';
-import { utimes } from 'fs';
 
 interface TriggerButtonProps {
   label: string;
@@ -78,8 +67,7 @@ export const RegionsTrigger = ({
             trigger={
               <Button
                 size='icon'
-                variant='default'
-                className={'opacity-70 rounded-s-none col-span-1 w-full'}
+                className={'rounded-s-none col-span-1 w-full'}
                 type='button'
                 asChild
               >

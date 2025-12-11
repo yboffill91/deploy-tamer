@@ -5,7 +5,10 @@ import {
   EmptyDescription,
   EmptyHeader,
   EmptyTitle,
+  Sheet,
   SheetClose,
+  SheetContent,
+  SheetTitle,
   SheetTrigger,
   Table,
   TableBody,
@@ -21,7 +24,7 @@ import {
   usePositiveStore,
 } from '../context/WordsStoreFactory';
 import { CustomLoading } from '@/components/CustomLoading';
-import { Bot, Check, ChevronRight, Plus, Trash2 } from 'lucide-react';
+import { Bot, Check, ChevronRight, List, Plus, Trash2 } from 'lucide-react';
 import { CreateSuggestDTO } from '@/core/dto';
 import { cn } from '@/lib/utils';
 import { showToast } from '@/components/CustomToaster';
@@ -36,7 +39,6 @@ interface Props {
 
 export const GenerateWordsWithAiButton = ({ isLoading, type }: Props) => {
   const [showNotification, setShowNotification] = useState(false);
-  const [isAdding, setIsAdding] = useState(false);
 
   const addWords = usePositiveStore((st) => st.addWord);
   const addNegative = useNegativeStore((st) => st.addWord);
@@ -135,7 +137,7 @@ export const GenerateWordsWithAiButton = ({ isLoading, type }: Props) => {
   };
 
   return (
-    <>
+    <div className='flex items-center w-full'>
       {evalType.length === 0 ? (
         <Button
           variant='secondary'
@@ -153,7 +155,10 @@ export const GenerateWordsWithAiButton = ({ isLoading, type }: Props) => {
               });
             }
           }}
-          className={cn(' w-full')}
+          className={cn(
+            'w-full flex-1',
+            brands.length !== 0 && type === 'Brands' && 'rounded-e-none!'
+          )}
           type='button'
         >
           {isLoading ? (
@@ -176,7 +181,8 @@ export const GenerateWordsWithAiButton = ({ isLoading, type }: Props) => {
               <Button
                 variant={'secondary'}
                 className={cn(
-                  ' w-full flex-1 justify-between relative bg-green-500/10'
+                  ' w-full flex-1 justify-between relative bg-green-500/10',
+                  brands.length !== 0 && type === 'Brands' && 'rounded-e-none!'
                 )}
                 type='button'
                 onClick={() => setShowNotification(false)}
@@ -250,7 +256,57 @@ export const GenerateWordsWithAiButton = ({ isLoading, type }: Props) => {
           </SheetClose>
         </CustomSheet>
       )}
-    </>
+      {brands.length > 0 && type === 'Brands' && (
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button className='rounded-s-none'>
+              <List />
+            </Button>
+          </SheetTrigger>
+          <SheetContent className='p-4'>
+            <SheetTitle>Manage Selected Brands</SheetTitle>
+            <div className='min-h-[80dvh] w-full overflow-y-auto'>
+              <Table className='mt-6'>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{type}</TableHead>
+                    <TableHead>Action</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {brands.map((word, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{word}</TableCell>
+                      <TableCell className='flex items-center justify-end'>
+                        {Words.includes(word) ? (
+                          <Button
+                            size={'xs'}
+                            variant='ghost'
+                            className='bg-destructive/10 text-destructive'
+                            onClick={() => handleDelete(word)}
+                          >
+                            <Trash2 />
+                          </Button>
+                        ) : (
+                          <Button
+                            size={'xs'}
+                            variant='ghost'
+                            className='bg-green-500/10 text-green-500'
+                            onClick={() => handleAdd(word)}
+                          >
+                            <Plus />
+                          </Button>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </SheetContent>
+        </Sheet>
+      )}
+    </div>
   );
 };
 

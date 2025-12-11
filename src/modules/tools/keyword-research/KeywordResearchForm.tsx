@@ -32,6 +32,7 @@ import { showToast } from '@/components/CustomToaster';
 import { CustomLoading } from '@/components/CustomLoading';
 import { useFormStore } from './context/FormStore';
 import { CustomPageLoader } from '@/components/CustomPageLoader';
+import { KeywordStatus } from '@/core/entities';
 
 export const KeywordResearchForm = () => {
   const [isError, setIsError] = useState('');
@@ -62,7 +63,7 @@ export const KeywordResearchForm = () => {
   const setMode = useFormStore((st) => st.setMode);
   const resetRegions = useRegionStore((st) => st.resetState);
   const clearKeywordResearch = useFormStore((st) => st.clearKeywordResearch);
-
+  const hidrateRegions = useFormStore((st) => st.regions);
   const selectedRegions = Array.from(finalValues, ([key, value]) => ({
     key,
     value,
@@ -120,15 +121,12 @@ export const KeywordResearchForm = () => {
       brand: brands,
     };
 
-    const updatePayload: Partial<KeywordResearchFormInput> = {
-      ...payload,
-    };
     const REPO = new KeywordResearchApiRepository();
     try {
       if (mode === 'edit') {
-        await REPO.update(String(keywordResearch.id), updatePayload);
+        await REPO.runKeyword(String(keywordResearch.id));
         showToast({
-          message: 'Updated  Keyword Research',
+          message: 'Keyword Research relaunched',
           type: 'success',
           description: '',
         });
@@ -150,7 +148,6 @@ export const KeywordResearchForm = () => {
       );
     }
   };
-  console.log(initialValues);
   useEffect(() => {
     if (mode === 'edit' && keywordResearch) {
       if (Array.isArray(initialValues.positiveKeywords))
@@ -162,7 +159,7 @@ export const KeywordResearchForm = () => {
       if (Array.isArray(initialValues.brand))
         hidrateBrands(initialValues.brand);
       if (Array.isArray(initialValues.city)) hidrateNegativeCities();
-
+      if (Array.isArray(initialValues.region)) hidrateRegions();
       reset(getInitialValues());
       trigger();
     }
@@ -281,7 +278,11 @@ export const KeywordResearchForm = () => {
                     type='submit'
                     className=' w-full flex-1 '
                     size={'lg'}
-                    disabled={!isValid && positiveWords.length === 0}
+                    disabled={
+                      !isValid ||
+                      positiveWords.length === 0 ||
+                      regionValues.length === 0
+                    }
                     variant={
                       isValid &&
                       positiveWords.length > 0 &&
@@ -302,7 +303,9 @@ export const KeywordResearchForm = () => {
                         ) : (
                           <>
                             <SendHorizonal />
-                            Re Run Research
+                            {keywordResearch.status !== KeywordStatus.DRAFT &&
+                              'Re '}{' '}
+                            Run Research
                           </>
                         )}
                       </>
@@ -317,6 +320,7 @@ export const KeywordResearchForm = () => {
                       }}
                       type='reset'
                       size='lg'
+                      variant='secondary'
                     >
                       <RefreshCw /> Reset Form
                     </Button>
