@@ -8,7 +8,7 @@ import {
   KeywordResearchFormHeader,
 } from './components';
 import { Button, Label, RadioGroup, RadioGroupItem } from '@/components/ui';
-import { Focus, Save, Send, SendHorizonal } from 'lucide-react';
+import { Focus, Save, SendHorizonal } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { KeywordPositiveNegativeWords } from './components/KeywordPositiveNegativeWords';
 import { KeywordResearchCityComponent } from './components/KeywordResearchCityComponent';
@@ -84,6 +84,23 @@ export const KeywordResearchForm = () => {
   });
 
   const onSubmitHandler = async (data: KeywordResearchFormInput) => {
+    if (positiveWords.length === 0) {
+      showToast({
+        type: 'error',
+        message: 'Error validating the form. ',
+        description: 'Positive keywords are required',
+      });
+      return;
+    }
+
+    if (regionValues.length === 0) {
+      showToast({
+        type: 'error',
+        message: 'Error validating the form.',
+        description: 'Region is required',
+      });
+      return;
+    }
     const payload = {
       ...data,
       region: regionValues,
@@ -256,7 +273,11 @@ export const KeywordResearchForm = () => {
                   size={'lg'}
                   disabled={!isValid && positiveWords.length === 0}
                   variant={
-                    isValid && positiveWords.length > 0 ? 'default' : 'outline'
+                    isValid &&
+                    positiveWords.length > 0 &&
+                    regionValues.length > 0
+                      ? 'default'
+                      : 'outline'
                   }
                 >
                   {isSubmitting ? (

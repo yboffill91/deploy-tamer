@@ -336,7 +336,9 @@ export const KeywordsResearchDataTable = ({
                     label: 'Edit the result',
                     onClick: () => handleEdit(item),
                     tooltipMessage: 'Edit Keyword Research',
-                    show: (item) => item.status === KeywordStatus.DRAFT,
+                    show: (item) =>
+                      item.status === KeywordStatus.DRAFT ||
+                      item.status === KeywordStatus.READY_TO_CHECK,
                   },
 
                   {
@@ -433,6 +435,11 @@ export const KeywordsResearchDataTable = ({
             </div>
           </ControlledDialog>
         </>
+      )}
+      {(loadingDownload || laodingDownloadURL) && (
+        <div className='w-full h-screen bg-background/90 flex items-center justify-center fixed top-0 left-0 z-50'>
+          <CustomLoading message='Generating Report' />
+        </div>
       )}
       {!isLoading &&
         (!Array.isArray(keywordsResearch) ||
