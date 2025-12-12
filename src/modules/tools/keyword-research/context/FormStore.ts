@@ -17,6 +17,7 @@ interface FormStore {
   regions: () => void;
   city: () => void;
   clearKeywordResearch: () => void;
+  resetKeywordResearch: () => void;
 }
 
 export const useFormStore = create<FormStore>((set, get) => ({
@@ -109,5 +110,8 @@ export const useFormStore = create<FormStore>((set, get) => ({
     useRegionStore.getState().hidrateNegativeCities(citiesFromEntity);
 
     return citiesFromEntity;
+  },
+  resetKeywordResearch: () => {
+    set({ keywordResearch: null });
   },
 }));

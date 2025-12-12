@@ -45,6 +45,7 @@ interface RegionStore {
   getErrorMessage(error: unknown): string;
 
   resetState(): void;
+  resetFinalValue(): void;
 
   finalValue: Map<number, string[]>;
   hidrateFinalValue: (values: Map<number, string[]>) => void;
@@ -244,4 +245,7 @@ export const useRegionStore = create<RegionStore>((set, get) => ({
     set({ finalValue: data });
   },
   hidrateNegativeCities: (data) => set({ negativeCities: data }),
+  resetFinalValue: () => {
+    set({ finalValue: new Map() });
+  },
 }));

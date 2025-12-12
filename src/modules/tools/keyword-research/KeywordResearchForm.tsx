@@ -36,7 +36,6 @@ import { KeywordStatus } from '@/core/entities';
 
 export const KeywordResearchForm = () => {
   const [isError, setIsError] = useState('');
-  // const hidrateRegions = useFormStore((st) => st.regions);
   const brands = useBrandStore((st) => st.words);
   const errorLoadingData = useFormStore((st) => st.error);
   const extraPositiveWords = useExtraPositiveStore((st) => st.words);
@@ -51,6 +50,7 @@ export const KeywordResearchForm = () => {
   const initialValues = getInitialValues();
   const isLoading = useFormStore((st) => st.isLoading);
   const keywordResearch = useFormStore((st) => st.keywordResearch);
+  const deleteKeywordReserch = useFormStore((st) => st.resetKeywordResearch);
   const mode = useFormStore((st) => st.mode);
   const negativeCities = useRegionStore((st) => st.negativeCities);
   const negativeWords = useNegativeStore((st) => st.words);
@@ -61,7 +61,7 @@ export const KeywordResearchForm = () => {
   const resetNegativeCities = useRegionStore((st) => st.resetNegativesCities);
   const resetWords = usePositiveStore((st) => st.resetWords);
   const setMode = useFormStore((st) => st.setMode);
-  const resetRegions = useRegionStore((st) => st.resetState);
+  const resetRegions = useRegionStore((st) => st.resetFinalValue);
   const clearKeywordResearch = useFormStore((st) => st.clearKeywordResearch);
   const hidrateRegions = useFormStore((st) => st.regions);
   const selectedRegions = Array.from(finalValues, ([key, value]) => ({
@@ -79,8 +79,20 @@ export const KeywordResearchForm = () => {
     resetBrands();
     resetNegativeCities();
     resetRegions();
+    clearKeywordResearch();
   };
 
+  const resetFormAfterEdit = () => {
+    reset(getInitialValues());
+    deleteKeywordReserch();
+    resetWords();
+    resetNegative();
+    resetExtraPositive();
+    resetBrands();
+    resetNegativeCities();
+    resetRegions();
+    clearKeywordResearch();
+  };
   const {
     control,
     handleSubmit,
@@ -165,38 +177,7 @@ export const KeywordResearchForm = () => {
     }
 
     if (mode === 'create' && keywordResearch) {
-      const positiveWordsFromKeyword =
-        keywordResearch.generatedPositiveKeywords?.map((el) => el.keyword) ||
-        [];
-      const negativeWordsFromKeyword =
-        (Array.isArray(keywordResearch.negativeKeywords) &&
-          keywordResearch.negativeKeywords.map((el) => el)) ||
-        [];
-
-      const extraPositiveWordsFromKeywords =
-        (Array.isArray(keywordResearch.extraPositiveKeywords) &&
-          keywordResearch.extraPositiveKeywords?.map((el) => el)) ||
-        [];
-
-      if (
-        positiveWordsFromKeyword.length > 0 ||
-        extraPositiveWordsFromKeywords.length > 0 ||
-        negativeWordsFromKeyword.length > 0
-      ) {
-        hidratePositive(positiveWordsFromKeyword);
-        hidrateNegative(negativeWordsFromKeyword);
-        hidrateExtraPositive(extraPositiveWordsFromKeywords);
-      }
-
-      if (Array.isArray(keywordResearch.negativeKeywords))
-        hidrateNegative(keywordResearch.negativeKeywords);
-      if (Array.isArray(keywordResearch.extraPositiveKeywords))
-        hidrateExtraPositive(keywordResearch.extraPositiveKeywords);
-      if (Array.isArray(keywordResearch.brand))
-        hidrateBrands(keywordResearch.brand);
-      if (Array.isArray(keywordResearch.city)) hidrateNegativeCities(); // Usar la entidad, no initialValues.city
-
-      reset(getInitialValues());
+      resetFormAfterEdit();
     }
   }, [
     keywordResearch,
@@ -210,6 +191,8 @@ export const KeywordResearchForm = () => {
     hidrateBrands,
     hidrateNegativeCities,
   ]);
+
+  console.log(mode, keywordResearch);
 
   useEffect(() => {
     if (isError) {
@@ -315,7 +298,6 @@ export const KeywordResearchForm = () => {
                     <Button
                       onClick={() => {
                         resetForm();
-                        clearKeywordResearch();
                         setMode('create');
                       }}
                       type='reset'

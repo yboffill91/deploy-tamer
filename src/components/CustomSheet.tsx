@@ -1,32 +1,17 @@
 import { PropsWithChildren, ReactNode } from 'react';
 import {
   Button,
-  ButtonGroup,
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
   Sheet,
   SheetClose,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-  Badge,
 } from './ui';
-import { ChevronDown, LucideIcon, Trash2 } from 'lucide-react';
-import { CustomLoading } from './CustomLoading';
-import { useRegionStore } from '@/modules/tools/keyword-research/context/RegionStore';
-import { showToast } from './CustomToaster';
+import { cn } from '@/lib/utils';
 
 interface SheetProps extends PropsWithChildren {
   title: string;
@@ -34,6 +19,7 @@ interface SheetProps extends PropsWithChildren {
   trigger: ReactNode;
   tooltipContentElement: ReactNode;
   showClose?: boolean;
+  isBrandButton?: boolean;
 }
 
 export const CustomSheet = ({
@@ -43,12 +29,15 @@ export const CustomSheet = ({
   tooltipContentElement,
   children,
   showClose = false,
+  isBrandButton = false,
 }: SheetProps) => {
   return (
     <Sheet>
       <Tooltip>
         <TooltipTrigger asChild type='button'>
-          <div className='w-full'>{trigger}</div>
+          <div className={cn('w-full', isBrandButton && 'col-span-4')}>
+            {trigger}
+          </div>
         </TooltipTrigger>
         <TooltipContent className='flex items-center justify-center gap-2'>
           {tooltipContentElement}

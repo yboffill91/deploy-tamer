@@ -24,7 +24,7 @@ import {
   usePositiveStore,
 } from '../context/WordsStoreFactory';
 import { CustomLoading } from '@/components/CustomLoading';
-import { Bot, Check, ChevronRight, List, Plus, Trash2 } from 'lucide-react';
+import { Bot, ChevronRight, List, Plus, Trash2 } from 'lucide-react';
 import { CreateSuggestDTO } from '@/core/dto';
 import { cn } from '@/lib/utils';
 import { showToast } from '@/components/CustomToaster';
@@ -137,7 +137,12 @@ export const GenerateWordsWithAiButton = ({ isLoading, type }: Props) => {
   };
 
   return (
-    <div className='flex items-center w-full'>
+    <div
+      className={cn(
+        'w-full',
+        type === 'Brands' && brands.length > 0 && 'grid grid-cols-5'
+      )}
+    >
       {evalType.length === 0 ? (
         <Button
           variant='secondary'
@@ -156,8 +161,10 @@ export const GenerateWordsWithAiButton = ({ isLoading, type }: Props) => {
             }
           }}
           className={cn(
-            'w-full flex-1',
-            brands.length !== 0 && type === 'Brands' && 'rounded-e-none!'
+            'w-full',
+            brands.length !== 0 &&
+              type === 'Brands' &&
+              'rounded-e-none! col-span-4'
           )}
           type='button'
         >
@@ -175,14 +182,17 @@ export const GenerateWordsWithAiButton = ({ isLoading, type }: Props) => {
       ) : (
         <CustomSheet
           title={`Generate and Select ${type}`}
+          isBrandButton={type === 'Brands'}
           tooltipContentElement={<ToolTipContent type={type} />}
           trigger={
-            <SheetTrigger asChild>
+            <SheetTrigger asChild className='w-full'>
               <Button
                 variant={'secondary'}
                 className={cn(
-                  ' w-full flex-1 justify-between relative bg-green-500/10',
-                  brands.length !== 0 && type === 'Brands' && 'rounded-e-none!'
+                  ' w-full  justify-between relative bg-green-500/10',
+                  brands.length !== 0 &&
+                    type === 'Brands' &&
+                    'rounded-e-none! col-span-4! '
                 )}
                 type='button'
                 onClick={() => setShowNotification(false)}
