@@ -250,6 +250,7 @@ export const ResultResearchDataTable = ({ data }: Props) => {
       router.push('/tools/seo/keyword-research');
     }
   }, [isError, data, router]);
+  console.log(selectedResearch.status);
 
   // --> ColumnDef
 
@@ -311,6 +312,7 @@ export const ResultResearchDataTable = ({ data }: Props) => {
         return (
           <ActionsButtonSet
             item={item}
+            showRow={true}
             actions={[
               {
                 icon: Eye,
@@ -374,6 +376,7 @@ export const ResultResearchDataTable = ({ data }: Props) => {
         return (
           <ActionsButtonSet
             item={item}
+            showRow={true}
             actions={[
               {
                 icon: ArrowLeftCircle,
@@ -415,6 +418,7 @@ export const ResultResearchDataTable = ({ data }: Props) => {
         return (
           <ActionsButtonSet
             item={item}
+            showRow={true}
             actions={[
               {
                 icon: ArrowLeftCircle,

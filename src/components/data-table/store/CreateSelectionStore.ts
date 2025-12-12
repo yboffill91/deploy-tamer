@@ -42,7 +42,7 @@ export function createSelectionStore<T>() {
         return set({
           selection: [...selection, item],
           positivesToNewKeyword: newArrUnselect,
-          selectedResearch: null,
+          // selectedResearch: null,
         });
       }
 
@@ -73,7 +73,6 @@ export function createSelectionStore<T>() {
         return set({
           selection: [...selection, item],
           unSelect: newArrUnselect,
-          selectedResearch: null,
         });
       }
 

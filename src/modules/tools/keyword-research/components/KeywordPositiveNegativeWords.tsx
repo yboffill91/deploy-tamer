@@ -19,7 +19,7 @@ export const KeywordPositiveNegativeWords = () => {
   const loadingNegativeWords = useNegativeStore((st) => st.isLoading);
 
   return (
-    <div className='grid md:grid-cols-2 gap-4 w-full'>
+    <div className='grid lg:grid-cols-2 gap-4 w-full'>
       <CustomCard title='Positive Keywords' icon={CheckCircle}>
         <KeywordResearchWordsComponent
           emptyMessage='No Positive Words Added'

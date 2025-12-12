@@ -31,16 +31,18 @@ export interface ActionsButtonSetProps<T> {
   item: T;
   actions: ActionConfig<T>[];
   className?: string;
+  showRow?: boolean;
 }
 
 export function ActionsButtonSet<T>({
   item,
   actions,
   className = '',
+  showRow = false,
 }: ActionsButtonSetProps<T>) {
   return (
     <div className='flex gap-1 items-center justify-end    rounded'>
-      {actions.length === 1 &&
+      {showRow ? (
         actions
           .filter((a) => (a.show ? a.show(item) : true))
           .map(
@@ -61,12 +63,12 @@ export function ActionsButtonSet<T>({
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>{tooltipMessage}</p>
+                  <p className='capitalize'>{label}</p>
                 </TooltipContent>
               </Tooltip>
             )
-          )}
-      {actions.length >= 2 && (
+          )
+      ) : (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant='ghost' size='xs'>
