@@ -15,13 +15,6 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
   Tabs,
   TabsContent,
   TabsList,
@@ -30,15 +23,11 @@ import Image from 'next/image';
 import { ActionsButtonSet } from '@/components/data-table/ActionsButtons';
 import {
   ArrowLeftCircle,
-  ChevronUp,
   CircleMinusIcon,
   Eye,
-  FileDown,
-  FileText,
   ListCheck,
   ListMinus,
   ListPlus,
-  Loader,
   PlusCircle,
   Save,
   SendToBack,
@@ -52,6 +41,7 @@ import { useKeywordStore } from './context/KeywordSelectionStore';
 import { CustomTabTrigger } from '../../components';
 import { CreateKeywordResearchDTO } from '@/core/dto';
 import { useFormStore } from '../context/FormStore';
+import { cn } from '@/lib/utils';
 
 interface Props {
   data: KeywordResultEntity[];
@@ -60,8 +50,6 @@ export const ResultResearchDataTable = ({ data }: Props) => {
   const [image, setImage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState('');
-  const [isLoadingDownload, setIsLoadingDownload] = useState(false);
-  const [isLoadingDownloadURL, setIsLoadingDownloadURL] = useState(false);
 
   const [isLoadingSave, setIsLoadingSave] = useState(false);
 
@@ -134,37 +122,6 @@ export const ResultResearchDataTable = ({ data }: Props) => {
     }
   };
 
-  const onExport = async () => {
-    try {
-      setIsLoadingDownload(true);
-      const REPO = new KeywordResearchApiRepository();
-      await REPO.exportExcel(String(selectedResearch.id));
-    } catch (error) {
-      setIsError(
-        error instanceof Error
-          ? error.message
-          : 'Unexpected Error Downloading Report'
-      );
-    } finally {
-      setIsLoadingDownload(false);
-    }
-  };
-  const onExportURLS = async () => {
-    try {
-      setIsLoadingDownloadURL(true);
-      const REPO = new KeywordResearchApiRepository();
-      await REPO.exportExcelUrl(String(selectedResearch.id));
-    } catch (error) {
-      setIsError(
-        error instanceof Error
-          ? error.message
-          : 'Unexpected Error Downloading Report'
-      );
-    } finally {
-      setIsLoadingDownloadURL(false);
-    }
-  };
-
   const router = useRouter();
 
   const onSave = async (selected: KeywordResearchEntity) => {
@@ -207,7 +164,6 @@ export const ResultResearchDataTable = ({ data }: Props) => {
   };
 
   const handleEdit = async (item: KeywordResearchEntity) => {
-    console.log(item);
     await onSave(item);
     setFormMode('create');
     setFormSelectedResearch(String(item.id));
@@ -229,6 +185,7 @@ export const ResultResearchDataTable = ({ data }: Props) => {
     }
     const hidrate = () => {};
     hidrate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const discardsAndPositivesToNKR = new Set([
     ...unSelected.map((el) => el.keyword),
@@ -250,7 +207,6 @@ export const ResultResearchDataTable = ({ data }: Props) => {
       router.push('/tools/seo/keyword-research');
     }
   }, [isError, data, router]);
-  console.log(selectedResearch.status);
 
   // --> ColumnDef
 
@@ -524,60 +480,13 @@ export const ResultResearchDataTable = ({ data }: Props) => {
           />
         </TabsContent>
       </Tabs>
-      <div className='h-12 p-2 bg-card border-t w-full sticky bottom-0 right-0 flex items-center justify-end gap-6 '>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant='success'>
-              {isLoadingDownloadURL || isLoadingDownload ? (
-                <Loader className='animate-spin' />
-              ) : (
-                <FileText />
-              )}{' '}
-              Reports <ChevronUp />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuGroup>
-              <DropdownMenuLabel>Excel Reports</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Button
-                  variant='ghost'
-                  className='w-full justify-start capitalize'
-                  onClick={() => onExport()}
-                  disabled={isLoadingDownload || isLoadingDownloadURL}
-                >
-                  {isLoadingDownload ? (
-                    <CustomLoading message='Generating Report' />
-                  ) : (
-                    <>
-                      {' '}
-                      <FileDown /> Download results report
-                    </>
-                  )}
-                </Button>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Button
-                  variant='ghost'
-                  className='w-full justify-start capitalize'
-                  onClick={() => onExportURLS()}
-                  disabled={isLoadingDownloadURL || isLoadingDownload}
-                >
-                  {isLoadingDownloadURL ? (
-                    <CustomLoading message='Generating Report' />
-                  ) : (
-                    <>
-                      {' '}
-                      <FileDown /> Download the Organic URL report
-                    </>
-                  )}
-                </Button>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-
+      <div
+        className={cn(
+          'h-12 p-2 bg-card border-t w-full sticky bottom-0 right-0 hidden',
+          (unSelected.length === 0 || positivesToNewKeyword.length === 0) &&
+            'flex items-center justify-end gap-6'
+        )}
+      >
         {unSelected.length > 0 && (
           <Button variant='secondary' onClick={() => onSave(selectedResearch)}>
             {isLoadingSave ? (

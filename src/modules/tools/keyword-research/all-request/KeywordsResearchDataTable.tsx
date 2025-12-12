@@ -8,19 +8,14 @@ import { KeywordResearchEntity, KeywordStatus } from '@/core/entities';
 import { CommonHeader } from '@/modules/users/admin';
 import { ColumnDef } from '@tanstack/react-table';
 import {
-  AlertCircle,
   Check,
-  CloudLightning,
   Eye,
   FileText,
   Goal,
   Link,
   List,
-  Loader,
   Pencil,
   Play,
-  Replace,
-  Send,
   Trash2,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -59,7 +54,6 @@ export const KeywordsResearchDataTable = ({
   const [loadingDownload, setIsLoadingDownload] = useState(false);
   const [laodingDownloadURL, setIsLoadingDownloadURL] = useState(false);
 
-  const [dwError, setDwError] = useState('');
   const [fieldValue, setFiedValue] = useState('');
 
   const handleShowConfirm = (el: KeywordResearchEntity) => {
@@ -79,7 +73,7 @@ export const KeywordsResearchDataTable = ({
       const REPO = new KeywordResearchApiRepository();
       await REPO.exportExcel(String(item.id));
     } catch (error) {
-      setDwError(
+      setComponentError(
         error instanceof Error
           ? error.message
           : 'Unexpected Error Downloading Report'
@@ -94,7 +88,7 @@ export const KeywordsResearchDataTable = ({
       const REPO = new KeywordResearchApiRepository();
       await REPO.exportExcelUrl(String(item.id));
     } catch (error) {
-      setDwError(
+      setComponentError(
         error instanceof Error
           ? error.message
           : 'Unexpected Error Downloading Report'

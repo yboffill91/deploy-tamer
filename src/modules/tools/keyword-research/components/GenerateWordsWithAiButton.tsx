@@ -122,7 +122,7 @@ export const GenerateWordsWithAiButton = ({ isLoading, type }: Props) => {
     if (type === 'Positive Words') deleteWords(word);
   };
 
-  const evalDisabled = words.length <= 1;
+  const evalDisabled = words.length <= 1 || extra.length <= 1;
 
   const evalType =
     type === 'Brands'
@@ -174,7 +174,7 @@ export const GenerateWordsWithAiButton = ({ isLoading, type }: Props) => {
               showToast({
                 message: 'Alert',
                 description:
-                  'To make the AI-generated result more reliable, please add at least two positive keywords.',
+                  'To make the AI-generated result more reliable, please add at least one positive and extra positive keywords.',
                 type: 'error',
               });
             }

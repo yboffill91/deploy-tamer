@@ -62,7 +62,6 @@ const ManageAuthAndToken = async (user: UsersEntity) => {
         access_token!,
         'TS_SESSION'
       );
-      console.log(usuario);
       await COOKIES_MANAGER_REPOSITORY.createSessionCookie(
         JSON.stringify(usuario)!,
         'TS_USER'
