@@ -28,8 +28,9 @@ export const StatusBadge = ({ status }: { status: string }) => {
     );
 
   return (
-    <Badge className={cn('text-xs font-semibold', getColorStatus)}>
-      {status.replaceAll('_', ' ')} {StatusIcon}
+    <Badge className={cn('text-xs font-semibold capitalize', getColorStatus)}>
+      {' '}
+      {status.toLowerCase().replace(/_/g, ' ')} {StatusIcon}{' '}
     </Badge>
   );
 };

@@ -319,9 +319,7 @@ export const KeywordsResearchDataTable = ({
                     icon: FileText,
                     label: 'Download results report (Excel)',
                     onClick: onExport,
-                    show: (item) =>
-                      item.status === KeywordStatus.FINISHED ||
-                      item.status === KeywordStatus.READY_TO_CHECK,
+                    show: (item) => item.status === KeywordStatus.FINISHED,
                   },
                   {
                     icon: Link,
@@ -333,7 +331,7 @@ export const KeywordsResearchDataTable = ({
 
                   {
                     icon: Pencil,
-                    label: 'Edit the result',
+                    label: 'Edit the Keyword Research Form',
                     onClick: () => handleEdit(item),
                     tooltipMessage: 'Edit Keyword Research',
                     show: (item) =>

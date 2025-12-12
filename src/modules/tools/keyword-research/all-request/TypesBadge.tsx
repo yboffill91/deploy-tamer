@@ -16,7 +16,10 @@ export const TypeBadge = ({
           'bg-orange-500/10 dark:text-orange-500 text-orange-700'
       )}
     >
-      {value.replace('_', ' ')}
+      <span className='capitalize'>
+        {' '}
+        {value.replace('_', ' ').toLowerCase()}
+      </span>
     </Badge>
   );
 };
