@@ -24,7 +24,14 @@ import {
   usePositiveStore,
 } from '../context/WordsStoreFactory';
 import { CustomLoading } from '@/components/CustomLoading';
-import { Bot, ChevronRight, List, Plus, Trash2 } from 'lucide-react';
+import {
+  Bot,
+  CheckCheck,
+  ChevronRight,
+  List,
+  Plus,
+  Trash2,
+} from 'lucide-react';
 import { CreateSuggestDTO } from '@/core/dto';
 import { cn } from '@/lib/utils';
 import { showToast } from '@/components/CustomToaster';
@@ -68,6 +75,11 @@ export const GenerateWordsWithAiButton = ({ isLoading, type }: Props) => {
   const negative = useNegativeStore((st) => st.words);
   const extra = useExtraPositiveStore((st) => st.words);
   const brands = useBrandStore((st) => st.words);
+
+  const addAllWords = usePositiveStore((st) => st.addWords);
+  const addAllNegative = useNegativeStore((st) => st.addWords);
+  const addAllExtraPositive = useExtraPositiveStore((st) => st.addWords);
+  const addAllBrands = useBrandStore((st) => st.addWords);
 
   const getSuggestedPositiveWords = usePositiveStore(
     (st) => st.getSuggestedWords
@@ -134,6 +146,13 @@ export const GenerateWordsWithAiButton = ({ isLoading, type }: Props) => {
     if (type === 'Extra Positive Words') clearSuggestedExtra();
     if (type === 'Negative Words') clearSuggestedNegative();
     if (type === 'Positive Words') clearSuggestedWords();
+  };
+
+  const handleAddAll = (keywords: string[]) => {
+    if (type === 'Brands') addAllBrands(keywords);
+    if (type === 'Extra Positive Words') addAllExtraPositive(keywords);
+    if (type === 'Negative Words') addAllNegative(keywords);
+    if (type === 'Positive Words') addAllWords(keywords);
   };
 
   return (
@@ -212,7 +231,7 @@ export const GenerateWordsWithAiButton = ({ isLoading, type }: Props) => {
             </SheetTrigger>
           }
         >
-          <div className='min-h-[80dvh] w-full overflow-y-auto'>
+          <div className='min-h-[80dvh] w-full overflow-y-auto flex flex-col justify-between'>
             {isLoading && <CustomPageLoader message={`Generating ${type}`} />}
             {evalType.length === 0 && !isLoading && (
               <Empty>
@@ -260,6 +279,15 @@ export const GenerateWordsWithAiButton = ({ isLoading, type }: Props) => {
                 </TableBody>
               </Table>
             )}
+            <Button
+              variant='success'
+              onClick={() => {
+                handleAddAll(evalType);
+                console.log('se dispara');
+              }}
+            >
+              <CheckCheck /> Add all
+            </Button>
           </div>
           <SheetClose asChild>
             <Button onClick={handleClear}> Finish {type} Selection</Button>

@@ -179,6 +179,7 @@ export const KeywordResearchForm = () => {
     if (mode === 'create' && keywordResearch) {
       resetFormAfterEdit();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     keywordResearch,
     mode,
@@ -192,7 +193,6 @@ export const KeywordResearchForm = () => {
     hidrateNegativeCities,
   ]);
 
-  console.log(mode, keywordResearch);
 
   useEffect(() => {
     if (isError) {

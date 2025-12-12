@@ -155,7 +155,6 @@ export class KeywordResearchApiRepository implements IRepository {
       generatedNegativeKeywords: data.generatedNegativeKeywords,
       generatedPositiveKeywords: data.generatedPositiveKeywords,
     };
-    console.log(payload);
 
     try {
       const response = await fetchHelper(keywordResearchApi + `/${id}`, {
@@ -169,7 +168,6 @@ export class KeywordResearchApiRepository implements IRepository {
       if (!response) {
         throw new Error('Error creating new Keyword Research Report');
       }
-      console.log('Response --->', response);
     } catch (error) {
       throw error;
     }
