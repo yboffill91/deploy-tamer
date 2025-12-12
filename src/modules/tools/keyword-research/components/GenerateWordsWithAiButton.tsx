@@ -283,7 +283,6 @@ export const GenerateWordsWithAiButton = ({ isLoading, type }: Props) => {
               variant='success'
               onClick={() => {
                 handleAddAll(evalType);
-                console.log('se dispara');
               }}
             >
               <CheckCheck /> Add all
