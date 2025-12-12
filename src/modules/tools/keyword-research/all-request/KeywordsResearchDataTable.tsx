@@ -8,6 +8,8 @@ import { KeywordResearchEntity, KeywordStatus } from '@/core/entities';
 import { CommonHeader } from '@/modules/users/admin';
 import { ColumnDef } from '@tanstack/react-table';
 import {
+  AlertCircle,
+  Check,
   CloudLightning,
   Eye,
   FileText,
@@ -240,15 +242,15 @@ export const KeywordsResearchDataTable = ({
     },
     {
       accessorKey: 'result',
-      header: 'Has Result',
+      header: 'Result',
       cell: ({ row }) => {
         const value: KeywordResearchEntity['result'] = row.getValue('result');
         return value && value.length > 0 ? (
           <Badge className='bg-green-500/10 dark:text-green-500 text-green-700'>
-            Yes
+            <Check />
           </Badge>
         ) : (
-          <Badge className='bg-destructive/10 text-destructive'>No</Badge>
+          <Badge className='bg-destructive/10 text-destructive'> - </Badge>
         );
       },
     },
@@ -276,7 +278,7 @@ export const KeywordsResearchDataTable = ({
       cell: ({ row }) => {
         const value: KeywordResearchEntity['searchVolume'] =
           row.getValue('searchVolume');
-        return value === 0 ? 'No Volume Search' : value;
+        return value === 0 ? '-' : value;
       },
     },
     {
@@ -295,7 +297,10 @@ export const KeywordsResearchDataTable = ({
                   {
                     icon: Play,
                     label: 'Perform keyword research',
-                    onClick: async () => await onRun(String(item.id)),
+                    onClick: async () => {
+                      console.log(item);
+                      await onRun(String(item.id));
+                    },
                     variant: 'ghost',
                     show: (item) => item.status === KeywordStatus.DRAFT,
                   },

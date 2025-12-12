@@ -200,7 +200,7 @@ export const useRegionStore = create<RegionStore>((set, get) => ({
         }
       } else {
         selectedCities.forEach((city) => {
-          const value = [...partialRoute, city].toReversed();
+          const value = [...partialRoute, city.trim()].toReversed();
 
           if (!existsInMap(value)) {
             newMap.set(index, value);

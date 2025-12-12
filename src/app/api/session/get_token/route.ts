@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
   try {
-    const token = await req.cookies.get("TS_SESSION");
+    const token = await req.cookies.get('TS_SESSION');
 
     if (token) {
       return NextResponse.json(

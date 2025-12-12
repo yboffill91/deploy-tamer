@@ -69,7 +69,7 @@ export const KeywordResearchForm = () => {
     value,
   }));
 
-  const regionValues = selectedRegions.map((region) => region.value.join(', '));
+  const regionValues = selectedRegions.map((region) => region.value.join(','));
 
   const resetForm = () => {
     reset();
@@ -192,7 +192,6 @@ export const KeywordResearchForm = () => {
     hidrateBrands,
     hidrateNegativeCities,
   ]);
-
 
   useEffect(() => {
     if (isError) {
