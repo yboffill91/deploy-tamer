@@ -15,8 +15,9 @@ export function createListQuery<T>(
     return useQuery({
       queryKey,
       queryFn: fetcher,
-      staleTime: 1000 * 60,
+      staleTime: 1000 * 5,
       refetchOnWindowFocus: false,
+      
     });
   };
 }

@@ -6,5 +6,6 @@ const repo = new KeywordResearchApiRepository();
 
 export const useKeywordResearchList = createListQuery<KeywordResearchEntity>(
   keywordResearchKeys.list(),
-  () => repo.findAll()
+  () => repo.findAll(),
+ 
 );

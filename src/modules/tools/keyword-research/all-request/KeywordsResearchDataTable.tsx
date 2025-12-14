@@ -20,13 +20,11 @@ import {
   Goal,
   Link,
   List,
-  Loader2,
   Pencil,
   Play,
   Trash2,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useResearchStore } from './context/ResearchStore';
 import { ActionsButtonSet } from '@/components/data-table/ActionsButtons';
 import { TypeBadge } from './TypesBadge';
 import { useKeywordStore } from './context/KeywordSelectionStore';
@@ -38,17 +36,33 @@ import { CustomLoading } from '@/components/CustomLoading';
 import { useFormStore } from '../context/FormStore';
 import { StatusBadge } from '../components/StatusBadge';
 import { CustomEmpty } from '@/components/CustomEmpty';
-import { CustomCard } from '@/components/CustomCard';
+
+import {
+  useKeywordResearchList,
+  useDeleteKeywordResearch,
+  useRunKeywordResearch,
+  useForceEndKeywordResearch,
+} from '@/modules/tools/keyword-research/hooks';
 
 export const KeywordsResearchDataTable = ({
   onChangeTab,
 }: {
   onChangeTab(): void;
 }) => {
-  const keywordsResearch = useResearchStore((st) => st.allResearch);
-  const isLoading = useResearchStore((st) => st.isLoadingResearchs);
-  const isError = useResearchStore((st) => st.isErrorGettingResearch);
-  const getKeywordsResearch = useResearchStore((st) => st.getAllResearch);
+  // const keywordsResearch = useResearchStore((st) => st.allResearch);
+  // const isLoading = useResearchStore((st) => st.isLoadingResearchs);
+  // const isError = useResearchStore((st) => st.isErrorGettingResearch);
+  // const getKeywordsResearch = useResearchStore((st) => st.getAllResearch);
+
+  const {
+    data: keywordResearch,
+    isLoading,
+    error,
+    refetch,
+  } = useKeywordResearchList();
+  const deleteMutation = useDeleteKeywordResearch();
+  const runMutation = useRunKeywordResearch();
+  const forceEndMutation = useForceEndKeywordResearch();
 
   const setResultSelected = useKeywordStore((st) => st.setSelection);
   const setSelectedResearch = useKeywordStore((st) => st.setSelectedResearch);
@@ -57,7 +71,6 @@ export const KeywordsResearchDataTable = ({
   const setFormMode = useFormStore((st) => st.setMode);
   const router = useRouter();
 
-  const [confirmLoading, setConfirmLoading] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
   const [componentError, setComponentError] = useState('');
   const [loadingDownload, setIsLoadingDownload] = useState(false);
@@ -111,39 +124,39 @@ export const KeywordsResearchDataTable = ({
     }
   };
 
-  const onConfirm = async (id: string) => {
-    const REPO = new KeywordResearchApiRepository();
-    try {
-      setConfirmLoading(true);
-      setComponentError('');
-      await REPO.delete(id);
-      getKeywordsResearch();
-      showToast({
-        message: 'Keyword Research Deleted',
-        description: 'The Keyword Research was successfully removed',
-        type: 'success',
-      });
-    } catch (error) {
-      setComponentError(
-        error instanceof Error
-          ? error.message
-          : 'Unexpected Error deleting the keyword research'
-      );
-    } finally {
-      setShowDialog(false);
-      setConfirmLoading(false);
-    }
+  const onConfirm = (id: string) => {
+    setComponentError('');
+
+    deleteMutation.mutate(id, {
+      onSuccess: () => {
+        setShowDialog(false);
+        showToast({
+          message: 'Keyword Research Deleted',
+          description: 'The Keyword Research was successfully removed',
+          type: 'success',
+        });
+      },
+      onError: (error) => {
+        setComponentError(
+          error instanceof Error
+            ? error.message
+            : 'Unexpected Error deleting the keyword research'
+        );
+      },
+    });
   };
 
   useEffect(() => {
-    getKeywordsResearch();
-  }, [getKeywordsResearch]);
+    refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
-    if (isError) {
+    if (error) {
       showToast({
         message: 'Error getting Keyword Research List',
-        description: isError,
+        description:
+          error instanceof Error ? error.message : 'Unexpected Error',
         type: 'error',
       });
     }
@@ -154,7 +167,7 @@ export const KeywordsResearchDataTable = ({
         type: 'error',
       });
     }
-  }, [isError, componentError]);
+  }, [error, componentError]);
 
   const onShow = (item: KeywordResearchEntity) => {
     setResultSelected(item.result!);
@@ -162,39 +175,39 @@ export const KeywordsResearchDataTable = ({
     router.push('/tools/seo/keyword-result');
   };
 
-  const onRun = async (id: string) => {
-    const REPO = new KeywordResearchApiRepository();
-    try {
-      setButtonBussy(Number(id));
-      setComponentError('');
-      await REPO.runKeyword(id);
-      getKeywordsResearch();
-    } catch (error) {
-      setComponentError(
-        error instanceof Error
-          ? error.message
-          : 'Unexpected Error Running Keyword Research'
-      );
-    } finally {
-      setButtonBussy(0);
-    }
+  const onRun = (id: string) => {
+    setButtonBussy(Number(id));
+    setComponentError('');
+
+    runMutation.mutate(id, {
+      onError: (error) => {
+        setComponentError(
+          error instanceof Error
+            ? error.message
+            : 'Unexpected Error Running Keyword Research'
+        );
+      },
+      onSettled: () => {
+        setButtonBussy(0);
+      },
+    });
   };
 
-  const onFinish = async (id: string) => {
-    try {
-      setButtonBussy(Number(id));
-      const REPO = new KeywordResearchApiRepository();
-      await REPO.forceEnd(id);
-      getKeywordsResearch();
-    } catch (error) {
-      setComponentError(
-        error instanceof Error
-          ? error.message
-          : 'An unexpected error occurred while finishing the keyword research.'
-      );
-    } finally {
-      setButtonBussy(null);
-    }
+  const onFinish = (id: string) => {
+    setButtonBussy(Number(id));
+
+    forceEndMutation.mutate(id, {
+      onError: (error) => {
+        setComponentError(
+          error instanceof Error
+            ? error.message
+            : 'An unexpected error occurred while finishing the keyword research.'
+        );
+      },
+      onSettled: () => {
+        setButtonBussy(0);
+      },
+    });
   };
 
   const columns: ColumnDef<KeywordResearchEntity>[] = [
@@ -301,7 +314,6 @@ export const KeywordsResearchDataTable = ({
       ),
       cell: ({ row }) => {
         const item = row.original;
-        console.log(item);
         return (
           <>
             <>
@@ -385,12 +397,12 @@ export const KeywordsResearchDataTable = ({
       {isLoading && (
         <CustomPageLoader message='Obtaining the list of keyword research results.' />
       )}
-      {Array.isArray(keywordsResearch) &&
-        keywordsResearch.length > 0 &&
+      {Array.isArray(keywordResearch) &&
+        keywordResearch.length > 0 &&
         !isLoading && (
           <>
             <DataTable
-              data={keywordsResearch}
+              data={keywordResearch}
               columns={columns}
               onAdd={() => {
                 setFormMode('create');
@@ -446,15 +458,9 @@ export const KeywordsResearchDataTable = ({
                   }}
                   disabled={fieldValue !== selectedResearch.title}
                 >
-                  {confirmLoading ? (
-                    <CustomLoading message='Deleting Keyword Research' />
-                  ) : (
-                    <>
-                      {' '}
-                      <Trash2 />
-                      Confirm
-                    </>
-                  )}
+                  {' '}
+                  <Trash2 />
+                  Confirm
                 </Button>
               </div>
             </ControlledDialog>
@@ -466,9 +472,9 @@ export const KeywordsResearchDataTable = ({
         </div>
       )}
       {!isLoading &&
-        (!Array.isArray(keywordsResearch) ||
-          keywordsResearch.length === 0 ||
-          !keywordsResearch) && (
+        (!Array.isArray(keywordResearch) ||
+          keywordResearch.length === 0 ||
+          !keywordResearch) && (
           <Card className='mx-auto container max-w-2xl'>
             <CustomEmpty
               icon={List}

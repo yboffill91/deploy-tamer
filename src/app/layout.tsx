@@ -6,23 +6,24 @@ import { AuthProvider } from "@/modules/auth/providers/AuthProvider";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { Toaster } from "sonner";
 import { Metadata } from "next";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 export const metadata: Metadata = {
-  title: "TAMERStudio",
-  description: "A Tamer Digital Tool",
+  title: 'TAMERStudio',
+  description: 'A Tamer Digital Tool',
   icons: {
     icon: [
       {
-        rel: "icon",
-        type: "image/png",
-        media: "(prefers-color-scheme: light)",
-        url: "/favicons/favicon-light.ico",
+        rel: 'icon',
+        type: 'image/png',
+        media: '(prefers-color-scheme: light)',
+        url: '/favicons/favicon-light.ico',
       },
       {
-        rel: "icon",
-        type: "image/png",
-        media: "(prefers-color-scheme: dark)",
-        url: "/favicons/favicon-dark.ico",
+        rel: 'icon',
+        type: 'image/png',
+        media: '(prefers-color-scheme: dark)',
+        url: '/favicons/favicon-dark.ico',
       },
     ],
   },
@@ -30,23 +31,23 @@ export const metadata: Metadata = {
 
 const layout = ({ children }: { children: Readonly<ReactNode> }) => {
   return (
-    <html lang="en">
+    <html lang='en'>
       <body
         className={cn(
-          "antialiased bg-background text-foreground transition-all duration-300 ",
+          'antialiased bg-background text-foreground transition-all duration-100 ',
           bodyFont.className
         )}
       >
         <AuthProvider>
           <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
+            attribute='class'
+            defaultTheme='system'
             enableSystem
             disableTransitionOnChange={false}
           >
             {children}
           </ThemeProvider>
-          <Toaster position="bottom-right" duration={6000} />
+          <Toaster position='bottom-right' duration={6000} />
         </AuthProvider>
       </body>
     </html>
