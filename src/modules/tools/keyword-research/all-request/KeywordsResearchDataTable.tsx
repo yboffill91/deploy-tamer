@@ -125,11 +125,11 @@ export const KeywordsResearchDataTable = ({
   };
 
   const onConfirm = (id: string) => {
+    setShowDialog(false);
     setComponentError('');
 
     deleteMutation.mutate(id, {
       onSuccess: () => {
-        setShowDialog(false);
         showToast({
           message: 'Keyword Research Deleted',
           description: 'The Keyword Research was successfully removed',
