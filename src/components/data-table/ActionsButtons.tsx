@@ -1,4 +1,4 @@
-import { EllipsisVertical, type LucideIcon } from 'lucide-react';
+import { EllipsisVertical, Loader2, type LucideIcon } from 'lucide-react';
 import {
   Button,
   DropdownMenu,
@@ -12,6 +12,7 @@ import {
   TooltipTrigger,
 } from '../ui';
 import { cn } from '@/lib/utils';
+import { LoadingBase } from '../LoadingBase';
 
 export interface ActionConfig<T> {
   icon: LucideIcon;
@@ -24,7 +25,6 @@ export interface ActionConfig<T> {
     | 'success'
     | 'secondary'
     | 'ghostDestructive';
-  tooltipMessage?: string;
 }
 
 export interface ActionsButtonSetProps<T> {
@@ -32,6 +32,7 @@ export interface ActionsButtonSetProps<T> {
   actions: ActionConfig<T>[];
   className?: string;
   showRow?: boolean;
+  bussy?: boolean;
 }
 
 export function ActionsButtonSet<T>({
@@ -39,63 +40,71 @@ export function ActionsButtonSet<T>({
   actions,
   className = '',
   showRow = false,
+  bussy = false,
 }: ActionsButtonSetProps<T>) {
   return (
     <div className='flex gap-1 items-center justify-end    rounded'>
       {showRow ? (
-        actions
-          .filter((a) => (a.show ? a.show(item) : true))
-          .map(
-            (
-              { icon: Icon, label, onClick, variant, tooltipMessage = '' },
-              idx
-            ) => (
-              <Tooltip key={idx}>
-                <TooltipTrigger asChild>
-                  <Button
-                    size='xs'
-                    variant={variant ?? 'ghost'}
-                    onClick={() => onClick(item)}
-                    aria-label={label}
-                    className={className}
-                  >
-                    <Icon className='size-4' />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p className='capitalize'>{label}</p>
-                </TooltipContent>
-              </Tooltip>
-            )
-          )
-      ) : (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant='ghost' size='xs'>
-              <EllipsisVertical />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuGroup>
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              {actions
-                .filter((a) => (a.show ? a.show(item) : true))
-                .map(({ icon: Icon, label, onClick, variant }, idx) => (
-                  <DropdownMenuItem key={idx}>
+        <>
+          {bussy ? (
+            <LoadingBase variant='xs' />
+          ) : (
+            actions
+              .filter((a) => (a.show ? a.show(item) : true))
+              .map(({ icon: Icon, label, onClick, variant }, idx) => (
+                <Tooltip key={idx}>
+                  <TooltipTrigger asChild>
                     <Button
+                      size='xs'
                       variant={variant ?? 'ghost'}
                       onClick={() => onClick(item)}
                       aria-label={label}
-                      className={cn(className, 'w-full justify-start h-6 ')}
+                      className={className}
                     >
-                      <Icon className='size-4' />{' '}
-                      <span className='capitalize'>{label}</span>
+                      <Icon className='size-4' />
                     </Button>
-                  </DropdownMenuItem>
-                ))}
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className='capitalize'>{label}</p>
+                  </TooltipContent>
+                </Tooltip>
+              ))
+          )}
+        </>
+      ) : (
+        <>
+          {bussy ? (
+            <LoadingBase variant='xs' />
+          ) : (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant='ghost' size='xs'>
+                  <EllipsisVertical />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                  {actions
+                    .filter((a) => (a.show ? a.show(item) : true))
+                    .map(({ icon: Icon, label, onClick, variant }, idx) => (
+                      <DropdownMenuItem key={idx}>
+                        <Button
+                          variant={variant ?? 'ghost'}
+                          onClick={() => onClick(item)}
+                          aria-label={label}
+                          className={cn(className, 'w-full justify-start h-6 ')}
+                        >
+                          <Icon className='size-4' />{' '}
+                          <span className='capitalize'>{label}</span>
+                        </Button>
+                      </DropdownMenuItem>
+                    ))}
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+        </>
       )}
     </div>
   );

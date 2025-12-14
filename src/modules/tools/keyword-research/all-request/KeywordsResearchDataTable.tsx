@@ -3,7 +3,13 @@
 import { CustomPageLoader } from '@/components/CustomPageLoader';
 import { showToast } from '@/components/CustomToaster';
 import { DataTable } from '@/components/data-table/DataTable';
-import { Badge, Button, InputGroup, InputGroupInput } from '@/components/ui';
+import {
+  Badge,
+  Button,
+  Card,
+  InputGroup,
+  InputGroupInput,
+} from '@/components/ui';
 import { KeywordResearchEntity, KeywordStatus } from '@/core/entities';
 import { CommonHeader } from '@/modules/users/admin';
 import { ColumnDef } from '@tanstack/react-table';
@@ -14,6 +20,7 @@ import {
   Goal,
   Link,
   List,
+  Loader2,
   Pencil,
   Play,
   Trash2,
@@ -30,6 +37,8 @@ import { ControlledDialog } from '@/components/ControlledDialog';
 import { CustomLoading } from '@/components/CustomLoading';
 import { useFormStore } from '../context/FormStore';
 import { StatusBadge } from '../components/StatusBadge';
+import { CustomEmpty } from '@/components/CustomEmpty';
+import { CustomCard } from '@/components/CustomCard';
 
 export const KeywordsResearchDataTable = ({
   onChangeTab,
@@ -53,7 +62,7 @@ export const KeywordsResearchDataTable = ({
   const [componentError, setComponentError] = useState('');
   const [loadingDownload, setIsLoadingDownload] = useState(false);
   const [laodingDownloadURL, setIsLoadingDownloadURL] = useState(false);
-
+  const [buttonsBussy, setButtonBussy] = useState<number>();
   const [fieldValue, setFiedValue] = useState('');
 
   const handleShowConfirm = (el: KeywordResearchEntity) => {
@@ -69,6 +78,7 @@ export const KeywordsResearchDataTable = ({
   };
   const onExport = async (item: KeywordResearchEntity) => {
     try {
+      setButtonBussy(item.id);
       setIsLoadingDownload(true);
       const REPO = new KeywordResearchApiRepository();
       await REPO.exportExcel(String(item.id));
@@ -80,10 +90,12 @@ export const KeywordsResearchDataTable = ({
       );
     } finally {
       setIsLoadingDownload(false);
+      setButtonBussy(0);
     }
   };
   const onExportURL = async (item: KeywordResearchEntity) => {
     try {
+      setButtonBussy(item.id);
       setIsLoadingDownloadURL(true);
       const REPO = new KeywordResearchApiRepository();
       await REPO.exportExcelUrl(String(item.id));
@@ -95,6 +107,7 @@ export const KeywordsResearchDataTable = ({
       );
     } finally {
       setIsLoadingDownloadURL(false);
+      setButtonBussy(0);
     }
   };
 
@@ -152,6 +165,7 @@ export const KeywordsResearchDataTable = ({
   const onRun = async (id: string) => {
     const REPO = new KeywordResearchApiRepository();
     try {
+      setButtonBussy(Number(id));
       setComponentError('');
       await REPO.runKeyword(id);
       getKeywordsResearch();
@@ -161,11 +175,14 @@ export const KeywordsResearchDataTable = ({
           ? error.message
           : 'Unexpected Error Running Keyword Research'
       );
+    } finally {
+      setButtonBussy(0);
     }
   };
 
   const onFinish = async (id: string) => {
     try {
+      setButtonBussy(Number(id));
       const REPO = new KeywordResearchApiRepository();
       await REPO.forceEnd(id);
       getKeywordsResearch();
@@ -175,6 +192,8 @@ export const KeywordsResearchDataTable = ({
           ? error.message
           : 'An unexpected error occurred while finishing the keyword research.'
       );
+    } finally {
+      setButtonBussy(null);
     }
   };
 
@@ -282,71 +301,72 @@ export const KeywordsResearchDataTable = ({
       ),
       cell: ({ row }) => {
         const item = row.original;
+        console.log(item);
         return (
           <>
-            {item.status !== KeywordStatus.KEYWORING && (
-              <ActionsButtonSet
-                item={item}
-                actions={[
-                  {
-                    icon: Play,
-                    label: 'Perform keyword research',
-                    onClick: async () => {
-                      console.log(item);
-                      await onRun(String(item.id));
+            <>
+              {item.status !== KeywordStatus.KEYWORING && (
+                <ActionsButtonSet
+                  item={item}
+                  bussy={buttonsBussy === item.id}
+                  actions={[
+                    {
+                      icon: Play,
+                      label: 'Perform keyword research',
+                      onClick: async () => {
+                        onRun(String(item.id));
+                      },
+                      variant: 'ghost',
+                      show: (item) => item.status === KeywordStatus.DRAFT,
                     },
-                    variant: 'ghost',
-                    show: (item) => item.status === KeywordStatus.DRAFT,
-                  },
-                  {
-                    icon: Goal,
-                    label: 'Finish Keyword Research',
-                    onClick: () => onFinish(String(item.id)),
-                    tooltipMessage: 'Complete the keyword research.',
-                    show: (item) =>
-                      item.status === KeywordStatus.READY_TO_CHECK,
-                  },
-                  {
-                    icon: Eye,
-                    label: 'Review the result',
-                    onClick: onShow,
-                    show: (item) =>
-                      item.status === KeywordStatus.READY_TO_CHECK ||
-                      item.status === KeywordStatus.FINISHED,
-                  },
-                  {
-                    icon: FileText,
-                    label: 'Download results report (Excel)',
-                    onClick: onExport,
-                    show: (item) => item.status === KeywordStatus.FINISHED,
-                  },
-                  {
-                    icon: Link,
-                    label: 'Download the Organic URL report.',
-                    onClick: onExportURL,
-                    variant: 'ghost',
-                    show: (item) => item.status === KeywordStatus.FINISHED,
-                  },
+                    {
+                      icon: Goal,
+                      label: 'Finish Keyword Research',
+                      onClick: () => onFinish(String(item.id)),
+                      show: (item) =>
+                        item.status === KeywordStatus.READY_TO_CHECK,
+                    },
+                    {
+                      icon: Eye,
+                      label: 'Review the result',
+                      onClick: onShow,
+                      show: (item) =>
+                        item.status === KeywordStatus.READY_TO_CHECK ||
+                        item.status === KeywordStatus.FINISHED,
+                    },
+                    {
+                      icon: FileText,
+                      label: 'Download results report (Excel)',
+                      onClick: onExport,
+                      show: (item) => item.status === KeywordStatus.FINISHED,
+                    },
+                    {
+                      icon: Link,
+                      label: 'Download the Organic URL report.',
+                      onClick: onExportURL,
+                      variant: 'ghost',
+                      show: (item) => item.status === KeywordStatus.FINISHED,
+                    },
 
-                  {
-                    icon: Pencil,
-                    label: 'Edit the Keyword Research Form',
-                    onClick: () => handleEdit(item),
-                    tooltipMessage: 'Edit Keyword Research',
-                    show: (item) =>
-                      item.status === KeywordStatus.DRAFT ||
-                      item.status === KeywordStatus.READY_TO_CHECK,
-                  },
+                    {
+                      icon: Pencil,
+                      label: 'Edit the Keyword Research Form',
+                      onClick: () => handleEdit(item),
+                      show: (item) =>
+                        item.status === KeywordStatus.DRAFT ||
+                        item.status === KeywordStatus.READY_TO_CHECK,
+                    },
 
-                  {
-                    icon: Trash2,
-                    label: 'Eliminate keyword research',
-                    onClick: () => handleShowConfirm(item),
-                    variant: 'ghostDestructive',
-                  },
-                ]}
-              />
-            )}
+                    {
+                      icon: Trash2,
+                      label: 'Eliminate keyword research',
+                      onClick: () => handleShowConfirm(item),
+                      variant: 'ghostDestructive',
+                    },
+                  ]}
+                />
+              )}
+            </>
           </>
         );
       },
@@ -365,74 +385,81 @@ export const KeywordsResearchDataTable = ({
       {isLoading && (
         <CustomPageLoader message='Obtaining the list of keyword research results.' />
       )}
-      {keywordsResearch && !isLoading && (
-        <>
-          <DataTable
-            data={keywordsResearch}
-            columns={columns}
-            onAdd={() => {
-              setFormMode('create');
-              onChangeTab();
-              router.push('/tools/seo/keyword-research');
-            }}
-          />
-          <ControlledDialog
-            open={showDialog}
-            onOpenChange={() => {
-              setShowDialog(!showDialog);
-              setFiedValue('');
-            }}
-            title='Confirm deletion of keyword research'
-          >
-            <h3>
-              Please confirm that you wish to delete Keyword Research; this step
-              will be irreversible and your used credits will be consumed.
-            </h3>
-            <div className='flex gap-2 flex-col mt-4 text-sm text-muted-foreground bg-muted/30  p-4 rounded-md'>
-              <h4>
-                To confirm, please enter the keyword research title in the field
-                below. ( {selectedResearch.title} )
-              </h4>
-              <InputGroup>
-                <InputGroupInput
-                  placeholder='Write the title here'
-                  value={fieldValue}
-                  onChange={(e) => {
-                    e.preventDefault();
-                    setFiedValue(e.target.value);
+      {Array.isArray(keywordsResearch) &&
+        keywordsResearch.length > 0 &&
+        !isLoading && (
+          <>
+            <DataTable
+              data={keywordsResearch}
+              columns={columns}
+              onAdd={() => {
+                setFormMode('create');
+                onChangeTab();
+                router.push('/tools/seo/keyword-research');
+              }}
+            />
+            <ControlledDialog
+              open={showDialog}
+              onOpenChange={() => {
+                setFiedValue('');
+                setShowDialog(!showDialog);
+              }}
+              title='Confirm deletion of keyword research'
+            >
+              <h3>
+                Please confirm that you wish to delete Keyword Research; this
+                step will be irreversible and your used credits will be
+                consumed.
+              </h3>
+              <div className='flex gap-2 flex-col mt-4 text-sm text-muted-foreground bg-muted/30  p-4 rounded-md'>
+                <h4>
+                  To confirm, please enter the keyword research title in the
+                  field below. ( {selectedResearch.title} )
+                </h4>
+                <InputGroup>
+                  <InputGroupInput
+                    placeholder='Write the title here'
+                    value={fieldValue}
+                    onChange={(e) => {
+                      e.preventDefault();
+                      setFiedValue(e.target.value);
+                    }}
+                    className='ring-none focus:ting-none'
+                  ></InputGroupInput>
+                </InputGroup>
+              </div>
+              <div className=' mt-4 w-full grid grid-cols-2 gap-2 p-2'>
+                <Button
+                  variant={'secondary'}
+                  onClick={() => {
+                    setShowDialog(false);
+                    setFiedValue('');
                   }}
-                  className='ring-none focus:ting-none'
-                ></InputGroupInput>
-              </InputGroup>
-            </div>
-            <div className=' mt-4 w-full grid grid-cols-2 gap-2 p-2'>
-              <Button
-                variant={'secondary'}
-                onClick={() => {
-                  setShowDialog(false);
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant='destructive'
-                onClick={() => onConfirm(String(selectedResearch.id))}
-                disabled={fieldValue !== selectedResearch.title}
-              >
-                {confirmLoading ? (
-                  <CustomLoading message='Deleting Keyword Research' />
-                ) : (
-                  <>
-                    {' '}
-                    <Trash2 />
-                    Confirm
-                  </>
-                )}
-              </Button>
-            </div>
-          </ControlledDialog>
-        </>
-      )}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant='destructive'
+                  onClick={() => {
+                    setFiedValue('');
+                    onConfirm(String(selectedResearch.id));
+                  }}
+                  disabled={fieldValue !== selectedResearch.title}
+                >
+                  {confirmLoading ? (
+                    <CustomLoading message='Deleting Keyword Research' />
+                  ) : (
+                    <>
+                      {' '}
+                      <Trash2 />
+                      Confirm
+                    </>
+                  )}
+                </Button>
+              </div>
+            </ControlledDialog>
+          </>
+        )}
       {(loadingDownload || laodingDownloadURL) && (
         <div className='w-full h-screen bg-background/90 flex items-center justify-center fixed top-0 left-0 z-50'>
           <CustomLoading message='Generating Report' />
@@ -441,7 +468,20 @@ export const KeywordsResearchDataTable = ({
       {!isLoading &&
         (!Array.isArray(keywordsResearch) ||
           keywordsResearch.length === 0 ||
-          !keywordsResearch) && <div>Empty</div>}
+          !keywordsResearch) && (
+          <Card className='mx-auto container max-w-2xl'>
+            <CustomEmpty
+              icon={List}
+              description='You can start by creating the first clicking de add buttin bellow'
+              title='No Keyword Research Created Yet'
+              onClick={() => {
+                setFormMode('create');
+                onChangeTab();
+                router.push('/tools/seo/keyword-research');
+              }}
+            />
+          </Card>
+        )}
     </>
   );
 };

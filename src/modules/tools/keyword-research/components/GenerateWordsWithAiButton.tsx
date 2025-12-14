@@ -27,8 +27,10 @@ import { CustomLoading } from '@/components/CustomLoading';
 import {
   Bot,
   CheckCheck,
+  CheckCircle2,
   ChevronRight,
   List,
+  ListPlus,
   Plus,
   Trash2,
 } from 'lucide-react';
@@ -122,7 +124,7 @@ export const GenerateWordsWithAiButton = ({ isLoading, type }: Props) => {
     if (type === 'Positive Words') deleteWords(word);
   };
 
-  const evalDisabled = words.length <= 1 || extra.length <= 1;
+  const evalDisabled = words.length < 1;
 
   const evalType =
     type === 'Brands'
@@ -174,7 +176,7 @@ export const GenerateWordsWithAiButton = ({ isLoading, type }: Props) => {
               showToast({
                 message: 'Alert',
                 description:
-                  'To make the AI-generated result more reliable, please add at least one positive and extra positive keywords.',
+                  'To make the AI-generated result more reliable, please add at least one positive keywords.',
                 type: 'error',
               });
             }
@@ -285,11 +287,15 @@ export const GenerateWordsWithAiButton = ({ isLoading, type }: Props) => {
                 handleAddAll(evalType);
               }}
             >
-              <CheckCheck /> Add all
+              <ListPlus /> Add All
             </Button>
           </div>
           <SheetClose asChild>
-            <Button onClick={handleClear}> Finish {type} Selection</Button>
+            <Button onClick={handleClear}>
+              {' '}
+              <CheckCircle2 />
+              Finish {type} Selection and Close
+            </Button>
           </SheetClose>
         </CustomSheet>
       )}

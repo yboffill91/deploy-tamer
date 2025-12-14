@@ -69,7 +69,9 @@ export const KeywordResearchForm = () => {
     value,
   }));
 
-  const regionValues = selectedRegions.map((region) => region.value.join(','));
+  const regionValues = selectedRegions.map((region) =>
+    region.value.join(',').trim()
+  );
 
   const resetForm = () => {
     reset();
