@@ -345,7 +345,6 @@ export const ResultResearchDataTable = ({ data }: Props) => {
                     type: 'success',
                   });
                 },
-                tooltipMessage: 'Move back to Positive Keywords List',
                 variant: 'success',
               },
             ]}
@@ -387,7 +386,6 @@ export const ResultResearchDataTable = ({ data }: Props) => {
                     type: 'success',
                   });
                 },
-                tooltipMessage: 'Move back to Positive Keywords list',
                 variant: 'success',
               },
             ]}
