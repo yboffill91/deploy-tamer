@@ -13,8 +13,12 @@ import {
   Button,
   Card,
   CardContent,
+  CardFooter,
   CardHeader,
   CardTitle,
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
   Tabs,
   TabsContent,
   TabsList,
@@ -422,46 +426,55 @@ export const ResultResearchDataTable = ({ data }: Props) => {
           )}
         </TabsList>
         <TabsContent value='results'>
-          <div className='grid md:grid-cols-2  gap-2'>
-            <DataTable columns={columns} data={dataToshow} pageSize={100} />
-
-            <Card>
-              <CardHeader>
-                <CardTitle>
-                  <div className='flex items-center gap-2'>
-                    {' '}
-                    <Image
-                      src={'/logos/google.svg'}
-                      alt='Google'
-                      className='size-6'
-                      width={128}
-                      height={128}
-                    />{' '}
-                    <h2 className='texl-xl'>Google Snap</h2>
-                  </div>
-                </CardTitle>
-                <CardContent className=' w-full min-h-64'>
-                  {isLoading ? (
-                    <div>
-                      <CustomLoading message='Getting Google Snapshot' />
+          <ResizablePanelGroup direction='horizontal'>
+            <ResizablePanel defaultSize={50} className='p-2' minSize={10}>
+              <DataTable
+                columns={columns}
+                data={dataToshow}
+                pageSize={100}
+                persistKey='result-data'
+              />
+            </ResizablePanel>
+            <ResizableHandle className='bg-accent' />
+            <ResizablePanel defaultSize={50} className='p-2' minSize={10}>
+              <Card>
+                <CardHeader>
+                  <CardTitle>
+                    <div className='flex items-center gap-2'>
+                      {' '}
+                      <Image
+                        src={'/logos/google.svg'}
+                        alt='Google'
+                        className='size-6'
+                        width={128}
+                        height={128}
+                      />{' '}
+                      <h2 className='texl-xl'>Google Snap</h2>
                     </div>
-                  ) : (
-                    <>
-                      {image && (
-                        <Image
-                          src={`data:image/jpeg; base64, ${image}`}
-                          width={1920}
-                          height={2800}
-                          alt='Google Snapshot'
-                          className='w-full rounded-lg'
-                        ></Image>
-                      )}
-                    </>
-                  )}
-                </CardContent>
-              </CardHeader>
-            </Card>
-          </div>
+                  </CardTitle>
+                  <CardContent className=' w-full min-h-64'>
+                    {isLoading ? (
+                      <div>
+                        <CustomLoading message='Getting Google Snapshot' />
+                      </div>
+                    ) : (
+                      <>
+                        {image && (
+                          <Image
+                            src={`data:image/jpeg; base64, ${image}`}
+                            width={1920}
+                            height={2800}
+                            alt='Google Snapshot'
+                            className='w-full rounded-lg'
+                          ></Image>
+                        )}
+                      </>
+                    )}
+                  </CardContent>
+                </CardHeader>
+              </Card>
+            </ResizablePanel>
+          </ResizablePanelGroup>
         </TabsContent>
         <TabsContent value='unSelected'>
           <DataTable
@@ -471,49 +484,50 @@ export const ResultResearchDataTable = ({ data }: Props) => {
           />
         </TabsContent>
         <TabsContent value='positivesToNewKeywordResearch'>
-          <DataTable
-            columns={columnsPositiveToNewKeyword}
-            data={positivesToNewKeyword}
-            pageSize={100}
-          />
+          <Card>
+            <CardHeader className='flex items-center justify-end'>
+              {unSelected.length > 0 && (
+                <Button
+                  variant='outline'
+                  onClick={() => onSave(selectedResearch)}
+                >
+                  {isLoadingSave ? (
+                    <>
+                      <CustomLoading message='Saving Keyword' />
+                    </>
+                  ) : (
+                    <>
+                      Save Result <Save />
+                    </>
+                  )}
+                </Button>
+              )}
+              {positivesToNewKeyword.length > 0 && (
+                <Button
+                  variant='default'
+                  onClick={() => handleEdit(selectedResearch)}
+                >
+                  {isLoadingSave ? (
+                    <CustomLoading message='Saving Change on Report' />
+                  ) : (
+                    <>
+                      {' '}
+                      Run New Research <SendToBack />
+                    </>
+                  )}
+                </Button>
+              )}
+            </CardHeader>
+            <CardContent>
+              <DataTable
+                columns={columnsPositiveToNewKeyword}
+                data={positivesToNewKeyword}
+                pageSize={100}
+              />
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
-      <div
-        className={cn(
-          'h-12 p-2 bg-card border-t w-full sticky bottom-0 right-0 hidden',
-          (unSelected.length === 0 || positivesToNewKeyword.length === 0) &&
-            'flex items-center justify-end gap-6'
-        )}
-      >
-        {unSelected.length > 0 && (
-          <Button variant='secondary' onClick={() => onSave(selectedResearch)}>
-            {isLoadingSave ? (
-              <>
-                <CustomLoading message='Saving Keyword' />
-              </>
-            ) : (
-              <>
-                Save Result <Save />
-              </>
-            )}
-          </Button>
-        )}
-        {positivesToNewKeyword.length > 0 && (
-          <Button
-            variant='secondary'
-            onClick={() => handleEdit(selectedResearch)}
-          >
-            {isLoadingSave ? (
-              <CustomLoading message='Saving Change on Report' />
-            ) : (
-              <>
-                {' '}
-                Run New Research <SendToBack />
-              </>
-            )}
-          </Button>
-        )}
-      </div>
     </div>
   );
 };

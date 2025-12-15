@@ -12,8 +12,7 @@ import {
 
 import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
-import { AdminSidebarItems, APP_CONFIG } from "../utils";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui";
+import { AdminSidebarItems, APP_CONFIG } from '../utils';
 import { useTheme } from "next-themes";
 import Image from "next/image";
 

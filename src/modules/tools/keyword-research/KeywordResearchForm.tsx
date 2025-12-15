@@ -137,7 +137,7 @@ export const KeywordResearchForm = () => {
 
     const REPO = new KeywordResearchApiRepository();
     try {
-      if (mode === 'edit') {
+      if (mode === 'edit' ) {
         await REPO.runKeyword(String(keywordResearch.id));
         showToast({
           message: 'Keyword Research relaunched',

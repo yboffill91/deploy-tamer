@@ -231,7 +231,7 @@ export class KeywordResearchApiRepository implements IRepository {
       });
 
       if (!response.ok) {
-        throw new Error(`Error descargando el archivo: ${response.statusText}`);
+        throw new Error(`Error downloading file: ${response.statusText}`);
       }
 
       const blob = await response.blob();
@@ -272,7 +272,7 @@ export class KeywordResearchApiRepository implements IRepository {
       });
 
       if (!response.ok) {
-        throw new Error(`Error descargando el archivo: ${response.statusText}`);
+        throw new Error(`Error downloading file: ${response.statusText}`);
       }
 
       const blob = await response.blob();

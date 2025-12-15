@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   ColumnDef,
@@ -8,7 +8,17 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table";
+} from '@tanstack/react-table';
+
+import { DndContext, closestCenter, DragEndEvent } from '@dnd-kit/core';
+
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable';
+
+import { CSS } from '@dnd-kit/utilities';
 
 import {
   Table,
@@ -17,7 +27,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table';
 
 import {
   Badge,
@@ -40,7 +50,7 @@ import {
   SelectTrigger,
   SelectValue,
   Checkbox,
-} from "@/components/ui";
+} from '@/components/ui';
 
 import {
   ChevronDown,
@@ -53,18 +63,75 @@ import {
   Plus,
   Search,
   SlidersHorizontal,
-} from "lucide-react";
+  GripVertical,
+} from 'lucide-react';
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from 'react';
+
+/* ---------------------------------------------------
+   Sortable column item
+--------------------------------------------------- */
+
+function SortableColumnItem({
+  id,
+  label,
+  checked,
+  onCheckedChange,
+  disabled,
+}: {
+  id: string;
+  label: string;
+  checked: boolean;
+  onCheckedChange(value: boolean): void;
+  disabled?: boolean;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id, disabled });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`flex items-center gap-2 px-2 py-1 rounded ${
+        disabled
+          ? 'opacity-50 cursor-not-allowed'
+          : 'cursor-move hover:bg-muted'
+      }`}
+    >
+      <GripVertical
+        {...attributes}
+        {...listeners}
+        className='size-4 text-muted-foreground'
+      />
+      <DropdownMenuCheckboxItem
+        checked={checked}
+        onCheckedChange={onCheckedChange}
+        onSelect={(e) => e.preventDefault()}
+        className='capitalize w-full'
+        disabled={disabled}
+      >
+        {label}
+      </DropdownMenuCheckboxItem>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------
+   DataTable
+--------------------------------------------------- */
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   onAdd?(): void;
   pageSize?: number;
-
-  /** NUEVO: permitir activar selección */
   enableSelection?: boolean;
+  persistKey?: string;
 }
 
 export function DataTable<TData, TValue>({
@@ -73,42 +140,44 @@ export function DataTable<TData, TValue>({
   onAdd,
   enableSelection = false,
   pageSize = 20,
+  persistKey,
 }: DataTableProps<TData, TValue>) {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: pageSize,
+    pageSize,
   });
-  const [columnVisibility, setColumnVisibility] = useState({});
-  const [sortColumn, setSortColumn] = useState([]);
-  const [filtering, setFiltering] = useState("");
-  const [rowSelection, setRowSelection] = useState({});
 
-  /** --- Columna de selección --- */
+  const [columnVisibility, setColumnVisibility] = useState({});
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [sorting, setSorting] = useState<any[]>([]);
+  const [filtering, setFiltering] = useState('');
+  const [rowSelection, setRowSelection] = useState({});
+  const [columnOrder, setColumnOrder] = useState<string[]>([]);
+  const [pageSizeValue, setPageSizeValue] = useState<string>(String(pageSize));
+
+  /* ---------- selection column ---------- */
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const selectionColumn: ColumnDef<TData> = {
-    id: "select",
+    id: 'select',
     header: ({ table }) => (
       <Checkbox
         checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
+        onCheckedChange={(v) => table.toggleAllPageRowsSelected(!!v)}
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
+        onCheckedChange={(v) => row.toggleSelected(!!v)}
       />
     ),
     enableSorting: false,
     enableHiding: false,
-    size: 5,
   };
 
-  /** --- Combinar columnas si enableSelection está activo --- */
   const finalColumns = useMemo(() => {
     return enableSelection ? [selectionColumn, ...columns] : columns;
-  }, [enableSelection, columns]);
+  }, [enableSelection, selectionColumn, columns]);
 
   const table = useReactTable({
     data,
@@ -116,118 +185,171 @@ export function DataTable<TData, TValue>({
     state: {
       pagination,
       columnVisibility,
-      sorting: sortColumn,
+      sorting,
       globalFilter: filtering,
       rowSelection,
+      columnOrder,
     },
 
-    /** --- NUEVO --- */
+    onPaginationChange: setPagination,
+    onColumnVisibilityChange: setColumnVisibility,
+    onSortingChange: setSorting,
+    onGlobalFilterChange: setFiltering,
     onRowSelectionChange: setRowSelection,
+    onColumnOrderChange: setColumnOrder,
+
     enableRowSelection: enableSelection,
 
     getCoreRowModel: getCoreRowModel(),
-    onPaginationChange: setPagination,
     getPaginationRowModel: getPaginationRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
     getSortedRowModel: getSortedRowModel(),
-    onSortingChange: setSortColumn,
     getFilteredRowModel: getFilteredRowModel(),
-    onGlobalFilterChange: setFiltering,
   });
 
+  /* ---------- INIT column order from TABLE ---------- */
+  useEffect(() => {
+    if (columnOrder.length > 0) return;
+
+    const ids = table.getAllLeafColumns().map((c) => c.id);
+    setColumnOrder(ids);
+  }, [table, columnOrder.length]);
+
+  /* ---------- hydrate persisted order ---------- */
+  useEffect(() => {
+    if (!persistKey) return;
+
+    const stored = localStorage.getItem(persistKey);
+    if (!stored) return;
+
+    const storedIds: string[] = JSON.parse(stored);
+    const currentIds = table.getAllLeafColumns().map((c) => c.id);
+
+    const next = storedIds.filter((id) => currentIds.includes(id));
+
+    currentIds.forEach((id) => {
+      if (!next.includes(id)) next.push(id);
+    });
+
+    setColumnOrder(next);
+  }, [table, persistKey]);
+
+  /* ---------- persist order ---------- */
+  useEffect(() => {
+    if (!persistKey || columnOrder.length === 0) return;
+    localStorage.setItem(persistKey, JSON.stringify(columnOrder));
+  }, [columnOrder, persistKey]);
+
+  /* ---------- DND ---------- */
+  const draggableIds = table
+    .getAllLeafColumns()
+    .filter((c) => c.getCanHide())
+    .map((c) => c.id);
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    setColumnOrder((prev) => {
+      const oldIndex = prev.indexOf(active.id as string);
+      const newIndex = prev.indexOf(over.id as string);
+      if (oldIndex === -1 || newIndex === -1) return prev;
+
+      const next = [...prev];
+      const [moved] = next.splice(oldIndex, 1);
+      next.splice(newIndex, 0, moved);
+      return next;
+    });
+  };
+
   const totalRows = table.getFilteredRowModel().rows.length;
+  useEffect(() => {
+    if (pageSizeValue === 'All') {
+      table.setPageSize(totalRows);
+    }
+  }, [totalRows, pageSizeValue, table]);
 
   return (
-    <Card className="overflow-hidden rounded-xl shadow-md border bg-card py-0!">
-      {/* HEADER / FILTER TOOLBAR */}
-      <CardHeader className="p-3 border-b bg-muted/20">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-          {/* LEFT SIDE ACTIONS */}
-          <div className="flex items-center gap-2 w-full md:w-auto">
-            <InputGroup>
-              <InputGroupInput
-                placeholder="Filter data"
-                value={filtering}
-                onChange={(e) => setFiltering(e.target.value)}
-                className="rounded-md"
-              />
+    <Card className='rounded-xl border bg-card'>
+      <CardHeader className='p-3 border-b bg-muted/20'>
+        <div className='flex justify-between gap-3'>
+          <InputGroup>
+            <InputGroupInput
+              placeholder='Filter data'
+              value={filtering}
+              onChange={(e) => setFiltering(e.target.value)}
+            />
+            <InputGroupAddon>
+              <Search className='size-4' />
+            </InputGroupAddon>
+            <InputGroupButton
+              onClick={() => setFiltering('')}
+              disabled={!filtering}
+            >
+              <FilterX className='size-4' />
+            </InputGroupButton>
+          </InputGroup>
 
-              <InputGroupAddon>
-                <Search className="size-4" />
-              </InputGroupAddon>
+          <div className='flex gap-2 items-center'>
+            <Select
+              value={pageSizeValue}
+              onValueChange={(v) => {
+                setPageSizeValue(v);
 
-              <InputGroupButton
-                onClick={() => setFiltering("")}
-                disabled={!filtering.length}
-              >
-                <FilterX className="size-4" />
-              </InputGroupButton>
-            </InputGroup>
-          </div>
+                if (v === 'All') {
+                  table.setPageSize(totalRows);
+                } else {
+                  table.setPageSize(Number(v));
+                }
+              }}
+            >
+              <SelectTrigger className='w-[90px] h-9'>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {['5', '10', '20', '50', '100', 'All'].map((v) => (
+                  <SelectItem key={v} value={v}>
+                    {v}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-          {/* RIGHT SIDE ACTIONS */}
-          <div className="flex items-center gap-2">
-            {/* ROW SIZE SELECT */}
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Rows:</span>
-
-              <Select
-                value={String(pagination.pageSize)}
-                onValueChange={(value) => {
-                  if (value === "all") {
-                    table.setPageSize(totalRows);
-                  } else {
-                    table.setPageSize(Number(value));
-                  }
-                }}
-              >
-                <SelectTrigger className="w-[90px] h-9" size="sm">
-                  <SelectValue defaultValue={pagination.pageSize} />
-                </SelectTrigger>
-
-                <SelectContent>
-                  <SelectItem value="5">5</SelectItem>
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="20">20</SelectItem>
-                  <SelectItem value="50">50</SelectItem>
-                  <SelectItem value="100">100</SelectItem>
-                  <SelectItem value="all">All</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* COLUMN VISIBILITY */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button size="sm" variant="outline" className="gap-1">
-                  <SlidersHorizontal className="size-4" />
-                  Columns
+                <Button variant='outline'>
+                  <SlidersHorizontal className='size-4' />
                 </Button>
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent align="end" className="w-40">
-                {table
-                  .getAllColumns()
-                  .filter((column) => column.getCanHide())
-                  .map((column, idx) => (
-                    <DropdownMenuCheckboxItem
-                      key={idx}
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                      className="capitalize"
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  ))}
+              <DropdownMenuContent className='w-64'>
+                <DndContext
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
+                >
+                  <SortableContext
+                    items={draggableIds}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    {table
+                      .getAllLeafColumns()
+                      .filter((c) => c.getCanHide())
+                      .map((column) => (
+                        <SortableColumnItem
+                          key={column.id}
+                          id={column.id}
+                          label={column.id}
+                          checked={column.getIsVisible()}
+                          onCheckedChange={(v) => column.toggleVisibility(!!v)}
+                        />
+                      ))}
+                  </SortableContext>
+                </DndContext>
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* ADD BUTTON */}
             {onAdd && (
-              <Button onClick={onAdd} size="sm" className="gap-1">
-                <Plus className="size-4" />
+              <Button onClick={onAdd} size='sm'>
+                <Plus className='size-4' />
                 Add
               </Button>
             )}
@@ -235,32 +357,24 @@ export function DataTable<TData, TValue>({
         </div>
       </CardHeader>
 
-      {/* TABLE */}
-      <CardContent className="">
-        <Table className="rounded-xl overflow-hidden border-separate border-spacing-0 border">
-          <TableHeader className="bg-muted text-muted-foreground ">
-            {table.getHeaderGroups().map((headerGroup, idx) => (
-              <TableRow key={idx}>
-                {headerGroup.headers.map((header, idx) => (
+      <CardContent>
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((hg) => (
+              <TableRow key={hg.id}>
+                {hg.headers.map((h) => (
                   <TableHead
-                    key={idx}
-                    onClick={header.column.getToggleSortingHandler()}
-                    className="cursor-pointer select-none py-3 font-semibold text-sm border-b"
+                    key={h.id}
+                    onClick={h.column.getToggleSortingHandler()}
+                    className='cursor-pointer'
                   >
-                    <div className="flex items-center gap-1">
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-
-                      {header.column.getIsSorted() === "asc" && (
-                        <ChevronUp className="size-4 opacity-70" />
+                    <div className='flex items-center gap-1'>
+                      {flexRender(h.column.columnDef.header, h.getContext())}
+                      {h.column.getIsSorted() === 'asc' && (
+                        <ChevronUp className='size-4' />
                       )}
-
-                      {header.column.getIsSorted() === "desc" && (
-                        <ChevronDown className="size-4 opacity-70" />
+                      {h.column.getIsSorted() === 'desc' && (
+                        <ChevronDown className='size-4' />
                       )}
                     </div>
                   </TableHead>
@@ -270,85 +384,59 @@ export function DataTable<TData, TValue>({
           </TableHeader>
 
           <TableBody>
-            {table.getRowModel().rows.length ? (
-              table.getRowModel().rows.map((row, idx) => (
-                <TableRow
-                  key={idx}
-                  className="hover:bg-muted/30 transition-colors duration-100 ease-out "
-                >
-                  {row.getVisibleCells().map((cell, idx) => (
-                    <TableCell
-                      key={idx}
-                      className="py-3 border-b border-muted/30"
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={finalColumns.length}
-                  className="text-center py-6 text-muted-foreground"
-                >
-                  No results found.
-                </TableCell>
+            {table.getRowModel().rows.map((row) => (
+              <TableRow key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
               </TableRow>
-            )}
+            ))}
           </TableBody>
         </Table>
       </CardContent>
 
-      {/* FOOTER / PAGINATION */}
-      <CardFooter className="flex items-center justify-between py-3 border-t bg-muted/20">
-        <Badge variant="secondary">
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
+      <CardFooter className='flex justify-between border-t bg-muted/20'>
+        <Badge variant='secondary'>
+          Page {table.getState().pagination.pageIndex + 1} of{' '}
           {table.getPageCount()}
         </Badge>
 
-        {(table.getCanNextPage() || table.getCanPreviousPage()) && (
-          <div className="flex items-center gap-1">
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => table.setPageIndex(0)}
-              disabled={!table.getCanPreviousPage()}
-            >
-              <ChevronFirst />
-            </Button>
-
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              <ChevronLeft />
-            </Button>
-
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              <ChevronRight />
-            </Button>
-
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-              disabled={!table.getCanNextPage()}
-            >
-              <ChevronLast />
-            </Button>
-          </div>
-        )}
+        <div className='flex gap-1'>
+          <Button
+            size='sm'
+            variant='outline'
+            onClick={() => table.setPageIndex(0)}
+            disabled={!table.getCanPreviousPage()}
+          >
+            <ChevronFirst />
+          </Button>
+          <Button
+            size='sm'
+            variant='outline'
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            <ChevronLeft />
+          </Button>
+          <Button
+            size='sm'
+            variant='outline'
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            <ChevronRight />
+          </Button>
+          <Button
+            size='sm'
+            variant='outline'
+            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+            disabled={!table.getCanNextPage()}
+          >
+            <ChevronLast />
+          </Button>
+        </div>
       </CardFooter>
     </Card>
   );
