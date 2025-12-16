@@ -49,10 +49,7 @@ export const KeywordsResearchDataTable = ({
 }: {
   onChangeTab(): void;
 }) => {
-  // const keywordsResearch = useResearchStore((st) => st.allResearch);
-  // const isLoading = useResearchStore((st) => st.isLoadingResearchs);
-  // const isError = useResearchStore((st) => st.isErrorGettingResearch);
-  // const getKeywordsResearch = useResearchStore((st) => st.getAllResearch);
+
 
   const {
     data: keywordResearch,
@@ -419,9 +416,8 @@ export const KeywordsResearchDataTable = ({
               title='Confirm deletion of keyword research'
             >
               <h3>
-                Please confirm that you wish to delete Keyword Research; this
-                step will be irreversible and your used credits will be
-                consumed.
+                Please confirm that you want to delete the Keyword Research;
+                this step will be irreversible.
               </h3>
               <div className='flex gap-2 flex-col mt-4 text-sm text-muted-foreground bg-muted/30  p-4 rounded-md'>
                 <h4>

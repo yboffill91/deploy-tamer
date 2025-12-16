@@ -52,3 +52,10 @@ export class CreateDomainDTO {
   readonly clickTracking?: boolean
 }
 
+export enum BroadCastEvents {
+  DRAFT = 'Draft',
+  SHCEDULED = 'Scheduled',
+  QUEUED = 'Quewed',
+  SENT = 'SENT',
+  FAILED = 'Failed',
+}

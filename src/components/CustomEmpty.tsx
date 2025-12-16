@@ -13,7 +13,7 @@ import { Button } from "./ui";
 interface Props {
   title: string;
   description: string;
-  onClick: () => void;
+  onClick?: () => void;
   icon: LucideIcon;
 }
 
@@ -24,17 +24,19 @@ export function CustomEmpty({
   icon: Icon = AlertTriangle,
 }: Props) {
   return (
-    <Empty className="min-h-[96vh">
+    <Empty className='min-h-[96vh'>
       <EmptyHeader>
-        <EmptyMedia variant="icon">
+        <EmptyMedia variant='icon'>
           <Icon />
         </EmptyMedia>
         <EmptyTitle>{title}</EmptyTitle>
         <EmptyDescription>{description}</EmptyDescription>
       </EmptyHeader>
-      <EmptyContent>
-        <Button onClick={onClick}>Create</Button>
-      </EmptyContent>
+      {onClick && (
+        <EmptyContent>
+          <Button onClick={onClick}>Create</Button>
+        </EmptyContent>
+      )}
     </Empty>
   );
 }

@@ -47,7 +47,7 @@ const layout = ({ children }: { children: Readonly<ReactNode> }) => {
           >
             {children}
           </ThemeProvider>
-          <Toaster position='bottom-right' duration={6000} />
+          <Toaster position='bottom-right' duration={1500} expand />
         </AuthProvider>
       </body>
     </html>

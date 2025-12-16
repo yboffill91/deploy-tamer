@@ -6,17 +6,36 @@ import { Download, Mail, Search } from "lucide-react"
 import { useState } from "react"
 import { StatusBadge } from "./StatusBadge"
 import { CustomEmpty } from "@/components/CustomEmpty"
+import { DateRange } from 'react-day-picker';
 
 const selectDates = [
-    "Today", "Yesterday", "Last 3 Days", "Last 7 days", "Last 15 Days", "Last 30 Days"
-]
+  'Today',
+  'Yesterday',
+  'Last 3 Days',
+  'Last 7 days',
+  'Last 15 Days',
+  'Last 30 Days',
+];
 
 const Status = [
-    'BOUNCED', 'CANCELED', 'CLICKED', 'COMPLAINED', 'DELIVERED', 'DELIVERY_DELAYED', 'FAILED', 'OPENED', 'QUEUED', 'SHCEDULED', 'SENT'
-]
+  'BOUNCED',
+  'CANCELED',
+  'CLICKED',
+  'COMPLAINED',
+  'DELIVERED',
+  'DELIVERY_DELAYED',
+  'FAILED',
+  'OPENED',
+  'QUEUED',
+  'SHCEDULED',
+  'SENT',
+];
 
 export const SendingEmails = () => {
-    const [date, setDate] = useState<Date | undefined>(new Date())
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: new Date(2025, 5, 12),
+    to: new Date(2025, 6, 15),
+  });
   return (
     <Card className='w-full'>
       <CardHeader className='grid lg:grid-cols-12 gap-2'>
@@ -43,11 +62,11 @@ export const SendingEmails = () => {
               <SelectSeparator />
               <SelectLabel>Calendar Pick Date</SelectLabel>
               <Calendar
-                mode='single'
-                selected={date}
-                onSelect={setDate}
-                className='rounded-md border shadow-sm'
-                captionLayout='dropdown'
+                mode='range'
+                defaultMonth={dateRange?.from}
+                selected={dateRange}
+                onSelect={setDateRange}
+                className='rounded-lg border shadow-sm'
               />
             </SelectGroup>
           </SelectContent>
@@ -60,16 +79,27 @@ export const SendingEmails = () => {
             <SelectGroup></SelectGroup>
             {Status.map((st, index) => (
               <SelectItem key={st + index} value={st}>
-                <StatusBadge  status={EmailEvents[st]} />
+                <StatusBadge status={EmailEvents[st]} />
               </SelectItem>
             ))}
           </SelectContent>
-              </Select>
-              <Button variant="outline" className="w-full lg:col-span-1 justify-start text-muted-foreground"><Download/>Export</Button> 
-          </CardHeader>
-          <CardContent>
-              <CustomEmpty icon={Mail} description="Start sending emails to see insights and previews for every message." title="No sent emails yet" onClick={()=> alert('Implement')}/>
-          </CardContent>
+        </Select>
+        <Button
+          variant='outline'
+          className='w-full lg:col-span-1 justify-start text-muted-foreground'
+        >
+          <Download />
+          Export
+        </Button>
+      </CardHeader>
+      <CardContent>
+        <CustomEmpty
+          icon={Mail}
+          description='Start sending emails to see insights and previews for every message.'
+          title='No sent emails yet'
+          onClick={() => alert('Implement')}
+        />
+      </CardContent>
     </Card>
   );
-}
+};

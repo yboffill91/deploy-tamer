@@ -107,7 +107,7 @@ export const KeywordResearchForm = ({
     formState: { errors, isValid, isSubmitting },
   } = useForm<KeywordResearchFormInput>({
     resolver: zodResolver(KeywordResearchSchema),
-    mode: 'onSubmit',
+    mode: 'onBlur',
     defaultValues: initialValues,
   });
 

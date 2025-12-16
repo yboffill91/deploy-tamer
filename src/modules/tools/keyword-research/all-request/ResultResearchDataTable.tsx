@@ -98,6 +98,7 @@ export const ResultResearchDataTable = ({ data }: Props) => {
 
   const router = useRouter();
 
+  console.log(selectedResearch);
   const formatNumberAbbreviated = (num: number) => {
     const number = Number(num);
     if (isNaN(number) || number === 0) {
@@ -165,6 +166,7 @@ export const ResultResearchDataTable = ({ data }: Props) => {
         generatedNegativeKeywords: unSelected, //TODO: Cambiar en el backend a una nueva tabla de discards
         generatedPositiveKeywords: positivesToNewKeyword, //TODO: Cambiar en el backend a una nueva tabla de palabras seleccionadas para correr un nuevo research
       };
+      console.log(payload);
 
       await REPO.update(String(selected.id), payload);
       showToast({
@@ -172,6 +174,7 @@ export const ResultResearchDataTable = ({ data }: Props) => {
         description: 'The Keyword Research was successfully updated',
         type: 'success',
       });
+      router.push('tools/seo/keyword-result');
     } catch (error) {
       setIsError(
         error instanceof Error
@@ -482,7 +485,9 @@ export const ResultResearchDataTable = ({ data }: Props) => {
                 <ButtonGroupSeparator />
                 <Button
                   size='icon'
-                  variant='outline'
+                  variant={
+                    positivesToNewKeyword.length === 0 ? 'outline' : 'success'
+                  }
                   disabled={positivesToNewKeyword.length === 0}
                   aria-label='Run New Keyword'
                   onClick={() => handleEdit(selectedResearch)}
@@ -495,7 +500,7 @@ export const ResultResearchDataTable = ({ data }: Props) => {
                   variant={'outline'}
                   size='icon'
                   onClick={() => {
-                    leftPanelRef.current.collapse();
+                    leftPanelRef.current.resize(25);
                     rightPanelRef.current.resize(100);
                   }}
                 >
@@ -602,18 +607,88 @@ export const ResultResearchDataTable = ({ data }: Props) => {
           </div>
         </TabsContent>
         <TabsContent value='unSelected'>
-          <DataTable
-            columns={columnsUnSelected}
-            data={unSelected}
-            pageSize={100}
-          />
+          <div className='flex flex-col gap-4'>
+            <div className='w-full flex justify-between bg-muted/20 rounded'>
+              <ButtonGroup>
+                <ButtonGroupText>Save & Run</ButtonGroupText>
+                <Button
+                  size='icon'
+                  variant='outline'
+                  onClick={() => onSave(selectedResearch)}
+                  aria-label='Save'
+                >
+                  {isLoadingSave ? (
+                    <>
+                      <LoadingBase />
+                    </>
+                  ) : (
+                    <>
+                      <SaveAll />
+                    </>
+                  )}
+                </Button>
+                <ButtonGroupSeparator />
+                <Button
+                  size='icon'
+                  variant={
+                    positivesToNewKeyword.length === 0 ? 'outline' : 'success'
+                  }
+                  disabled={positivesToNewKeyword.length === 0}
+                  aria-label='Run New Keyword'
+                  onClick={() => handleEdit(selectedResearch)}
+                >
+                  <Goal />
+                </Button>
+              </ButtonGroup>
+            </div>
+            <DataTable
+              columns={columnsUnSelected}
+              data={unSelected}
+              pageSize={100}
+            />
+          </div>
         </TabsContent>
         <TabsContent value='positivesToNewKeywordResearch'>
-          <DataTable
-            columns={columnsPositiveToNewKeyword}
-            data={positivesToNewKeyword}
-            pageSize={100}
-          />
+          <div className='flex flex-col gap-4'>
+            <div className='w-full flex justify-between bg-muted/20 rounded'>
+              <ButtonGroup>
+                <ButtonGroupText>Save & Run</ButtonGroupText>
+                <Button
+                  size='icon'
+                  variant='outline'
+                  onClick={() => onSave(selectedResearch)}
+                  aria-label='Save'
+                >
+                  {isLoadingSave ? (
+                    <>
+                      <LoadingBase />
+                    </>
+                  ) : (
+                    <>
+                      <SaveAll />
+                    </>
+                  )}
+                </Button>
+                <ButtonGroupSeparator />
+                <Button
+                  size='icon'
+                  variant={
+                    positivesToNewKeyword.length === 0 ? 'outline' : 'success'
+                  }
+                  disabled={positivesToNewKeyword.length === 0}
+                  aria-label='Run New Keyword'
+                  onClick={() => handleEdit(selectedResearch)}
+                >
+                  <Goal />
+                </Button>
+              </ButtonGroup>
+            </div>
+            <DataTable
+              columns={columnsPositiveToNewKeyword}
+              data={positivesToNewKeyword}
+              pageSize={100}
+            />
+          </div>
         </TabsContent>
       </Tabs>
       <ControlledDialog
@@ -639,3 +714,5 @@ export const ResultResearchDataTable = ({ data }: Props) => {
     </div>
   );
 };
+
+
