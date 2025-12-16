@@ -84,8 +84,8 @@ export const KeywordsResearchDataTable = ({
   };
 
   const handleEdit = (item: KeywordResearchEntity) => {
-    setFormMode('edit');
     setFormSelectedResearch(String(item.id));
+    setFormMode('edit');
     onChangeTab();
     router.push('/tools/seo/keyword-research');
   };

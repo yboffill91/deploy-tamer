@@ -24,7 +24,9 @@ const KeywordResearchPage = () => {
           />
         </TabsList>
         <TabsContent value='form'>
-          <KeywordResearchForm />
+          <KeywordResearchForm
+            onChangeTab={() => setSelectedTab('researchs')}
+          />
         </TabsContent>
         <TabsContent value='researchs'>
           <KeywordsResearchDataTable

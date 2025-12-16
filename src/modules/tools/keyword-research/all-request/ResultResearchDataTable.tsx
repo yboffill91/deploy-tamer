@@ -184,8 +184,8 @@ export const ResultResearchDataTable = ({ data }: Props) => {
   };
 
   const handleEdit = async (item: KeywordResearchEntity) => {
-    await onSave(item);
-    setFormMode('create');
+    // await onSave(item);
+    setFormMode('new');
     setFormSelectedResearch(String(item.id));
     router.push('/tools/seo/keyword-research');
   };
