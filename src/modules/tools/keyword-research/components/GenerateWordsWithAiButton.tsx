@@ -233,7 +233,7 @@ export const GenerateWordsWithAiButton = ({ isLoading, type }: Props) => {
             </SheetTrigger>
           }
         >
-          <div className='min-h-[80dvh] w-full overflow-y-auto flex flex-col justify-between'>
+          <div className='h-screen w-full overflow-y-auto flex flex-col justify-between'>
             {isLoading && <CustomPageLoader message={`Generating ${type}`} />}
             {evalType.length === 0 && !isLoading && (
               <Empty>
@@ -308,7 +308,7 @@ export const GenerateWordsWithAiButton = ({ isLoading, type }: Props) => {
           </SheetTrigger>
           <SheetContent className='p-4'>
             <SheetTitle>Manage Selected Brands</SheetTitle>
-            <div className='min-h-[80dvh] w-full overflow-y-auto'>
+            <div className='h-screen w-full overflow-y-auto'>
               <Table className='mt-6'>
                 <TableHeader>
                   <TableRow>
