@@ -5,6 +5,7 @@ export * from './DocumentsDTO';
 export * from './FunctionalitiesDTO';
 export * from './KeywordResearchDTO';
 export * from './LogsDTO';
+export * from './MailerDTO';
 export * from './PositionsDTO';
 export * from './RoleDTO';
 export * from './SuggestWordsDTO';

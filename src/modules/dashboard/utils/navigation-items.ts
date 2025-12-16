@@ -41,6 +41,7 @@ export interface NavMainItem {
   comingSoon?: boolean;
   newTab?: boolean;
   isNew?: boolean;
+  
 }
 
 export interface NavGroup {
@@ -89,7 +90,6 @@ export const AdminSidebarItems: NavGroup[] = [
             title: 'Emails',
             url: '/tools/mailer/emails',
             icon: Mail,
-            comingSoon: true,
           },
           {
             title: 'Broadcast',

@@ -6,6 +6,7 @@ export * from './EmailEntity';
 export * from './FunctionalitiesEntity';
 export * from './KeywordResearchsEntity';
 export * from './LogsEntity';
+export * from './MailerEntities';
 export * from './PositionsEntity';
 export * from './RoleEntity';
 export * from './SuggestedWordsEntity';

@@ -11,6 +11,7 @@ import {
 import { DataTable } from '@/components/data-table/DataTable';
 import {
   Button,
+  ButtonGroup,
   Card,
   CardContent,
   CardFooter,
@@ -28,16 +29,19 @@ import { ActionsButtonSet } from '@/components/data-table/ActionsButtons';
 import {
   ArrowLeftCircle,
   CircleMinusIcon,
+  Columns2,
   Eye,
   ListCheck,
   ListMinus,
   ListPlus,
+  PanelLeft,
+  PanelRight,
   PlusCircle,
   Save,
   SendToBack,
 } from 'lucide-react';
 import { KeywordResearchApiRepository } from '@/infrastructure/repositories';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { showToast } from '@/components/CustomToaster';
 import { CustomLoading } from '@/components/CustomLoading';
 import { useRouter } from 'next/navigation';
@@ -46,6 +50,7 @@ import { CustomTabTrigger } from '../../components';
 import { CreateKeywordResearchDTO } from '@/core/dto';
 import { useFormStore } from '../context/FormStore';
 import { cn } from '@/lib/utils';
+import { ImperativePanelHandle } from 'react-resizable-panels';
 
 interface Props {
   data: KeywordResultEntity[];
@@ -56,6 +61,9 @@ export const ResultResearchDataTable = ({ data }: Props) => {
   const [isError, setIsError] = useState('');
 
   const [isLoadingSave, setIsLoadingSave] = useState(false);
+
+  const leftPanelRef = useRef<ImperativePanelHandle>(null);
+  const rightPanelRef = useRef<ImperativePanelHandle>(null);
 
   const setFormMode = useFormStore((st) => st.setMode);
   const setFormSelectedResearch = useFormStore((st) => st.getKeyWordResearch);
@@ -426,55 +434,106 @@ export const ResultResearchDataTable = ({ data }: Props) => {
           )}
         </TabsList>
         <TabsContent value='results'>
-          <ResizablePanelGroup direction='horizontal'>
-            <ResizablePanel defaultSize={50} className='p-2' minSize={10}>
-              <DataTable
-                columns={columns}
-                data={dataToshow}
-                pageSize={100}
-                persistKey='result-data'
-              />
-            </ResizablePanel>
-            <ResizableHandle className='bg-accent' />
-            <ResizablePanel defaultSize={50} className='p-2' minSize={10}>
-              <Card>
-                <CardHeader>
-                  <CardTitle>
-                    <div className='flex items-center gap-2'>
-                      {' '}
-                      <Image
-                        src={'/logos/google.svg'}
-                        alt='Google'
-                        className='size-6'
-                        width={128}
-                        height={128}
-                      />{' '}
-                      <h2 className='texl-xl'>Google Snap</h2>
-                    </div>
-                  </CardTitle>
-                  <CardContent className=' w-full min-h-64'>
-                    {isLoading ? (
-                      <div>
-                        <CustomLoading message='Getting Google Snapshot' />
+          <div className='flex flex-col gap-2'>
+            <div className='w-full flex justify-center'>
+              <ButtonGroup>
+                <Button
+                  variant={'outline'}
+                  size='icon'
+                  onClick={() => {
+                    leftPanelRef.current.resize(25);
+                    rightPanelRef.current.resize(75);
+                  }}
+                >
+                  <PanelLeft />
+                </Button>
+                <Button
+                  variant='outline'
+                  size='icon'
+                  onClick={() => {
+                    leftPanelRef.current.resize(50);
+                    rightPanelRef.current.resize(50);
+                  }}
+                >
+                  <Columns2 />
+                </Button>
+                <Button
+                  variant='outline'
+                  size='icon'
+                  onClick={() => {
+                    leftPanelRef.current.resize(75);
+                    rightPanelRef.current.resize(25);
+                  }}
+                >
+                  <PanelRight />
+                </Button>
+              </ButtonGroup>
+            </div>
+            <ResizablePanelGroup
+              direction='horizontal'
+              className='border rounded-2xl'
+            >
+              <ResizablePanel
+                ref={leftPanelRef}
+                defaultSize={50}
+                minSize={10}
+                className='p-2'
+              >
+                <DataTable
+                  columns={columns}
+                  data={dataToshow}
+                  pageSize={100}
+                  persistKey='result-data'
+                />
+              </ResizablePanel>
+
+              <ResizableHandle className='bg-accent' />
+
+              <ResizablePanel
+                ref={rightPanelRef}
+                defaultSize={50}
+                minSize={10}
+                className='p-2'
+              >
+                <Card>
+                  <CardHeader>
+                    <CardTitle>
+                      <div className='flex items-center gap-2'>
+                        {' '}
+                        <Image
+                          src={'/logos/google.svg'}
+                          alt='Google'
+                          className='size-6'
+                          width={128}
+                          height={128}
+                        />{' '}
+                        <h2 className='texl-xl'>Google Snap</h2>
                       </div>
-                    ) : (
-                      <>
-                        {image && (
-                          <Image
-                            src={`data:image/jpeg; base64, ${image}`}
-                            width={1920}
-                            height={2800}
-                            alt='Google Snapshot'
-                            className='w-full rounded-lg'
-                          ></Image>
-                        )}
-                      </>
-                    )}
-                  </CardContent>
-                </CardHeader>
-              </Card>
-            </ResizablePanel>
-          </ResizablePanelGroup>
+                    </CardTitle>
+                    <CardContent className=' w-full min-h-64'>
+                      {isLoading ? (
+                        <div>
+                          <CustomLoading message='Getting Google Snapshot' />
+                        </div>
+                      ) : (
+                        <>
+                          {image && (
+                            <Image
+                              src={`data:image/jpeg; base64, ${image}`}
+                              width={4800}
+                              height={8600}
+                              alt='Google Snapshot'
+                              className='w-full rounded-lg'
+                            ></Image>
+                          )}
+                        </>
+                      )}
+                    </CardContent>
+                  </CardHeader>
+                </Card>
+              </ResizablePanel>
+            </ResizablePanelGroup>
+          </div>
         </TabsContent>
         <TabsContent value='unSelected'>
           <DataTable
