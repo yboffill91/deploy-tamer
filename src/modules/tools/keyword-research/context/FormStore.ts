@@ -11,7 +11,6 @@ const EMPTY_FORM: KeywordResearchFormInput = {
   brand: [],
   city: [],
   companyId: 0,
-  extraPositiveKeywords: [],
   generatedNegativeKeywords: [],
   generatedPositiveKeywords: [],
   negativeKeywords: [],
@@ -39,6 +38,9 @@ interface FormStore {
 
   clearKeywordResearch: () => void;
   resetKeywordResearch: () => void;
+
+  resetNegativeList: () => void;
+  resetPositiveToNewResearch: () => void;
 }
 
 export const useFormStore = create<FormStore>((set, get) => ({
@@ -81,6 +83,7 @@ export const useFormStore = create<FormStore>((set, get) => ({
           useKeywordStore
             .getState()
             .positivesToNewKeyword.map((el) => el.keyword) ?? [],
+        
       };
     }
 
@@ -122,4 +125,10 @@ export const useFormStore = create<FormStore>((set, get) => ({
 
     useRegionStore.getState().hidrateNegativeCities(keywordResearch.city);
   },
+  resetNegativeList: () => {
+    useNegativeListStore.getState().resetWords()
+  },
+  resetPositiveToNewResearch: () => {
+    useKeywordStore.getState().resetPositiveToNewResearch()
+  }
 }));

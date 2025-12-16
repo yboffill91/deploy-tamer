@@ -9,7 +9,6 @@ export class KeywordResearchEntity {
   readonly searchVolume?: number;
 
   readonly positiveKeywords?: string[];
-  readonly extraPositiveKeywords?: string[];
   readonly negativeKeywords?: string[];
   readonly generatedPositiveKeywords?: KeywordResultEntity[];
   readonly generatedNegativeKeywords?: KeywordResultEntity[];
@@ -107,4 +106,6 @@ export enum KeywordStatus {
   READY_TO_CHECK = 'READY_TO_CHECK',
   RE_KEYWORING = 'RE_KEYWORING',
   FINISHED = 'FINISHED',
+  ORGANIC_LAUNCH = 'ORGANIC_LAUNCH',
+  ORGANIC_FINISHED = 'ORGANIC_FINISHED',
 }

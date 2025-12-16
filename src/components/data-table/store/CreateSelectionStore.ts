@@ -14,6 +14,7 @@ export interface SelectionStoreState<T> {
   setUnselectPositiveToKeyword: (item: T) => void;
   hidrateUnSelect: (items: T[] | null) => void;
   hidratePositiveToNewKeyword: (items: T[] | null) => void;
+  resetPositiveToNewResearch: () => void;
 }
 
 export function createSelectionStore<T>() {
@@ -90,6 +91,9 @@ export function createSelectionStore<T>() {
     },
     hidratePositiveToNewKeyword: (newWords) => {
       if (!!newWords) set({ positivesToNewKeyword: [...newWords] });
+    },
+    resetPositiveToNewResearch: () => {
+      set({ positivesToNewKeyword: null });
     },
   }));
 }

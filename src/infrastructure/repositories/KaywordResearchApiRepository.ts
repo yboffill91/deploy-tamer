@@ -4,6 +4,7 @@ import { KeywordResearchEntity } from '@/core/entities';
 import {
   downloadExcelApi,
   downloadExcelUrlApi,
+  executeFindUrls,
   forceEndApi,
   googleSearchApi,
   keywordResearchApi,
@@ -18,7 +19,6 @@ export class KeywordResearchApiRepository implements IRepository {
       title: data.title,
       searchVolume: data.searchVolume,
       positiveKeywords: data.positiveKeywords,
-      extraPositiveKeywords: data.extraPositiveKeywords,
       negativeKeywords: data.negativeKeywords,
       generatedPositiveKeywords: data.generatedPositiveKeywords,
       generatedNegativeKeywords: data.generatedNegativeKeywords,
@@ -111,7 +111,6 @@ export class KeywordResearchApiRepository implements IRepository {
       title: data.title,
       searchVolume: Number(data.searchVolume),
       positiveKeywords: data.positiveKeywords as object,
-      extraPositiveKeywords: data.extraPositiveKeywords as object,
       negativeKeywords: data.negativeKeywords as object,
       city: data.city as object,
       region: data.region as object,
@@ -144,7 +143,6 @@ export class KeywordResearchApiRepository implements IRepository {
       title: data.title,
       searchVolume: Number(data.searchVolume),
       positiveKeywords: data.positiveKeywords as object,
-      extraPositiveKeywords: data.extraPositiveKeywords as object,
       negativeKeywords: data.negativeKeywords as object,
       city: data.city as object,
       region: data.region as object,
@@ -304,6 +302,18 @@ export class KeywordResearchApiRepository implements IRepository {
   async forceEnd(id: string): Promise<void> {
     try {
       await fetchHelper(forceEndApi + `/${id}`, {
+        headers: {
+          Authorization: `Bearer ${await this.auth()}`,
+        },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+  async executeFindUrl(id: string): Promise<void> {
+    try {
+      await fetchHelper(executeFindUrls + `/${id}`, {
+        method: 'GET',
         headers: {
           Authorization: `Bearer ${await this.auth()}`,
         },

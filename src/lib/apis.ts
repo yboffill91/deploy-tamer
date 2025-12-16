@@ -1,6 +1,5 @@
 export const route = process.env.NEXT_PUBLIC_API_URL;
-//  Local endpoints route handler
-export const mailingApi = route + 'email';
+export const mailingApi = route + 'email/send';
 export const sessionApi = route + 'session';
 export const getTokenApi = route + 'session/get_token';
 
@@ -26,7 +25,7 @@ export const googleSearchApi = keywordResearchApi + '/google/search';
 export const downloadExcelApi = keywordResearchApi + '/export/excel';
 export const downloadExcelUrlApi = keywordResearchApi + '/export/organic/urls';
 export const forceEndApi = keywordResearchApi + '/force/end';
-
+export const executeFindUrls = keywordResearchApi + '/google/search/findurls';
 
 
 

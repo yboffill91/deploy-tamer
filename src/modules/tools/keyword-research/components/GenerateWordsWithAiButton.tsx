@@ -19,14 +19,12 @@ import {
 } from '@/components/ui';
 import {
   useBrandStore,
-  useExtraPositiveStore,
   useNegativeStore,
   usePositiveStore,
 } from '../context/WordsStoreFactory';
 import { CustomLoading } from '@/components/CustomLoading';
 import {
   Bot,
-  CheckCheck,
   CheckCircle2,
   ChevronRight,
   List,
@@ -51,36 +49,29 @@ export const GenerateWordsWithAiButton = ({ isLoading, type }: Props) => {
 
   const addWords = usePositiveStore((st) => st.addWord);
   const addNegative = useNegativeStore((st) => st.addWord);
-  const addExtra = useExtraPositiveStore((st) => st.addWord);
   const addBrand = useBrandStore((st) => st.addWord);
 
   const deleteWords = usePositiveStore((st) => st.deleteWord);
   const deleteNegative = useNegativeStore((st) => st.deleteWord);
-  const deleteExtra = useExtraPositiveStore((st) => st.deleteWord);
   const deleteBrand = useBrandStore((st) => st.deleteWord);
 
   const suggestedWords = usePositiveStore((st) => st.sugguestedWords);
   const suggestedNegative = useNegativeStore((st) => st.sugguestedWords);
-  const suggestedExtra = useExtraPositiveStore((st) => st.sugguestedWords);
   const suggestedBrands = useBrandStore((st) => st.sugguestedWords);
 
   const clearSuggestedWords = usePositiveStore((st) => st.clearSuggestedWords);
   const clearSuggestedNegative = useNegativeStore(
     (st) => st.clearSuggestedWords
   );
-  const clearSuggestedExtra = useExtraPositiveStore(
-    (st) => st.clearSuggestedWords
-  );
+
   const clearSuggestedBrands = useBrandStore((st) => st.clearSuggestedWords);
 
   const words = usePositiveStore((st) => st.words);
   const negative = useNegativeStore((st) => st.words);
-  const extra = useExtraPositiveStore((st) => st.words);
   const brands = useBrandStore((st) => st.words);
 
   const addAllWords = usePositiveStore((st) => st.addWords);
   const addAllNegative = useNegativeStore((st) => st.addWords);
-  const addAllExtraPositive = useExtraPositiveStore((st) => st.addWords);
   const addAllBrands = useBrandStore((st) => st.addWords);
 
   const getSuggestedPositiveWords = usePositiveStore(
@@ -90,18 +81,13 @@ export const GenerateWordsWithAiButton = ({ isLoading, type }: Props) => {
   const getSuggestedNegativeWords = useNegativeStore(
     (st) => st.getSuggestedWords
   );
-  const getSuggestedExtraPositiveWords = useExtraPositiveStore(
-    (st) => st.getSuggestedWords
-  );
 
   const clickHandler = () => {
     const payLoad = new CreateSuggestDTO(words);
     if (type === 'Brands') {
       getSuggestedBrands(payLoad);
     }
-    if (type === 'Extra Positive Words') {
-      getSuggestedExtraPositiveWords(payLoad);
-    }
+
     if (type === 'Negative Words') {
       getSuggestedNegativeWords(payLoad);
     }
@@ -113,13 +99,11 @@ export const GenerateWordsWithAiButton = ({ isLoading, type }: Props) => {
 
   const handleAdd = (word: string) => {
     if (type === 'Brands') addBrand(word);
-    if (type === 'Extra Positive Words') addExtra(word);
     if (type === 'Negative Words') addNegative(word);
     if (type === 'Positive Words') addWords(word);
   };
   const handleDelete = (word: string) => {
     if (type === 'Brands') deleteBrand(word);
-    if (type === 'Extra Positive Words') deleteExtra(word);
     if (type === 'Negative Words') deleteNegative(word);
     if (type === 'Positive Words') deleteWords(word);
   };
@@ -129,30 +113,20 @@ export const GenerateWordsWithAiButton = ({ isLoading, type }: Props) => {
   const evalType =
     type === 'Brands'
       ? suggestedBrands
-      : type === 'Extra Positive Words'
-      ? suggestedExtra
       : type === 'Negative Words'
       ? suggestedNegative
       : suggestedWords;
   const Words =
-    type === 'Brands'
-      ? brands
-      : type === 'Extra Positive Words'
-      ? extra
-      : type === 'Negative Words'
-      ? negative
-      : words;
+    type === 'Brands' ? brands : type === 'Negative Words' ? negative : words;
 
   const handleClear = () => {
     if (type === 'Brands') clearSuggestedBrands();
-    if (type === 'Extra Positive Words') clearSuggestedExtra();
     if (type === 'Negative Words') clearSuggestedNegative();
     if (type === 'Positive Words') clearSuggestedWords();
   };
 
   const handleAddAll = (keywords: string[]) => {
     if (type === 'Brands') addAllBrands(keywords);
-    if (type === 'Extra Positive Words') addAllExtraPositive(keywords);
     if (type === 'Negative Words') addAllNegative(keywords);
     if (type === 'Positive Words') addAllWords(keywords);
   };
@@ -360,17 +334,10 @@ const ToolTipContent = ({
 }) => {
   const words = usePositiveStore((st) => st.words);
   const negative = useNegativeStore((st) => st.words);
-  const extra = useExtraPositiveStore((st) => st.words);
   const brands = useBrandStore((st) => st.words);
 
   const evalType =
-    type === 'Brands'
-      ? brands
-      : type === 'Extra Positive Words'
-      ? extra
-      : type === 'Negative Words'
-      ? negative
-      : words;
+    type === 'Brands' ? brands : type === 'Negative Words' ? negative : words;
 
   return (
     <>

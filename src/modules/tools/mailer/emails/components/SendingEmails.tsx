@@ -7,6 +7,7 @@ import { useState } from "react"
 import { StatusBadge } from "./StatusBadge"
 import { CustomEmpty } from "@/components/CustomEmpty"
 import { DateRange } from 'react-day-picker';
+import { SendEmailForm } from '../forms/SendEmailForm';
 
 const selectDates = [
   'Today',
@@ -99,6 +100,7 @@ export const SendingEmails = () => {
           title='No sent emails yet'
           onClick={() => alert('Implement')}
         />
+        <SendEmailForm />
       </CardContent>
     </Card>
   );

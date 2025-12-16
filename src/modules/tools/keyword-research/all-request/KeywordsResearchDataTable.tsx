@@ -22,6 +22,7 @@ import {
   List,
   Pencil,
   Play,
+  PlayCircle,
   Trash2,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -49,8 +50,6 @@ export const KeywordsResearchDataTable = ({
 }: {
   onChangeTab(): void;
 }) => {
-
-
   const {
     data: keywordResearch,
     isLoading,
@@ -103,6 +102,24 @@ export const KeywordsResearchDataTable = ({
       setButtonBussy(0);
     }
   };
+  const onRunURL = async (item: KeywordResearchEntity) => {
+    try {
+      setButtonBussy(item.id);
+      setIsLoadingDownloadURL(true);
+      const REPO = new KeywordResearchApiRepository();
+      await REPO.executeFindUrl(String(item.id));
+    } catch (error) {
+      setComponentError(
+        error instanceof Error
+          ? error.message
+          : 'Unexpected Error Generating Report'
+      );
+    } finally {
+      setIsLoadingDownloadURL(false);
+      setButtonBussy(0);
+    }
+  };
+
   const onExportURL = async (item: KeywordResearchEntity) => {
     try {
       setButtonBussy(item.id);
@@ -350,11 +367,19 @@ export const KeywordsResearchDataTable = ({
                       show: (item) => item.status === KeywordStatus.FINISHED,
                     },
                     {
+                      icon: PlayCircle,
+                      label: 'Download the Organic URL report.',
+                      onClick: onRunURL,
+                      variant: 'ghost',
+                      show: (item) => item.status === KeywordStatus.FINISHED,
+                    },
+                    {
                       icon: Link,
                       label: 'Download the Organic URL report.',
                       onClick: onExportURL,
                       variant: 'ghost',
-                      show: (item) => item.status === KeywordStatus.FINISHED,
+                      show: (item) =>
+                        item.status === KeywordStatus.ORGANIC_FINISHED,
                     },
 
                     {
@@ -416,8 +441,8 @@ export const KeywordsResearchDataTable = ({
               title='Confirm deletion of keyword research'
             >
               <h3>
-                Please confirm that you want to delete the Keyword Research;
-                this step will be irreversible.
+                Please confirm that you want to delete the Keyword Research.
+                This step will be irreversible.
               </h3>
               <div className='flex gap-2 flex-col mt-4 text-sm text-muted-foreground bg-muted/30  p-4 rounded-md'>
                 <h4>
@@ -462,7 +487,7 @@ export const KeywordsResearchDataTable = ({
             </ControlledDialog>
           </>
         )}
-      {(loadingDownload || laodingDownloadURL) && (
+      {loadingDownload && (
         <div className='w-full h-screen bg-background/90 flex items-center justify-center fixed top-0 left-0 z-50'>
           <CustomLoading message='Generating Report' />
         </div>

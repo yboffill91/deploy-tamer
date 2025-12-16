@@ -91,5 +91,4 @@ function createWordsStore(defaultEndpoint: Endpoint) {
 export const useBrandStore = createWordsStore('/brands');
 export const usePositiveStore = createWordsStore('/words');
 export const useNegativeStore = createWordsStore('/negativekeywords');
-export const useExtraPositiveStore = createWordsStore('/words');
 export const useNegativeListStore = createWordsStore('/words');

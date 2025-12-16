@@ -59,3 +59,12 @@ export enum BroadCastEvents {
   SENT = 'SENT',
   FAILED = 'Failed',
 }
+
+export class EmailsEntity {
+  readonly from?: string;
+  readonly to?: string[];
+  readonly subject?: string;
+  readonly text?: string;
+  readonly html?: string;
+  readonly react?: string;
+}

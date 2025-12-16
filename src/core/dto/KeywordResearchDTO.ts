@@ -4,7 +4,6 @@ export class CreateKeywordResearchDTO {
   readonly title?: string;
   readonly searchVolume?: number;
   readonly positiveKeywords?: string[];
-  readonly extraPositiveKeywords?: string[];
   readonly negativeKeywords?: string[];
   readonly generatedPositiveKeywords?: KeywordResultEntity[];
   readonly generatedNegativeKeywords?: KeywordResultEntity[];

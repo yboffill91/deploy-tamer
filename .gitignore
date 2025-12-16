@@ -9,7 +9,8 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
-
+  
+.env
 
 *src_legacy/*
 
@@ -46,3 +47,4 @@ next-env.d.ts
 
 
 Components_To_Review
+/.env

@@ -19,12 +19,6 @@ export const KeywordResearchSchema = z.object({
       message: 'Negative keywords has duplicates',
     }),
 
-  extraPositiveKeywords: z
-    .array(z.string())
-    .refine((list) => new Set(list).size === list.length, {
-      message: 'Extra positive keywords has duplicates',
-    }),
-
   city: z
     .array(z.string())
     .refine((list) => new Set(list).size === list.length, {

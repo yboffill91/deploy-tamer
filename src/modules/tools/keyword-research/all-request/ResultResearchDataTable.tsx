@@ -96,9 +96,14 @@ export const ResultResearchDataTable = ({ data }: Props) => {
   const addNegativeListWords = useNegativeListStore((st) => st.addWord);
   const deleteNegativeListWords = useNegativeListStore((st) => st.deleteWord);
 
+  const resetNegativeList = useNegativeListStore((st) => st.resetWords);
+  const resetPositiveoNewKeyword = useKeywordStore(
+    (st) => st.resetPositiveToNewResearch
+  );
+  const resetDescardsWords = useKeywordStore((st) => st.setUnSelec);
+
   const router = useRouter();
 
-  console.log(selectedResearch);
   const formatNumberAbbreviated = (num: number) => {
     const number = Number(num);
     if (isNaN(number) || number === 0) {
@@ -156,7 +161,6 @@ export const ResultResearchDataTable = ({ data }: Props) => {
         brand: selected.brand,
         city: selected.city,
         companyId: selected.companyId,
-        extraPositiveKeywords: selected.extraPositiveKeywords,
         negativeKeywords: selected.negativeKeywords,
         region: selected.region,
         requestLanguage: selected.requestLanguage,
@@ -206,6 +210,10 @@ export const ResultResearchDataTable = ({ data }: Props) => {
     }
     const hidrate = () => {};
     hidrate();
+
+    resetDescardsWords(null);
+    resetNegativeList();
+    resetPositiveoNewKeyword();
   }, []);
   const exactExclusions = new Set([
     ...unSelected.map((el) => el.keyword),

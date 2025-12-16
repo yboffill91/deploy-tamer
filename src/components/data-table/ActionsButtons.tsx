@@ -1,4 +1,4 @@
-import { EllipsisVertical, Loader2, type LucideIcon } from 'lucide-react';
+import { EllipsisVertical, Loader, type LucideIcon } from 'lucide-react';
 import {
   Button,
   DropdownMenu,
@@ -47,7 +47,7 @@ export function ActionsButtonSet<T>({
       {showRow ? (
         <>
           {bussy ? (
-            <LoadingBase variant='xs' />
+            <Loader className='animate-spin size-4' />
           ) : (
             actions
               .filter((a) => (a.show ? a.show(item) : true))
@@ -74,7 +74,7 @@ export function ActionsButtonSet<T>({
       ) : (
         <>
           {bussy ? (
-            <LoadingBase variant='xs' />
+            <Loader className='animate-spin size-4' />
           ) : (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

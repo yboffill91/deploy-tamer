@@ -19,12 +19,11 @@ import { Play, Focus, RefreshCw, SaveAll, Goal } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { KeywordPositiveNegativeWords } from './components/KeywordPositiveNegativeWords';
 import { KeywordResearchCityComponent } from './components/KeywordResearchCityComponent';
-import { KeywordExtraPositive } from './components/KeywordExtraPositiveComponent';
 import { CustomCard } from '@/components/CustomCard';
 import { useRegionStore } from '@/modules/tools/keyword-research/context/RegionStore';
 import {
   useBrandStore,
-  useExtraPositiveStore,
+  useNegativeListStore,
   useNegativeStore,
   usePositiveStore,
 } from './context/WordsStoreFactory';
@@ -34,6 +33,7 @@ import { CustomLoading } from '@/components/CustomLoading';
 import { useFormStore } from './context/FormStore';
 import { CustomPageLoader } from '@/components/CustomPageLoader';
 import { KeywordStatus } from '@/core/entities';
+import { useKeywordStore } from './all-request/context/KeywordSelectionStore';
 
 export const KeywordResearchForm = ({
   onChangeTab,
@@ -43,11 +43,9 @@ export const KeywordResearchForm = ({
   const [isError, setIsError] = useState('');
   const brands = useBrandStore((st) => st.words);
   const errorLoadingData = useFormStore((st) => st.error);
-  const extraPositiveWords = useExtraPositiveStore((st) => st.words);
   const finalValues = useRegionStore((st) => st.finalValue);
   const getInitialValues = useFormStore((st) => st.getInitialValues);
   const hidrateBrands = useBrandStore((st) => st.hidrateWords);
-  const hidrateExtraPositive = useExtraPositiveStore((st) => st.hidrateWords);
   const hidrateNegative = useNegativeStore((st) => st.hidrateWords);
   const hidrateNegativeCities = useFormStore((st) => st.city);
   const hidratePositive = usePositiveStore((st) => st.hidrateWords);
@@ -59,7 +57,6 @@ export const KeywordResearchForm = ({
   const negativeWords = useNegativeStore((st) => st.words);
   const positiveWords = usePositiveStore((st) => st.words);
   const resetBrands = useBrandStore((st) => st.resetWords);
-  const resetExtraPositive = useExtraPositiveStore((st) => st.resetWords);
   const resetNegative = useNegativeStore((st) => st.resetWords);
   const resetNegativeCities = useRegionStore((st) => st.resetNegativesCities);
   const resetWords = usePositiveStore((st) => st.resetWords);
@@ -71,6 +68,10 @@ export const KeywordResearchForm = ({
     key,
     value,
   }));
+  const resetNegativeList = useFormStore((st) => st.resetNegativeList);
+  const resetPositiveToNewResearch = useFormStore(
+    (st) => st.resetPositiveToNewResearch
+  );
 
   const regionValues = selectedRegions.map((region) =>
     region.value.join(',').trim()
@@ -81,11 +82,12 @@ export const KeywordResearchForm = ({
     reset();
     resetWords();
     resetNegative();
-    resetExtraPositive();
     resetBrands();
     resetNegativeCities();
     resetRegions();
     clearKeywordResearch();
+     resetNegativeList();
+     resetPositiveToNewResearch();
   };
 
   const resetFormAfterEdit = () => {
@@ -93,11 +95,12 @@ export const KeywordResearchForm = ({
     deleteKeywordReserch();
     resetWords();
     resetNegative();
-    resetExtraPositive();
     resetBrands();
     resetNegativeCities();
     resetRegions();
     clearKeywordResearch();
+     resetNegativeList();
+     resetPositiveToNewResearch();
   };
   const {
     control,
@@ -135,7 +138,6 @@ export const KeywordResearchForm = ({
       city: negativeCities,
       positiveKeywords: positiveWords,
       negativeKeywords: negativeWords,
-      extraPositiveKeywords: extraPositiveWords,
       brand: brands,
     };
 
@@ -190,8 +192,7 @@ export const KeywordResearchForm = ({
         hidratePositive(initialValues.positiveKeywords);
       if (Array.isArray(initialValues.negativeKeywords))
         hidrateNegative(initialValues.negativeKeywords);
-      if (Array.isArray(initialValues.extraPositiveKeywords))
-        hidrateExtraPositive(initialValues.extraPositiveKeywords);
+
       if (Array.isArray(initialValues.brand))
         hidrateBrands(initialValues.brand);
       if (Array.isArray(initialValues.city)) hidrateNegativeCities();
@@ -205,8 +206,11 @@ export const KeywordResearchForm = ({
         hidratePositive(initialValues.positiveKeywords);
       if (Array.isArray(initialValues.negativeKeywords))
         hidrateNegative(initialValues.negativeKeywords);
+
       reset(getInitialValues());
       trigger();
+
+     
     }
 
     if (mode === 'create' && keywordResearch) {
@@ -221,7 +225,6 @@ export const KeywordResearchForm = ({
     getInitialValues,
     hidratePositive,
     hidrateNegative,
-    hidrateExtraPositive,
     hidrateBrands,
     hidrateNegativeCities,
   ]);
@@ -256,7 +259,6 @@ export const KeywordResearchForm = ({
         <KeywordResearchDetailsCard control={control} errors={errors} />
         <KeywordPositiveNegativeWords />
 
-        <KeywordExtraPositive />
         <KeywordResearchCityComponent />
 
         <CustomCard title='Search Intent' icon={Focus} variant='banner'>
@@ -295,15 +297,10 @@ export const KeywordResearchForm = ({
                   type='submit'
                   disabled={
                     (mode !== 'create' && isSubmitting) ||
-                    (!isValid &&
-                      (positiveWords.length < 1 ||
-                        extraPositiveWords.length < 1))
+                    (!isValid && positiveWords.length < 1)
                   }
                   variant={
-                    !isValid &&
-                    (positiveWords.length < 1 || extraPositiveWords.length < 1)
-                      ? 'outline'
-                      : 'default'
+                    !isValid && positiveWords.length < 1 ? 'outline' : 'default'
                   }
                 >
                   {isSubmitting && <CustomLoading message='Submittind' />}

@@ -1,7 +1,6 @@
 export * from './CustomRegionSelector';
 export * from './CustomWordsComponent';
 export * from './GenerateWordsWithAiButton';
-export * from './KeywordExtraPositiveComponent';
 export * from './KeywordPositiveNegativeWords';
 export * from './KeywordResearchCityComponent';
 export * from './KeywordResearchDetailsCard';

@@ -7,7 +7,7 @@ interface Props {
 export const LoadingBase = ({ variant = 'xs' }: Props) => {
   const variantValue =
     variant === 'xs'
-      ? 'size-1'
+      ? 'size-0.5'
       : variant === 'sm'
       ? 'size-3'
       : variant === 'md'
