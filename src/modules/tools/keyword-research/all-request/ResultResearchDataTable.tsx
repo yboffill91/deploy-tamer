@@ -12,9 +12,10 @@ import { DataTable } from '@/components/data-table/DataTable';
 import {
   Button,
   ButtonGroup,
+  ButtonGroupSeparator,
+  ButtonGroupText,
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
   CardTitle,
   ResizableHandle,
@@ -31,13 +32,18 @@ import {
   CircleMinusIcon,
   Columns2,
   Eye,
+  FileWarning,
+  Goal,
   ListCheck,
+  ListFilter,
   ListMinus,
   ListPlus,
   PanelLeft,
   PanelRight,
+  Plus,
   PlusCircle,
   Save,
+  SaveAll,
   SendToBack,
 } from 'lucide-react';
 import { KeywordResearchApiRepository } from '@/infrastructure/repositories';
@@ -49,8 +55,12 @@ import { useKeywordStore } from './context/KeywordSelectionStore';
 import { CustomTabTrigger } from '../../components';
 import { CreateKeywordResearchDTO } from '@/core/dto';
 import { useFormStore } from '../context/FormStore';
-import { cn } from '@/lib/utils';
 import { ImperativePanelHandle } from 'react-resizable-panels';
+import { Separator } from 'radix-ui';
+import { LoadingBase } from '@/components/LoadingBase';
+import { ControlledDialog } from '@/components/ControlledDialog';
+import { CustomWordsComponent } from '../components';
+import { useNegativeListStore } from '../context/WordsStoreFactory';
 
 interface Props {
   data: KeywordResultEntity[];
@@ -59,11 +69,13 @@ export const ResultResearchDataTable = ({ data }: Props) => {
   const [image, setImage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState('');
+  const [openNegativeList, setOpenNegativeList] = useState(false);
 
   const [isLoadingSave, setIsLoadingSave] = useState(false);
 
   const leftPanelRef = useRef<ImperativePanelHandle>(null);
   const rightPanelRef = useRef<ImperativePanelHandle>(null);
+  const [keyword, setKeyword] = useState('');
 
   const setFormMode = useFormStore((st) => st.setMode);
   const setFormSelectedResearch = useFormStore((st) => st.getKeyWordResearch);
@@ -85,6 +97,11 @@ export const ResultResearchDataTable = ({ data }: Props) => {
   const hidratePositiveToNewKeyword = useKeywordStore(
     (st) => st.hidratePositiveToNewKeyword
   );
+  const negativeListWords = useNegativeListStore((st) => st.words);
+  const addNegativeListWords = useNegativeListStore((st) => st.addWord);
+  const deleteNegativeListWords = useNegativeListStore((st) => st.deleteWord);
+
+  const router = useRouter();
 
   const formatNumberAbbreviated = (num: number) => {
     const number = Number(num);
@@ -116,8 +133,6 @@ export const ResultResearchDataTable = ({ data }: Props) => {
     return number.toLocaleString('es-ES', { maximumFractionDigits: 0 });
   };
 
-  // handlers
-
   const onShow = async (item: KeywordResultEntity) => {
     const REPO = new KeywordResearchApiRepository();
     try {
@@ -133,8 +148,6 @@ export const ResultResearchDataTable = ({ data }: Props) => {
       setIsLoading(false);
     }
   };
-
-  const router = useRouter();
 
   const onSave = async (selected: KeywordResearchEntity) => {
     try {
@@ -182,8 +195,6 @@ export const ResultResearchDataTable = ({ data }: Props) => {
     router.push('/tools/seo/keyword-research');
   };
 
-  // TODO: Hidratacion de los datos precargados
-
   useEffect(() => {
     const hidrateDiscardsFromData = selectedResearch.generatedNegativeKeywords;
     const hidratePositivesNewResearch =
@@ -197,15 +208,33 @@ export const ResultResearchDataTable = ({ data }: Props) => {
     }
     const hidrate = () => {};
     hidrate();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const discardsAndPositivesToNKR = new Set([
+  const exactExclusions = new Set([
     ...unSelected.map((el) => el.keyword),
     ...positivesToNewKeyword.map((el) => el.keyword),
   ]);
-  const dataToshow = data.filter(
-    (el) => !discardsAndPositivesToNKR.has(el.keyword)
+
+  const normalizedNegativeWords = negativeListWords.map((word) =>
+    word.toLowerCase().trim()
   );
+
+  const dataToShow = data.filter((el) => {
+    const keyword = el.keyword.toLowerCase();
+
+    if (exactExclusions.has(el.keyword)) {
+      return false;
+    }
+
+    const hasNegativeMatch = normalizedNegativeWords.some((neg) =>
+      keyword.includes(neg)
+    );
+
+    if (hasNegativeMatch) {
+      return false;
+    }
+
+    return true;
+  });
 
   useEffect(() => {
     if (isError) {
@@ -219,8 +248,6 @@ export const ResultResearchDataTable = ({ data }: Props) => {
       router.push('/tools/seo/keyword-research');
     }
   }, [isError, data, router]);
-
-  // --> ColumnDef
 
   const columns: ColumnDef<KeywordResultEntity>[] = [
     {
@@ -274,7 +301,10 @@ export const ResultResearchDataTable = ({ data }: Props) => {
     },
     {
       id: 'actions',
-      header: 'Actions',
+      header: () => (
+        <div className='flex items-center w-full justify-center'>Actions</div>
+      ),
+
       cell: ({ row }) => {
         const item = row.original;
         return (
@@ -412,11 +442,11 @@ export const ResultResearchDataTable = ({ data }: Props) => {
   return (
     <div className='relative'>
       <Tabs defaultValue='results'>
-        <TabsList className='w-full container mx-auto max-w-7xl flex shrink-0 items-center justify-start lg:justify-center   p-0 mb-2 rounded-none overflow-x-auto snap-none md:snap-x md:snap-mandatory snap-always bg-transparent'>
+        <TabsList className='w-full container mx-auto max-w-7xl flex shrink-0 items-center justify-start lg:justify-center   p-0 mb-8 rounded-none overflow-x-auto snap-none md:snap-x md:snap-mandatory snap-always bg-transparent'>
           <CustomTabTrigger
             tab_value='results'
             icon={ListCheck}
-            tab_name={`Result Research (${dataToshow.length})`}
+            tab_name={`Result Research (${dataToShow.length})`}
           />
           {unSelected.length > 0 && (
             <CustomTabTrigger
@@ -435,18 +465,48 @@ export const ResultResearchDataTable = ({ data }: Props) => {
         </TabsList>
         <TabsContent value='results'>
           <div className='flex flex-col gap-2'>
-            <div className='w-full flex justify-center'>
+            <div className='w-full flex justify-between bg-muted/20 rounded'>
+              <ButtonGroup>
+                <ButtonGroupText>Save & Run</ButtonGroupText>
+                <Button
+                  size='icon'
+                  variant='outline'
+                  onClick={() => onSave(selectedResearch)}
+                  aria-label='Save'
+                >
+                  {isLoadingSave ? (
+                    <>
+                      <LoadingBase />
+                    </>
+                  ) : (
+                    <>
+                      <SaveAll />
+                    </>
+                  )}
+                </Button>
+                <ButtonGroupSeparator />
+                <Button
+                  size='icon'
+                  variant='outline'
+                  disabled={positivesToNewKeyword.length === 0}
+                  aria-label='Run New Keyword'
+                  onClick={() => handleEdit(selectedResearch)}
+                >
+                  <Goal />
+                </Button>
+              </ButtonGroup>
               <ButtonGroup>
                 <Button
                   variant={'outline'}
                   size='icon'
                   onClick={() => {
-                    leftPanelRef.current.resize(25);
-                    rightPanelRef.current.resize(75);
+                    leftPanelRef.current.collapse();
+                    rightPanelRef.current.resize(100);
                   }}
                 >
                   <PanelLeft />
                 </Button>
+                <ButtonGroupSeparator />
                 <Button
                   variant='outline'
                   size='icon'
@@ -457,15 +517,28 @@ export const ResultResearchDataTable = ({ data }: Props) => {
                 >
                   <Columns2 />
                 </Button>
+                <ButtonGroupSeparator />
+
                 <Button
                   variant='outline'
                   size='icon'
                   onClick={() => {
-                    leftPanelRef.current.resize(75);
-                    rightPanelRef.current.resize(25);
+                    leftPanelRef.current.resize(100);
+                    rightPanelRef.current.collapse();
                   }}
                 >
                   <PanelRight />
+                </Button>
+              </ButtonGroup>
+
+              <ButtonGroup>
+                <ButtonGroupText>Negative List</ButtonGroupText>
+
+                <Button
+                  variant='outline'
+                  onClick={() => setOpenNegativeList(!openNegativeList)}
+                >
+                  <ListFilter />
                 </Button>
               </ButtonGroup>
             </div>
@@ -476,12 +549,11 @@ export const ResultResearchDataTable = ({ data }: Props) => {
               <ResizablePanel
                 ref={leftPanelRef}
                 defaultSize={50}
-                minSize={10}
                 className='p-2'
               >
                 <DataTable
                   columns={columns}
-                  data={dataToshow}
+                  data={dataToShow}
                   pageSize={100}
                   persistKey='result-data'
                 />
@@ -492,7 +564,6 @@ export const ResultResearchDataTable = ({ data }: Props) => {
               <ResizablePanel
                 ref={rightPanelRef}
                 defaultSize={50}
-                minSize={10}
                 className='p-2'
               >
                 <Card>
@@ -543,50 +614,27 @@ export const ResultResearchDataTable = ({ data }: Props) => {
           />
         </TabsContent>
         <TabsContent value='positivesToNewKeywordResearch'>
-          <Card>
-            <CardHeader className='flex items-center justify-end'>
-              {unSelected.length > 0 && (
-                <Button
-                  variant='outline'
-                  onClick={() => onSave(selectedResearch)}
-                >
-                  {isLoadingSave ? (
-                    <>
-                      <CustomLoading message='Saving Keyword' />
-                    </>
-                  ) : (
-                    <>
-                      Save Result <Save />
-                    </>
-                  )}
-                </Button>
-              )}
-              {positivesToNewKeyword.length > 0 && (
-                <Button
-                  variant='default'
-                  onClick={() => handleEdit(selectedResearch)}
-                >
-                  {isLoadingSave ? (
-                    <CustomLoading message='Saving Change on Report' />
-                  ) : (
-                    <>
-                      {' '}
-                      Run New Research <SendToBack />
-                    </>
-                  )}
-                </Button>
-              )}
-            </CardHeader>
-            <CardContent>
-              <DataTable
-                columns={columnsPositiveToNewKeyword}
-                data={positivesToNewKeyword}
-                pageSize={100}
-              />
-            </CardContent>
-          </Card>
+          <DataTable
+            columns={columnsPositiveToNewKeyword}
+            data={positivesToNewKeyword}
+            pageSize={100}
+          />
         </TabsContent>
       </Tabs>
+      <ControlledDialog
+        open={openNegativeList}
+        onOpenChange={setOpenNegativeList}
+        title='Negative List'
+      >
+        <CustomWordsComponent
+          list={negativeListWords}
+          emptyMessageWorldsContainer='No negative words filter added'
+          inputHandleOnClick={() => addNegativeListWords(keyword)}
+          inputOnChangeValue={(e) => setKeyword(e.target.value)}
+          inputValue={keyword}
+          onDeleteWorldsContainer={deleteNegativeListWords}
+        />
+      </ControlledDialog>
     </div>
   );
 };
