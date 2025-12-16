@@ -82,22 +82,24 @@ export const KeywordResearchDetailsCard = ({ control, errors }: Props) => {
             control={control}
             name='requestLanguage'
             render={({ field }) => (
-              <div>
-                <Select {...field} onValueChange={field.onChange}>
-                  <SelectTrigger
-                    value={field.value}
-                    className='cursor-pointer w-full bg-secondary! border-none shadow-sm '
-                    type='button'
-                  >
-                    <Languages className='' />
-                    <SelectValue placeholder='Language' />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value='en'>English</SelectItem>
-                    <SelectItem value='es'>Spanish</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              <Select
+                key={field.value ?? 'empty'}
+                value={field.value}
+                onValueChange={field.onChange}
+              >
+                <SelectTrigger
+                  className='cursor-pointer w-full bg-secondary! border-none shadow-sm'
+                  type='button'
+                >
+                  <Languages />
+                  <SelectValue placeholder='Language' />
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectItem value='en'>English</SelectItem>
+                  <SelectItem value='es'>Spanish</SelectItem>
+                </SelectContent>
+              </Select>
             )}
           />
 

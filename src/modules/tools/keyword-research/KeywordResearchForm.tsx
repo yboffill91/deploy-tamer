@@ -162,6 +162,8 @@ export const KeywordResearchForm = () => {
       );
     }
   };
+
+  console.log(initialValues);
   useEffect(() => {
     if (mode === 'edit' && keywordResearch) {
       if (Array.isArray(initialValues.positiveKeywords))

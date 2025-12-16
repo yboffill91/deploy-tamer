@@ -32,7 +32,6 @@ import {
   CircleMinusIcon,
   Columns2,
   Eye,
-  FileWarning,
   Goal,
   ListCheck,
   ListFilter,
@@ -40,11 +39,8 @@ import {
   ListPlus,
   PanelLeft,
   PanelRight,
-  Plus,
   PlusCircle,
-  Save,
   SaveAll,
-  SendToBack,
 } from 'lucide-react';
 import { KeywordResearchApiRepository } from '@/infrastructure/repositories';
 import { useEffect, useRef, useState } from 'react';
@@ -56,7 +52,6 @@ import { CustomTabTrigger } from '../../components';
 import { CreateKeywordResearchDTO } from '@/core/dto';
 import { useFormStore } from '../context/FormStore';
 import { ImperativePanelHandle } from 'react-resizable-panels';
-import { Separator } from 'radix-ui';
 import { LoadingBase } from '@/components/LoadingBase';
 import { ControlledDialog } from '@/components/ControlledDialog';
 import { CustomWordsComponent } from '../components';
@@ -623,13 +618,19 @@ export const ResultResearchDataTable = ({ data }: Props) => {
       </Tabs>
       <ControlledDialog
         open={openNegativeList}
-        onOpenChange={setOpenNegativeList}
+        onOpenChange={() => {
+          setOpenNegativeList(false);
+          setKeyword('');
+        }}
         title='Negative List'
       >
         <CustomWordsComponent
           list={negativeListWords}
           emptyMessageWorldsContainer='No negative words filter added'
-          inputHandleOnClick={() => addNegativeListWords(keyword)}
+          inputHandleOnClick={() => {
+            addNegativeListWords(keyword);
+            setKeyword('');
+          }}
           inputOnChangeValue={(e) => setKeyword(e.target.value)}
           inputValue={keyword}
           onDeleteWorldsContainer={deleteNegativeListWords}

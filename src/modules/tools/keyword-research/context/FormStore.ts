@@ -79,7 +79,7 @@ export const useFormStore = create<FormStore>((set, get) => ({
       negativeKeywords: keywordResearch.negativeKeywords || [],
       positiveKeywords: keywordResearch.positiveKeywords || [],
       region: keywordResearch.region,
-      requestLanguage: keywordResearch.requestLanguage,
+      requestLanguage: keywordResearch.requestLanguage ?? 'en',
       searchVolume: String(keywordResearch.searchVolume),
       title: keywordResearch.title,
       type: keywordResearch.type,
