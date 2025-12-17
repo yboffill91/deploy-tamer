@@ -24,6 +24,7 @@ import {
   Play,
   PlayCircle,
   Trash2,
+  X,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { ActionsButtonSet } from '@/components/data-table/ActionsButtons';
@@ -290,7 +291,10 @@ export const KeywordsResearchDataTable = ({
             <Check />
           </Badge>
         ) : (
-          <Badge className='bg-destructive/10 text-destructive'> - </Badge>
+          <Badge className='bg-destructive/10 text-destructive'>
+            {' '}
+            <X />{' '}
+          </Badge>
         );
       },
     },
@@ -350,25 +354,30 @@ export const KeywordsResearchDataTable = ({
                       label: 'Finish Keyword Research',
                       onClick: () => onFinish(String(item.id)),
                       show: (item) =>
-                        item.status === KeywordStatus.READY_TO_CHECK,
+                        item.status === KeywordStatus.READY_TO_CHECK ||
+                        item.status === KeywordStatus.ORGANIC_FINISHED,
                     },
                     {
                       icon: Eye,
                       label: 'Review the result',
                       onClick: onShow,
                       show: (item) =>
-                        item.status === KeywordStatus.READY_TO_CHECK ||
-                        item.status === KeywordStatus.FINISHED,
+                        (item.status === KeywordStatus.READY_TO_CHECK ||
+                          item.status === KeywordStatus.FINISHED ||
+                          item.status === KeywordStatus.ORGANIC_FINISHED) &&
+                        item.result.length > 0,
                     },
                     {
                       icon: FileText,
                       label: 'Download results report (Excel)',
                       onClick: onExport,
-                      show: (item) => item.status === KeywordStatus.FINISHED,
+                      show: (item) =>
+                        item.status === KeywordStatus.FINISHED ||
+                        item.status === KeywordStatus.ORGANIC_FINISHED,
                     },
                     {
                       icon: PlayCircle,
-                      label: 'Download the Organic URL report.',
+                      label: 'Generate the Organic URL report.',
                       onClick: onRunURL,
                       variant: 'ghost',
                       show: (item) => item.status === KeywordStatus.FINISHED,

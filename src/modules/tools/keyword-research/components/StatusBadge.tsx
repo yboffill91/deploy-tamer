@@ -13,13 +13,18 @@ export const StatusBadge = ({ status }: { status: string }) => {
       ? 'bg-orange-500/10 text-orange-500 dark:text-orange-600'
       : status === KeywordStatus.RE_KEYWORING
       ? 'bg-sky-500/10 text-sky-500 dark:text-sky-600'
+      : status === KeywordStatus.ORGANIC_LAUNCH
+      ? 'bg-purple-500/10 text-purple-500 dark:text-purple-600'
+      : status === KeywordStatus.ORGANIC_FINISHED
+      ? 'bg-lime-500/10 text-lime-500 dark:text-lime-600'
       : 'bg-green-500/10 text-green-500 dark:text-green-600';
 
   const StatusIcon =
     status === KeywordStatus.DRAFT ? (
       <Circle />
     ) : status === KeywordStatus.KEYWORING ||
-      status === KeywordStatus.RE_KEYWORING ? (
+      status === KeywordStatus.RE_KEYWORING ||
+      status === KeywordStatus.ORGANIC_LAUNCH ? (
       <Loader className='animate-spin' />
     ) : status === KeywordStatus.READY_TO_CHECK ? (
       <CircleDotDashed />
