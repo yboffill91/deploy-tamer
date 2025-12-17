@@ -14,6 +14,9 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
+  const user = request.cookies.get('TS_USER');
+  console.log(user);
+
   const session = request.cookies.get("TS_SESSION");
 
   if (session?.value) {

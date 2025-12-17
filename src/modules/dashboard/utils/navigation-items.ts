@@ -89,7 +89,6 @@ export const AdminSidebarItems: NavGroup[] = [
             title: 'Emails',
             url: '/tools/mailer/emails',
             icon: Mail,
-            comingSoon: true,
           },
           {
             title: 'Broadcast',
@@ -107,7 +106,6 @@ export const AdminSidebarItems: NavGroup[] = [
             title: 'Domains',
             url: '/tools/mailer/domains',
             icon: Globe,
-            comingSoon: true,
           },
         ],
       },

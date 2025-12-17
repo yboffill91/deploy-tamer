@@ -1,4 +1,4 @@
-
+import { CompanyDTO } from './CompanyDTO';
 
 export class UsersDTO {
   readonly id?: number;
@@ -10,7 +10,7 @@ export class UsersDTO {
   readonly createdAt?: Date;
   readonly updatedAt?: Date;
   readonly deletedAt?: Date | null;
-  readonly positions?: UsersPositionsDTO
+  readonly positions?: UsersPositionsDTO;
 }
 
 export class UsersPositionsDTO {
@@ -27,4 +27,20 @@ export class requestUsersDTO {
   readonly email?: string;
   readonly uuid?: string;
   readonly positionId?: number;
+}
+
+export class ResponseUsersDTO {
+  readonly authCode?: string;
+  readonly companies?: CompanyDTO[];
+  readonly createdAt?: Date;
+  readonly updatedAt?: Date;
+  readonly deletedAt?: Date | null;
+  readonly email?: string;
+  readonly generatedTime?: Date | null;
+  readonly id?: number;
+  readonly infoId?: number | null;
+  readonly positionId?: number | null;
+  readonly teamId?: number | null;
+  readonly token?: string | null;
+  readonly uuid?: string;
 }

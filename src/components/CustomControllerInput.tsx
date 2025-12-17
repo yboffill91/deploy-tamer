@@ -7,7 +7,6 @@ import { Controller } from "react-hook-form";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import {
-  AlertCircle,
   Asterisk,
   Eye,
   EyeOff,
@@ -55,16 +54,16 @@ export const CustomControllerInput = <TFieldValues extends FieldValues>({
   return (
     <div
       className={cn(
-        " flex items-start gap-1 flex-col w-full ",
-        label ? "min-h-18" : "min-h-14"
+        ' flex items-start gap-1 flex-col w-full ',
+        label ? 'min-h-18' : 'min-h-14'
       )}
     >
       {label && (
         <Label
           htmlFor={name}
           className={cn(
-            "font-semibold text-foreground",
-            error && "text-destructive"
+            'font-semibold text-muted-foreground',
+            error && 'text-destructive'
           )}
         >
           {label}:
@@ -79,9 +78,9 @@ export const CustomControllerInput = <TFieldValues extends FieldValues>({
             {isPasswordField ? (
               <InputGroup
                 className={cn(
-                  "bg-primary/10",
+                  'bg-primary/10',
                   error &&
-                    "bg-destructive/5 border-destructive/20 placeholder:text-destructive/40 text-destructive"
+                    'bg-destructive/5 border-destructive/20 placeholder:text-destructive/40 text-destructive'
                 )}
               >
                 <InputGroupInput
@@ -97,23 +96,23 @@ export const CustomControllerInput = <TFieldValues extends FieldValues>({
                   disabled={disabled}
                 />
                 <InputGroupAddon>
-                  <Asterisk className={cn(error && "text-destructive/50")} />
+                  <Asterisk className={cn(error && 'text-destructive/50')} />
                 </InputGroupAddon>
 
-                <InputGroupAddon align="inline-end">
+                <InputGroupAddon align='inline-end'>
                   <InputGroupButton
-                    size="icon-xs"
+                    size='icon-xs'
                     onClick={() => setShowPassword(!showPassword)}
                     aria-label={
-                      showPassword ? "Show Password" : "Hide Password"
+                      showPassword ? 'Show Password' : 'Hide Password'
                     }
-                    className={cn(error && "text-destructive/50")}
-                    type="button"
+                    className={cn(error && 'text-destructive/50')}
+                    type='button'
                   >
                     {showPassword ? (
-                      <EyeOff className="w-4 h-4" />
+                      <EyeOff className='w-4 h-4' />
                     ) : (
-                      <Eye className="w-4 h-4" />
+                      <Eye className='w-4 h-4' />
                     )}
                   </InputGroupButton>
                 </InputGroupAddon>
@@ -121,9 +120,9 @@ export const CustomControllerInput = <TFieldValues extends FieldValues>({
             ) : addon ? (
               <InputGroup
                 className={cn(
-                  "bg-primary/10",
+                  'bg-primary/10',
                   error &&
-                    "bg-destructive/5 border-destructive/20 placeholder:text-destructive/40 text-destructive"
+                    'bg-destructive/5 border-destructive/20 placeholder:text-destructive/40 text-destructive'
                 )}
               >
                 <InputGroupInput
@@ -145,7 +144,7 @@ export const CustomControllerInput = <TFieldValues extends FieldValues>({
                       const AddonIcon = addon;
                       return (
                         <AddonIcon
-                          className={cn(error && "text-destructive/50")}
+                          className={cn(error && 'text-destructive/50')}
                         />
                       );
                     })()}
@@ -164,9 +163,9 @@ export const CustomControllerInput = <TFieldValues extends FieldValues>({
                 ref={field.ref}
                 disabled={disabled}
                 className={cn(
-                  "bg-primary/10 rounded",
+                  'bg-primary/10 rounded',
                   error &&
-                    "bg-destructive/5 border-destructive/20 placeholder:text-destructive/40 text-destructive"
+                    'bg-destructive/5 border-destructive/20 placeholder:text-destructive/40 text-destructive'
                 )}
               />
             )}
@@ -174,10 +173,10 @@ export const CustomControllerInput = <TFieldValues extends FieldValues>({
         )}
       />
 
-      <div className="w-full ">
+      <div className='w-full '>
         {error && (
-          <div className="flex text-[0.6rem] item-center gap-1 text-destructive line-clamp-2 font-semibold">
-            <Asterisk className="w-2 h-3" />
+          <div className='flex text-[0.6rem] item-center gap-1 text-destructive line-clamp-2 font-semibold'>
+            <Asterisk className='w-2 h-3' />
             {error.message}
           </div>
         )}

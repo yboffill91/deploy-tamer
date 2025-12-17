@@ -211,9 +211,9 @@ export const ResultResearchDataTable = ({ data }: Props) => {
     const hidrate = () => {};
     hidrate();
 
-    resetDescardsWords(null);
+  
     resetNegativeList();
-    resetPositiveoNewKeyword();
+  
   }, []);
   const exactExclusions = new Set([
     ...unSelected.map((el) => el.keyword),

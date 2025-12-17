@@ -1,3 +1,4 @@
+import { ResponseUsersDTO } from '@/core';
 import { getTokenApi, sessionApi } from '@/lib/apis';
 import { fetchHelper } from '@/lib/fetch-helper';
 
@@ -72,5 +73,21 @@ export class SessionRepository implements ISessionRepository {
   async autorization(): Promise<string> {
     const token = await this.getToken();
     return token;
+  }
+
+  async getUser(): Promise<ResponseUsersDTO | null> {
+    const response = await fetchHelper<{
+      success: boolean;
+      user: ResponseUsersDTO;
+    }>('/api/session/getUserCookie', {
+      method: 'GET',
+      credentials: 'include',
+    });
+
+    if (!response || !response.success) {
+      return null;
+    }
+
+    return response.user;
   }
 }

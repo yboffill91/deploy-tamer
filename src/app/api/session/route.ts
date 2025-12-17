@@ -11,7 +11,6 @@ export async function POST(req: Request) {
       );
     }
 
-    const expiresIn = 60 * 60 * 24 * 5;
 
     const response = NextResponse.json({
       success: true,
@@ -21,10 +20,10 @@ export async function POST(req: Request) {
     response.cookies.set({
       name: cookie,
       value: idToken,
-      maxAge: expiresIn,
       httpOnly: true,
-      path: "/",
-      secure: process.env.NODE_ENV === "production",
+      path: '/',
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
     });
 
     return response;

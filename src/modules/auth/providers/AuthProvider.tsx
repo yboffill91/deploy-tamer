@@ -66,6 +66,7 @@ const ManageAuthAndToken = async (user: UsersEntity) => {
         JSON.stringify(usuario)!,
         'TS_USER'
       );
+
       showToast({
         type: 'success',
         message: 'Success',

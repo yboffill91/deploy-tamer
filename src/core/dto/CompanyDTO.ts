@@ -7,4 +7,5 @@ export class CompanyDTO {
   readonly representative?: string;
   readonly notes?: string;
   readonly ownerId?: string;
+  readonly id?: number;
 }
