@@ -32,6 +32,7 @@ import { CustomLoading } from '@/components/CustomLoading';
 import { useFormStore } from './context/FormStore';
 import { CustomPageLoader } from '@/components/CustomPageLoader';
 import { KeywordStatus } from '@/core/entities';
+import { CreateKeywordResearchDTO } from '@/core/dto';
 
 export const KeywordResearchForm = ({
   onChangeTab,
@@ -131,7 +132,19 @@ export const KeywordResearchForm = ({
       });
       return;
     }
-    const payload = {
+    const UpdatePayload: CreateKeywordResearchDTO = {
+      ...data,
+      region: regionValues,
+      city: negativeCities,
+      positiveKeywords: positiveWords,
+      negativeKeywords: negativeWords,
+      brand: brands,
+      generatedNegativeKeywords: null,
+      generatedPositiveKeywords: null,
+      searchVolume: Number(data.searchVolume),
+    };
+
+    const createPayload = {
       ...data,
       region: regionValues,
       city: negativeCities,
@@ -155,7 +168,7 @@ export const KeywordResearchForm = ({
         mode === 'edit' &&
         keywordResearch.status === KeywordStatus.READY_TO_CHECK
       ) {
-        await REPO.update(String(keywordResearch.id), payload);
+        await REPO.update(String(keywordResearch.id), UpdatePayload);
         await REPO.runKeyword(String(keywordResearch.id));
         showToast({
           message: 'Performanced Keyword Research',
@@ -165,7 +178,7 @@ export const KeywordResearchForm = ({
         onChangeTab();
       }
       if (mode === 'create' || mode === 'new') {
-        await REPO.create(payload);
+        await REPO.create(createPayload);
         showToast({
           message: 'Created New Keyword Research',
           type: 'success',
