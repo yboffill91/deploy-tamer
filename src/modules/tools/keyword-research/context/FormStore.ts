@@ -11,8 +11,7 @@ const EMPTY_FORM: KeywordResearchFormInput = {
   brand: [],
   city: [],
   companyId: 0,
-  generatedNegativeKeywords: [],
-  generatedPositiveKeywords: [],
+
   negativeKeywords: [],
   positiveKeywords: [],
   region: [],
@@ -97,6 +96,8 @@ export const useFormStore = create<FormStore>((set, get) => ({
         ...keywordResearch,
         searchVolume: String(keywordResearch.searchVolume ?? '0'),
         requestLanguage: keywordResearch.requestLanguage ?? 'en',
+        allCitys: false,
+        companyId: keywordResearch.companyId ?? 0,
       } as KeywordResearchFormInput;
     }
 

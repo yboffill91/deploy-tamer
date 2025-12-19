@@ -25,18 +25,6 @@ export const KeywordResearchSchema = z.object({
       message: 'Cities has duplicates',
     }),
 
-  generatedPositiveKeywords: z
-    .array(z.string())
-    .refine((list) => new Set(list).size === list.length, {
-      message: 'Generated positive keywords has duplicates',
-    }),
-
-  generatedNegativeKeywords: z
-    .array(z.string())
-    .refine((list) => new Set(list).size === list.length, {
-      message: 'Generated negative keywords has duplicates',
-    }),
-
   allCitys: z.boolean(),
 
   region: z.array(z.string()).optional(),

@@ -1,41 +1,50 @@
 import { Badge } from '@/components/ui';
 import { KeywordStatus } from '@/core/entities';
 import { cn } from '@/lib/utils';
-import { CheckCircle, Circle, CircleDotDashed, Loader } from 'lucide-react';
+import {
+  CheckCircle,
+  Circle,
+  CircleDashed,
+  CircleDotDashed,
+  Loader,
+} from 'lucide-react';
 
 export const StatusBadge = ({ status }: { status: string }) => {
   const getColorStatus =
     status === KeywordStatus.DRAFT
-      ? 'bg-slate-500/10 text-slate-500 dark:text-slate-600'
+      ? 'text-gray-500 dark:text-gray-400'
       : status === KeywordStatus.KEYWORING
-      ? 'bg-blue-500/10 text-blue-500 dark:text-blue-600'
+      ? 'text-blue-500 dark:text-blue-600'
       : status === KeywordStatus.READY_TO_CHECK
-      ? 'bg-orange-500/10 text-orange-500 dark:text-orange-600'
+      ? 'text-orange-500 dark:text-orange-600'
       : status === KeywordStatus.RE_KEYWORING
-      ? 'bg-sky-500/10 text-sky-500 dark:text-sky-600'
+      ? 'text-sky-500 dark:text-sky-600'
       : status === KeywordStatus.ORGANIC_LAUNCH
-      ? 'bg-purple-500/10 text-purple-500 dark:text-purple-600'
+      ? 'text-purple-500 dark:text-purple-600'
       : status === KeywordStatus.ORGANIC_FINISHED
-      ? 'bg-lime-500/10 text-lime-500 dark:text-lime-600'
-      : 'bg-green-500/10 text-green-500 dark:text-green-600';
+      ? 'text-lime-500 dark:text-lime-600'
+      : 'text-green-500 dark:text-green-600';
 
   const StatusIcon =
     status === KeywordStatus.DRAFT ? (
-      <Circle />
+      <CircleDashed className={getColorStatus} />
     ) : status === KeywordStatus.KEYWORING ||
       status === KeywordStatus.RE_KEYWORING ||
       status === KeywordStatus.ORGANIC_LAUNCH ? (
       <Loader className='animate-spin' />
     ) : status === KeywordStatus.READY_TO_CHECK ? (
-      <CircleDotDashed />
+      <CircleDotDashed className={getColorStatus} />
     ) : (
-      <CheckCircle />
+      <CheckCircle className={getColorStatus} />
     );
 
   return (
-    <Badge className={cn('text-xs font-semibold capitalize', getColorStatus)}>
+    <Badge
+      className={cn('text-xs capitalize text-muted-foreground')}
+      variant='outline'
+    >
       {' '}
-      {status.toLowerCase().replace(/_/g, ' ')} {StatusIcon}{' '}
+      {StatusIcon} {status.toLowerCase().replace(/_/g, ' ')}{' '}
     </Badge>
   );
 };

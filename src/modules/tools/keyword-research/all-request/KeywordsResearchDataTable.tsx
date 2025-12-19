@@ -20,6 +20,7 @@ import {
   Goal,
   Link,
   List,
+  Minus,
   Pencil,
   Play,
   PlayCircle,
@@ -71,7 +72,6 @@ export const KeywordsResearchDataTable = ({
   const [showDialog, setShowDialog] = useState(false);
   const [componentError, setComponentError] = useState('');
   const [loadingDownload, setIsLoadingDownload] = useState(false);
-  const [laodingDownloadURL, setIsLoadingDownloadURL] = useState(false);
   const [buttonsBussy, setButtonBussy] = useState<number>();
   const [fieldValue, setFiedValue] = useState('');
 
@@ -106,7 +106,6 @@ export const KeywordsResearchDataTable = ({
   const onRunURL = async (item: KeywordResearchEntity) => {
     try {
       setButtonBussy(item.id);
-      setIsLoadingDownloadURL(true);
       const REPO = new KeywordResearchApiRepository();
       await REPO.executeFindUrl(String(item.id));
     } catch (error) {
@@ -116,7 +115,6 @@ export const KeywordsResearchDataTable = ({
           : 'Unexpected Error Generating Report'
       );
     } finally {
-      setIsLoadingDownloadURL(false);
       setButtonBussy(0);
     }
   };
@@ -124,7 +122,6 @@ export const KeywordsResearchDataTable = ({
   const onExportURL = async (item: KeywordResearchEntity) => {
     try {
       setButtonBussy(item.id);
-      setIsLoadingDownloadURL(true);
       const REPO = new KeywordResearchApiRepository();
       await REPO.exportExcelUrl(String(item.id));
     } catch (error) {
@@ -134,7 +131,6 @@ export const KeywordsResearchDataTable = ({
           : 'Unexpected Error Downloading Report'
       );
     } finally {
-      setIsLoadingDownloadURL(false);
       setButtonBussy(0);
     }
   };
@@ -262,42 +258,14 @@ export const KeywordsResearchDataTable = ({
             variant='destructive'
             className='bg-transparent! text-muted-foreground'
           >
-            No Negative Keywords
+            <Minus className='text-destructive' />
           </Badge>
         ) : (
           <RotatingBadge items={arr} />
         );
       },
     },
-    {
-      accessorKey: 'region',
-      header: 'Regions',
-      cell: ({ row }) => {
-        const values: KeywordResearchEntity['region'] = row.getValue('region');
-        return Array.isArray(values) && values.length > 1 ? (
-          <RotatingBadge items={values} />
-        ) : (
-          <span>{values}</span>
-        );
-      },
-    },
-    {
-      accessorKey: 'result',
-      header: 'Result',
-      cell: ({ row }) => {
-        const value: KeywordResearchEntity['result'] = row.getValue('result');
-        return value && value.length > 0 ? (
-          <Badge className='bg-green-500/10 dark:text-green-500 text-green-700'>
-            <Check />
-          </Badge>
-        ) : (
-          <Badge className='bg-destructive/10 text-destructive'>
-            {' '}
-            <X />{' '}
-          </Badge>
-        );
-      },
-    },
+   
 
     {
       accessorKey: 'status',
@@ -308,23 +276,7 @@ export const KeywordsResearchDataTable = ({
         return <StatusBadge status={value} />;
       },
     },
-    {
-      accessorKey: 'type',
-      header: 'Research Type',
-      cell: ({ row }) => {
-        const value: KeywordResearchEntity['type'] = row.getValue('type');
-        return <TypeBadge value={value} />;
-      },
-    },
-    {
-      accessorKey: 'searchVolume',
-      header: 'Volume of Search',
-      cell: ({ row }) => {
-        const value: KeywordResearchEntity['searchVolume'] =
-          row.getValue('searchVolume');
-        return value === 0 ? '-' : value;
-      },
-    },
+  
     {
       id: 'actions',
       header: () => (
@@ -362,10 +314,9 @@ export const KeywordsResearchDataTable = ({
                       label: 'Review the result',
                       onClick: onShow,
                       show: (item) =>
-                        (item.status === KeywordStatus.READY_TO_CHECK ||
-                          item.status === KeywordStatus.FINISHED ||
-                          item.status === KeywordStatus.ORGANIC_FINISHED) &&
-                        item.result.length > 0,
+                        item.status === KeywordStatus.READY_TO_CHECK ||
+                        item.status === KeywordStatus.FINISHED ||
+                        item.status === KeywordStatus.ORGANIC_FINISHED,
                     },
                     {
                       icon: FileText,

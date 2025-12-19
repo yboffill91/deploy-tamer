@@ -1,0 +1,48 @@
+ // {
+    //   accessorKey: 'region',
+    //   header: 'Regions',
+    //   cell: ({ row }) => {
+    //     const values: KeywordResearchEntity['region'] = row.getValue('region');
+    //     return Array.isArray(values) && values.length > 1 ? (
+    //       <RotatingBadge items={values} />
+    //     ) : (
+    //       <span>{values}</span>
+    //     );
+    //   },
+    // },
+    // {
+    //   accessorKey: 'result',
+    //   header: 'Result',
+    //   cell: ({ row }) => {
+    //     const value: KeywordResearchEntity['result'] = row.getValue('result');
+    //     return value && value.length > 0 ? (
+    //       <Badge className='bg-green-500/10 dark:text-green-500 text-green-700'>
+    //         <Check />
+    //       </Badge>
+    //     ) : (
+    //       <Badge className='bg-destructive/10 text-destructive'>
+    //         {' '}
+    //         <X />{' '}
+    //       </Badge>
+    //     );
+    //   },
+    // },
+
+
+      // {
+    //   accessorKey: 'type',
+    //   header: 'Research Type',
+    //   cell: ({ row }) => {
+    //     const value: KeywordResearchEntity['type'] = row.getValue('type');
+    //     return <TypeBadge value={value} />;
+    //   },
+    // },
+    // {
+    //   accessorKey: 'searchVolume',
+    //   header: 'Volume of Search',
+    //   cell: ({ row }) => {
+    //     const value: KeywordResearchEntity['searchVolume'] =
+    //       row.getValue('searchVolume');
+    //     return value === 0 ? '-' : value;
+    //   },
+    // },

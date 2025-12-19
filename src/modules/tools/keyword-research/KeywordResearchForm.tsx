@@ -23,7 +23,6 @@ import { CustomCard } from '@/components/CustomCard';
 import { useRegionStore } from '@/modules/tools/keyword-research/context/RegionStore';
 import {
   useBrandStore,
-  useNegativeListStore,
   useNegativeStore,
   usePositiveStore,
 } from './context/WordsStoreFactory';
@@ -33,7 +32,6 @@ import { CustomLoading } from '@/components/CustomLoading';
 import { useFormStore } from './context/FormStore';
 import { CustomPageLoader } from '@/components/CustomPageLoader';
 import { KeywordStatus } from '@/core/entities';
-import { useKeywordStore } from './all-request/context/KeywordSelectionStore';
 
 export const KeywordResearchForm = ({
   onChangeTab,
@@ -86,8 +84,8 @@ export const KeywordResearchForm = ({
     resetNegativeCities();
     resetRegions();
     clearKeywordResearch();
-     resetNegativeList();
-     resetPositiveToNewResearch();
+    resetNegativeList();
+    resetPositiveToNewResearch();
   };
 
   const resetFormAfterEdit = () => {
@@ -99,8 +97,8 @@ export const KeywordResearchForm = ({
     resetNegativeCities();
     resetRegions();
     clearKeywordResearch();
-     resetNegativeList();
-     resetPositiveToNewResearch();
+    resetNegativeList();
+    resetPositiveToNewResearch();
   };
   const {
     control,
@@ -115,6 +113,7 @@ export const KeywordResearchForm = ({
   });
 
   const onSubmitHandler = async (data: KeywordResearchFormInput) => {
+    console.log(data);
     if (positiveWords.length === 0) {
       showToast({
         type: 'error',
@@ -185,7 +184,7 @@ export const KeywordResearchForm = ({
     }
   };
 
-  console.log(initialValues);
+  console.log(errors);
   useEffect(() => {
     if (mode === 'edit' && keywordResearch) {
       if (Array.isArray(initialValues.positiveKeywords))
@@ -197,8 +196,8 @@ export const KeywordResearchForm = ({
         hidrateBrands(initialValues.brand);
       if (Array.isArray(initialValues.city)) hidrateNegativeCities();
       if (Array.isArray(initialValues.region)) hidrateRegions();
-      reset(getInitialValues());
       trigger();
+      reset(getInitialValues());
     }
 
     if (mode === 'new') {
@@ -207,10 +206,8 @@ export const KeywordResearchForm = ({
       if (Array.isArray(initialValues.negativeKeywords))
         hidrateNegative(initialValues.negativeKeywords);
 
-      reset(getInitialValues());
       trigger();
-
-     
+      reset(getInitialValues());
     }
 
     if (mode === 'create' && keywordResearch) {
