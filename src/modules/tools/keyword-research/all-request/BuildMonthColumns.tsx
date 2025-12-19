@@ -8,7 +8,7 @@ export const buildMonthColumns = (): ColumnDef<KeywordResultEntity>[] => {
     const monthNumber = index + 1;
 
     return {
-      accessorKey: `month_${monthNumber}`,
+      accessorKey: `${MONTH_MAP[monthNumber]}`,
       header: MONTH_MAP[monthNumber],
       cell: ({ row }) => {
         const monthly = row.original.monthly_searches;
@@ -30,10 +30,8 @@ export const buildMonthColumns = (): ColumnDef<KeywordResultEntity>[] => {
               borderRadius: '4px',
               textAlign: 'right',
               fontWeight: 500,
-              margin: '0'
-
+              margin: '0',
             }}
-
           >
             {value}
           </div>

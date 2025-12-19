@@ -14,6 +14,7 @@ export class CreateKeywordResearchDTO {
   readonly brand?: string[];
   readonly type?: string;
   readonly companyId?: number;
+  
 }
 
 export class KeywordResearchDTO extends CreateKeywordResearchDTO {
@@ -29,6 +30,7 @@ export class KeywordResearchDTO extends CreateKeywordResearchDTO {
   readonly deletedAt?: Date | null;
   readonly organicResult?: string | null;
   readonly organicResultFull?: OrganicResultFull | null;
+  
 }
 
 // interface Result {
