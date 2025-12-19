@@ -60,11 +60,12 @@ export function DomainsRegiter() {
         <div className='flex gap-6'>
           {/* Left Progress Indicator */}
           <div className='flex flex-col items-center pt-1'>
+            <div className='h-12 w-0.5 bg-linear-to-t to-transparent from-muted' />
             {steps.map((step, index) => (
               <div key={step.id} className='flex flex-col items-center'>
                 <div
                   className={cn(
-                    'w-4 h-4 rounded-full border-2 transition-all duration-300',
+                    'w-4 h-4 rounded-full border-2 transition-all duration-300 ',
                     currentStep === step.id
                       ? 'border-foreground bg-foreground'
                       : currentStep > step.id
@@ -75,16 +76,17 @@ export function DomainsRegiter() {
                 {index < steps.length - 1 && (
                   <div
                     className={cn(
-                      'w-0.5 h-80 transition-all duration-300',
+                      'w-0.5 h-75.5 transition-all duration-300',
                       currentStep > step.id ? 'bg-foreground' : 'bg-border'
                     )}
                   />
                 )}
               </div>
             ))}
+            <div className='h-12 w-0.5 bg-linear-to-b to-transparent from-muted' />
           </div>
 
-          <div className='flex-1 space-y-8'>
+          <div className='flex-1 space-y-8 mt-12'>
             <div className=''>
               <div>
                 <h2 className='text-lg font-medium text-foreground'>
@@ -106,7 +108,14 @@ export function DomainsRegiter() {
 
             <div className='pt-2'>
               <div>
-                <h2 className={cn('text-lg font-medium ', currentStep === 2 ? 'text-foreground' : 'text-muted-foreground')}>
+                <h2
+                  className={cn(
+                    'text-lg font-medium ',
+                    currentStep === 2
+                      ? 'text-foreground'
+                      : 'text-muted-foreground'
+                  )}
+                >
                   {steps[1].title}
                 </h2>
                 {currentStep === 2 && (
