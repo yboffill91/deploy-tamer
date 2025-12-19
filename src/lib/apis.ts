@@ -27,7 +27,7 @@ export const downloadExcelUrlApi =
   keywordResearchApi + '/export/excel/organic/urls';
 export const forceEndApi = keywordResearchApi + '/force/end';
 export const executeFindUrls = keywordResearchApi + '/google/search/findurls';
-
+export const keywordResultsApi = keywordResearchApi + '/keyword/result';
 
 
 export const mailerBaseApi = ApiStudio + '/mailer-config';

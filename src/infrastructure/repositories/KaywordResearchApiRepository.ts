@@ -1,6 +1,11 @@
 import { IRepository } from '@/core';
-import { KeywordResearchDTO, CreateKeywordResearchDTO } from '@/core/dto';
-import { KeywordResearchEntity } from '@/core/entities';
+import {
+  KeywordResearchDTO,
+  CreateKeywordResearchDTO,
+  ResultsDTO,
+  ResponseResultDTO,
+} from '@/core/dto';
+import { KeywordResearchEntity, KeywordResultEntity } from '@/core/entities';
 import {
   downloadExcelApi,
   downloadExcelUrlApi,
@@ -8,6 +13,7 @@ import {
   forceEndApi,
   googleSearchApi,
   keywordResearchApi,
+  keywordResultsApi,
 } from '@/lib/apis';
 import { fetchHelper } from '@/lib/fetch-helper';
 import { SessionRepository } from './SessionRepository';
@@ -318,6 +324,26 @@ export class KeywordResearchApiRepository implements IRepository {
           Authorization: `Bearer ${await this.auth()}`,
         },
       });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getResults(id: string): Promise<KeywordResultEntity[] | 'No results'> {
+    try {
+      const Response = await fetchHelper<ResponseResultDTO>(
+        keywordResultsApi + `/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${await this.auth()}`,
+          },
+        }
+      );
+      if (!Response) return 'No results';
+      const Map = Response.result.map((res) =>
+        Object.assign(new KeywordResultEntity(), res)
+      );
+      return Map;
     } catch (error) {
       throw error;
     }

@@ -3,7 +3,6 @@ import { KeywordStatus } from '@/core/entities';
 import { cn } from '@/lib/utils';
 import {
   CheckCircle,
-  Circle,
   CircleDashed,
   CircleDotDashed,
   Loader,

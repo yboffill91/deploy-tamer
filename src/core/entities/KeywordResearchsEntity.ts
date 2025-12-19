@@ -41,7 +41,7 @@ export class KeywordResearchEntity {
   readonly organicResultFull?: OrganicResultFullEntity | null;
 }
 
-export interface KeywordResultEntity {
+export class KeywordResultEntity {
   readonly cpc?: number;
   readonly competition?: CompetitionLevel;
   readonly keyword?: string;

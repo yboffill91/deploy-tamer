@@ -23,7 +23,7 @@ export class KeywordResearchDTO extends CreateKeywordResearchDTO {
   readonly status?: string;
   readonly requesterId?: number | null;
   readonly price?: number;
-  readonly result?: Result | null;
+  readonly result?: ResponseResultDTO | null;
   readonly tasks?: string[];
   readonly createdAt?: Date;
   readonly deletedAt?: Date | null;
@@ -31,19 +31,40 @@ export class KeywordResearchDTO extends CreateKeywordResearchDTO {
   readonly organicResultFull?: OrganicResultFull | null;
 }
 
-interface Result {
-  cpc: number;
-  keyword: string;
-  language_code: string;
-  location_code: number;
-  search_volume: number;
-  search_partners: boolean;
-  monthy_searches: {
-    year: number;
-    month: number;
-    search_volume: number;
-  }[];
+// interface Result {
+//   cpc: number;
+//   keyword: string;
+//   language_code: string;
+//   location_code: number;
+//   search_volume: number;
+//   search_partners: boolean;
+//   monthy_searches: {
+//     year: number;
+//     month: number;
+//     search_volume: number;
+//   }[];
+// }
+
+export class ResultsDTO {
+  readonly cpc?: number;
+  readonly keyword?: string;
+  readonly language_code?: string;
+  readonly location_code?: number;
+  readonly search_volume?: number;
+  readonly search_partners?: boolean;
+  readonly monthy_searches?: monthleSearches;
 }
+
+export class ResponseResultDTO {
+  readonly result?: ResultsDTO[];
+}
+
+interface monthleSearches {
+  year: number;
+  month: number;
+  search_volume: number;
+}
+
 
 interface OrganicResultFull {
   type: string;

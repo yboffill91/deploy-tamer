@@ -14,8 +14,8 @@ import { KeywordResearchEntity, KeywordStatus } from '@/core/entities';
 import { CommonHeader } from '@/modules/users/admin';
 import { ColumnDef } from '@tanstack/react-table';
 import {
-  Check,
   Eye,
+  FileArchive,
   FileText,
   Goal,
   Link,
@@ -25,11 +25,9 @@ import {
   Play,
   PlayCircle,
   Trash2,
-  X,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { ActionsButtonSet } from '@/components/data-table/ActionsButtons';
-import { TypeBadge } from './TypesBadge';
 import { useKeywordStore } from './context/KeywordSelectionStore';
 import { useRouter } from 'next/navigation';
 import { RotatingBadge } from '@/components/RotatingBadge';
@@ -46,6 +44,7 @@ import {
   useRunKeywordResearch,
   useForceEndKeywordResearch,
 } from '@/modules/tools/keyword-research/hooks';
+import { useQuery } from '@tanstack/react-query';
 
 export const KeywordsResearchDataTable = ({
   onChangeTab,
@@ -74,6 +73,7 @@ export const KeywordsResearchDataTable = ({
   const [loadingDownload, setIsLoadingDownload] = useState(false);
   const [buttonsBussy, setButtonBussy] = useState<number>();
   const [fieldValue, setFiedValue] = useState('');
+  const [gettingResults, setGettingResults] = useState(false);
 
   const handleShowConfirm = (el: KeywordResearchEntity) => {
     setSelectedResearch(el);
@@ -180,10 +180,62 @@ export const KeywordsResearchDataTable = ({
     }
   }, [error, componentError]);
 
-  const onShow = (item: KeywordResearchEntity) => {
-    setResultSelected(item.result!);
-    setSelectedResearch(item);
-    router.push('/tools/seo/keyword-result');
+  const onShowReport = async (item: KeywordResearchEntity) => {
+    try {
+      setSelectedResearch(item);
+      setButtonBussy(item.id);
+      setGettingResults(true);
+      const REPO = new KeywordResearchApiRepository();
+      const Results = await REPO.getResults(String(item.id));
+
+      if (Results === 'No results') {
+        setComponentError('The selected keyword research yielded no results.');
+        return;
+      }
+      setResultSelected(Results);
+      setGettingResults(false);
+      router.push('/tools/seo/view-excel-result');
+    } catch (error) {
+      setComponentError(
+        `Unexpected Error getting Results : ${
+          error instanceof Error
+            ? error.message
+            : 'Error in services or Network Error'
+        }`
+      );
+    } finally {
+      setGettingResults(false);
+      setButtonBussy(null);
+    }
+  };
+
+  const onShow = async (item: KeywordResearchEntity) => {
+    try {
+      setSelectedResearch(item);
+      setButtonBussy(item.id);
+      setGettingResults(true);
+      const REPO = new KeywordResearchApiRepository();
+      const Results = await REPO.getResults(String(item.id));
+
+      if (Results === 'No results') {
+        setComponentError('The selected keyword research yielded no results.');
+        return;
+      }
+      setResultSelected(Results);
+      setGettingResults(false);
+      router.push('/tools/seo/keyword-result');
+    } catch (error) {
+      setComponentError(
+        `Unexpected Error getting Results : ${
+          error instanceof Error
+            ? error.message
+            : 'Error in services or Network Error'
+        }`
+      );
+    } finally {
+      setGettingResults(false);
+      setButtonBussy(null);
+    }
   };
 
   const onRun = (id: string) => {
@@ -239,7 +291,7 @@ export const KeywordsResearchDataTable = ({
             className='bg-transparent! text-muted-foreground'
           >
             {' '}
-            No Positive Kywords
+            <Minus className='text-muted-foreground' />
           </Badge>
         ) : (
           <RotatingBadge items={value} />
@@ -258,14 +310,13 @@ export const KeywordsResearchDataTable = ({
             variant='destructive'
             className='bg-transparent! text-muted-foreground'
           >
-            <Minus className='text-destructive' />
+            <Minus className='text-muted-foreground' />
           </Badge>
         ) : (
           <RotatingBadge items={arr} />
         );
       },
     },
-   
 
     {
       accessorKey: 'status',
@@ -276,7 +327,7 @@ export const KeywordsResearchDataTable = ({
         return <StatusBadge status={value} />;
       },
     },
-  
+
     {
       id: 'actions',
       header: () => (
@@ -311,7 +362,9 @@ export const KeywordsResearchDataTable = ({
                     },
                     {
                       icon: Eye,
-                      label: 'Review the result',
+                      label: gettingResults
+                        ? 'Getting Results'
+                        : 'View Research Results',
                       onClick: onShow,
                       show: (item) =>
                         item.status === KeywordStatus.READY_TO_CHECK ||
@@ -322,6 +375,14 @@ export const KeywordsResearchDataTable = ({
                       icon: FileText,
                       label: 'Download results report (Excel)',
                       onClick: onExport,
+                      show: (item) =>
+                        item.status === KeywordStatus.FINISHED ||
+                        item.status === KeywordStatus.ORGANIC_FINISHED,
+                    },
+                    {
+                      icon: FileArchive,
+                      label: 'Review results reports',
+                      onClick: onShowReport,
                       show: (item) =>
                         item.status === KeywordStatus.FINISHED ||
                         item.status === KeywordStatus.ORGANIC_FINISHED,
