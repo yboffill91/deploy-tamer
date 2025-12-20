@@ -180,7 +180,7 @@ export const SendingEmails = () => {
                       <p className='text-xs'>{email.subject}</p>
                     </TableCell>
                     <TableCell>
-                      <p> {email.created_at} </p>
+                      <p> ---- </p>
                     </TableCell>
                     <TableCell>
                       <StatusBadge status={email.last_event} />
