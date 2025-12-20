@@ -61,10 +61,26 @@ export enum BroadCastEvents {
 }
 
 export class EmailsEntity {
+  readonly id?: string;
   readonly from?: string;
   readonly to?: string[];
   readonly subject?: string;
   readonly text?: string;
   readonly html?: string;
   readonly react?: string;
+}
+
+export class ResendEmailEntity extends EmailsEntity {
+  readonly bcc?: string[];
+  readonly cc?: string[];
+  readonly reply_to?: string[];
+  readonly created_at?: Date;
+  readonly last_event?: EmailEvents;
+  readonly scheduled_at?: Date | null;
+}
+
+export class ResendEmailEntityByTag extends EmailsEntity {
+  readonly html?: string;
+  readonly text?: string;
+  readonly error?: string | null;
 }

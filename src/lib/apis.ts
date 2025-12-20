@@ -30,5 +30,8 @@ export const executeFindUrls = keywordResearchApi + '/google/search/findurls';
 export const keywordResultsApi = keywordResearchApi + '/keyword/result';
 
 
-export const mailerBaseApi = ApiStudio + '/mailer-config';
-export const mailerDomainsApi = ApiStudio + mailerBaseApi + '/domains'; 
+
+
+export const mailerBaseApi = ApiStudio + 'mailer-config';
+export const mailerDomainsApi = ApiStudio + mailerBaseApi + '/domains';
+export const mailerEmailsApi = mailerBaseApi + '/mailer/list/emails';

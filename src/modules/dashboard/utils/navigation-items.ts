@@ -95,7 +95,6 @@ export const AdminSidebarItems: NavGroup[] = [
             title: 'Templates',
             url: '/tools/mailer/templates',
             icon: Layout,
-            comingSoon: true,
           },
           {
             title: 'Domains',

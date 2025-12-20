@@ -1,8 +1,17 @@
-import { CreateDomainDTO, CreateEmailDTO, ResponseEmailDTO } from '@/core/dto';
-import { MailerDomainsEntity } from '@/core/entities';
+import {
+  CreateDomainDTO,
+  CreateEmailDTO,
+  ResedApiEmailsResponseDTO,
+  ResendApiBaseEmailDTO,
+} from '@/core/dto';
+import {
+  EmailsEntity,
+  MailerDomainsEntity,
+  ResendEmailEntity,
+} from '@/core/entities';
 import { fetchHelper } from '@/lib/fetch-helper';
 import { SessionRepository } from './SessionRepository';
-import { mailerDomainsApi, mailingApi } from '@/lib/apis';
+import { mailerDomainsApi, mailerEmailsApi, mailingApi } from '@/lib/apis';
 
 interface IMailerRepository {
   createDomain(data: CreateDomainDTO): Promise<MailerDomainsEntity>;
@@ -43,14 +52,34 @@ export class MailerApiRepository implements IMailerRepository {
   }
   async sendEmail(data: CreateEmailDTO): Promise<void> {
     try {
-      const Response = await fetchHelper<ResponseEmailDTO>(mailingApi, {
+      const Response = await fetchHelper<ResendApiBaseEmailDTO>(mailingApi, {
         method: 'POST',
         headers: {
           'Content/Type': 'application/json',
+          Authorization: `Bearer ${await this.auth()}`,
         },
         body: JSON.stringify(data),
       });
       if (!Response) throw new Error('Error sending email');
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getMailList(): Promise<ResendEmailEntity[]> {
+    try {
+      const Response = await fetchHelper<ResedApiEmailsResponseDTO>(
+        mailerEmailsApi,
+        {
+          headers: {
+            Authorization: `Bearer ${await this.auth()}`,
+          },
+        }
+      );
+      if (!Response) throw new Error('Error getting the emails list');
+      const data = Response.data!.data;
+
+      return data.map((resp) => Object.assign(new ResendEmailEntity(), resp));
     } catch (error) {
       throw error;
     }

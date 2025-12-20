@@ -73,12 +73,7 @@ export const StatusBadge = ({ status, className }: EmailStatusBadgeProps) => {
   };
 
   return (
-    <span
-      className={cn(
-        'text-md gap-1  items-center flex justify-between',
-        className
-      )}
-    >
+    <span className={cn('text-md gap-1  items-center flex ', className)}>
       <Icon className={cn('size-8', iconColor[config.color])} />
       {config.label}
     </span>
