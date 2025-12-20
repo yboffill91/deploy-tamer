@@ -3,7 +3,6 @@
 import type React from 'react';
 
 
-
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import {
@@ -46,8 +45,7 @@ export function ComponentLibrary({
   const handleAddComponent = (type: ComponentType) => {
     const newComponent = createComponent(type);
 
-    // If no component is selected, add to root (only sections allowed)
-    if (!selectedId) {
+    if (!selectedId || type === 'section') {
       if (canAddComponent(type, undefined)) {
         onAddComponent([...components, newComponent]);
       }

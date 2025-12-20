@@ -4,10 +4,12 @@ import {
   COMPONENT_METADATA,
 } from './email-types';
 
+// Generate unique ID for components
 export function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 }
 
+// Validate if a component can be added to a parent
 export function canAddComponent(
   componentType: ComponentType,
   parentType?: ComponentType
@@ -37,6 +39,7 @@ export function canAddComponent(
   return true;
 }
 
+// Create a new component with default props
 export function createComponent(type: ComponentType): EmailComponent {
   const metadata = COMPONENT_METADATA[type];
   return {
@@ -45,6 +48,7 @@ export function createComponent(type: ComponentType): EmailComponent {
   } as EmailComponent;
 }
 
+// Find component by ID in tree
 export function findComponent(
   components: EmailComponent[],
   id: string
@@ -61,6 +65,7 @@ export function findComponent(
   return null;
 }
 
+// Update component in tree
 export function updateComponent(
   components: EmailComponent[],
   id: string,
@@ -68,18 +73,19 @@ export function updateComponent(
 ): EmailComponent[] {
   return components.map((component) => {
     if (component.id === id) {
-      return { ...component, ...updates };
+      return { ...component, ...updates } as EmailComponent;
     }
     if ('children' in component && component.children) {
       return {
         ...component,
         children: updateComponent(component.children, id, updates),
-      };
+      } as EmailComponent;
     }
     return component;
   });
 }
 
+// Add component to parent
 export function addComponentToParent(
   components: EmailComponent[],
   parentId: string | null,
@@ -112,6 +118,7 @@ export function addComponentToParent(
   });
 }
 
+// Remove component from tree
 export function removeComponent(
   components: EmailComponent[],
   id: string
