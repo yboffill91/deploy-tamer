@@ -13,19 +13,18 @@ import {
 import { Eye, Code } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { ReactCodeEditor } from './ReactCodeEditor';
 
 export type EditorMode = 'text' | 'html' | 'react';
 
-export  function EmailTemplateEditor() {
+export function EmailTemplateEditor() {
   const [mode, setMode] = useState<EditorMode>('text');
   const [activeTab, setActiveTab] = useState<'editor' | 'preview'>('editor');
 
   const [textContent, setTextContent] = useState('');
   const [htmlContent, setHtmlContent] = useState('');
-    const [reactContent, setReactContent] = useState('');
-    
+  const [reactContent, setReactContent] = useState('');
 
-    
   return (
     <div className='container mx-auto p-4 max-w-7xl'>
       <div className='mb-6'>
@@ -106,8 +105,9 @@ export  function EmailTemplateEditor() {
             )}
 
             {mode === 'react' && (
-              <div className='space-y-2'>
-                <Label htmlFor='react-editor'>React Component</Label>
+              <div className='space-y-2 bg-muted rounded-lg'>
+                <ReactCodeEditor />
+                {/* <Label htmlFor='react-editor'>React Component</Label>
                 <Textarea
                   id='react-editor'
                   value={reactContent}
@@ -121,13 +121,13 @@ export  function EmailTemplateEditor() {
   )
 }`}
                   className='font-mono text-sm min-h-125'
-                />
+                /> */}
               </div>
             )}
           </TabsContent>
 
           <TabsContent value='preview' className='mt-4'>
-            <Card className='p-6 min-h-100 bg-muted'>
+            <Card className='p-6 min-h-100 bg-muted rounded-lg'>
               {mode === 'text' && (
                 <pre className='whitespace-pre-wrap font-sans'>
                   {textContent}
@@ -140,15 +140,13 @@ export  function EmailTemplateEditor() {
                   className='w-full h-150 border-0 rounded-md'
                   title='HTML Preview'
                   sandbox='allow-scripts'
-                              />
-                             
+                />
               )}
 
               {mode === 'react' && (
                 <div className='p-4 border-2 border-dashed border-yellow-500 rounded-md'>
                   <p className='text-sm text-muted-foreground mb-2'>
-                                   
-                                      React Preview (simulated reder)
+                    React Preview (simulated reder)
                   </p>
                   <div className='bg-muted p-4 rounded-md'>
                     <pre className='text-xs overflow-auto'>{reactContent}</pre>
