@@ -21,6 +21,10 @@ import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
   Tabs,
   TabsContent,
   TabsList,
@@ -105,7 +109,6 @@ export const ResultResearchDataTable = ({ data }: Props) => {
 
   const router = useRouter();
 
-
   const onShow = async (item: KeywordResultEntity) => {
     const REPO = new KeywordResearchApiRepository();
     try {
@@ -142,7 +145,7 @@ export const ResultResearchDataTable = ({ data }: Props) => {
         generatedNegativeKeywords: unSelected, //TODO: Cambiar en el backend a una nueva tabla de discards
         generatedPositiveKeywords: positivesToNewKeyword, //TODO: Cambiar en el backend a una nueva tabla de palabras seleccionadas para correr un nuevo research
       };
-      console.log(payload);
+      console.log(data);
 
       await REPO.update(String(selected.id), payload);
       showToast({
@@ -183,9 +186,7 @@ export const ResultResearchDataTable = ({ data }: Props) => {
     const hidrate = () => {};
     hidrate();
 
-  
     resetNegativeList();
-  
   }, []);
   const exactExclusions = new Set([
     ...unSelected.map((el) => el.keyword),
@@ -335,6 +336,7 @@ export const ResultResearchDataTable = ({ data }: Props) => {
     },
   ];
 
+  console.log(selectedResearch);
   const columnsUnSelected: ColumnDef<KeywordResultEntity>[] = [
     {
       accessorKey: 'keyword',
@@ -514,12 +516,32 @@ export const ResultResearchDataTable = ({ data }: Props) => {
               <ButtonGroup>
                 <ButtonGroupText>Negative List</ButtonGroupText>
 
-                <Button
-                  variant='outline'
-                  onClick={() => setOpenNegativeList(!openNegativeList)}
-                >
-                  <ListFilter />
-                </Button>
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <Button
+                      variant='outline'
+                      onClick={() => setOpenNegativeList(!openNegativeList)}
+                    >
+                      <ListFilter />
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent className='p-4'>
+                    <SheetTitle className='text-lg'>
+                      Negative Keywords Manager
+                    </SheetTitle>
+                    <CustomWordsComponent
+                      list={negativeListWords}
+                      emptyMessageWorldsContainer='No negative words filter added'
+                      inputHandleOnClick={() => {
+                        addNegativeListWords(keyword);
+                        setKeyword('');
+                      }}
+                      inputOnChangeValue={(e) => setKeyword(e.target.value)}
+                      inputValue={keyword}
+                      onDeleteWorldsContainer={deleteNegativeListWords}
+                    />
+                  </SheetContent>
+                </Sheet>
               </ButtonGroup>
             </div>
             <ResizablePanelGroup
@@ -671,7 +693,7 @@ export const ResultResearchDataTable = ({ data }: Props) => {
           </div>
         </TabsContent>
       </Tabs>
-      <ControlledDialog
+      {/* <ControlledDialog
         open={openNegativeList}
         onOpenChange={() => {
           setOpenNegativeList(false);
@@ -690,9 +712,7 @@ export const ResultResearchDataTable = ({ data }: Props) => {
           inputValue={keyword}
           onDeleteWorldsContainer={deleteNegativeListWords}
         />
-      </ControlledDialog>
+      </ControlledDialog> */}
     </div>
   );
 };
-
-

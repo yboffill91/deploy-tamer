@@ -11,18 +11,16 @@ import {
 export const StatusBadge = ({ status }: { status: string }) => {
   const getColorStatus =
     status === KeywordStatus.DRAFT
-      ? 'text-gray-500 dark:text-gray-400'
+      ? 'text-gray-500 dark:text-gray-400 bg-gray-500/10 rounded'
       : status === KeywordStatus.KEYWORING
-      ? 'text-blue-500 dark:text-blue-600'
+      ? 'text-info '
       : status === KeywordStatus.READY_TO_CHECK
-      ? 'text-orange-500 dark:text-orange-600'
+      ? 'text-warning bg-warning/10 rounded'
       : status === KeywordStatus.RE_KEYWORING
-      ? 'text-sky-500 dark:text-sky-600'
+      ? 'text-info '
       : status === KeywordStatus.ORGANIC_LAUNCH
-      ? 'text-purple-500 dark:text-purple-600'
-      : status === KeywordStatus.ORGANIC_FINISHED
-      ? 'text-lime-500 dark:text-lime-600'
-      : 'text-green-500 dark:text-green-600';
+      ? 'text-info'
+      : 'text-success bg-success/20 rounded ';
 
   const StatusIcon =
     status === KeywordStatus.DRAFT ? (

@@ -1,13 +1,11 @@
-import { bodyFont } from "@/lib/fonts";
-import { cn } from "@/lib/utils";
-import { ReactNode } from "react";
-import "./globals.css";
-import { AuthProvider } from "@/modules/auth/providers/AuthProvider";
-import { ThemeProvider } from "@/providers/ThemeProvider";
-import { Toaster } from "sonner";
-import { Metadata } from "next";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { AuthInterceptor } from '@/providers/UnauthProvider';
+import { bodyFont } from '@/lib/fonts';
+import { cn } from '@/lib/utils';
+import { ReactNode } from 'react';
+import './globals.css';
+import { AuthProvider } from '@/modules/auth/providers/AuthProvider';
+import { ThemeProvider } from '@/providers/ThemeProvider';
+import { Toaster } from 'sonner';
+import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'TAMERStudio',
@@ -40,17 +38,15 @@ const layout = ({ children }: { children: Readonly<ReactNode> }) => {
         )}
       >
         <AuthProvider>
-          <AuthInterceptor>
-            <ThemeProvider
-              attribute='class'
-              defaultTheme='system'
-              enableSystem
-              disableTransitionOnChange={false}
-            >
-              {children}
-            </ThemeProvider>
-            <Toaster position='bottom-right' duration={1500} expand />
-          </AuthInterceptor>
+          <ThemeProvider
+            attribute='class'
+            defaultTheme='system'
+            enableSystem
+            disableTransitionOnChange={false}
+          >
+            {children}
+          </ThemeProvider>
+          <Toaster position='bottom-right' duration={1500} expand />
         </AuthProvider>
       </body>
     </html>

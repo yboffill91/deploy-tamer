@@ -140,8 +140,8 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive: #9c1010;
+  --color-destructive-foreground: #FDEDED;
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -158,6 +158,12 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+
+  --color-success: #0F9B6B;
+  --color-info:#105A9C;
+  --color-warning: #9C7610;
+
 
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
@@ -255,7 +261,7 @@ html {
 }
 
 .my-toast--success {
-  border-bottom-color: #599700;
+  border-bottom-color: #0f9b6b;
 }
 
 .my-toast--error {
@@ -269,7 +275,7 @@ html {
 }
 
 .my-toast--success .toast-icon svg {
-  color: #599700;
+  color: #0f9b6b;
   background-color: #323332 !important;
 }
 

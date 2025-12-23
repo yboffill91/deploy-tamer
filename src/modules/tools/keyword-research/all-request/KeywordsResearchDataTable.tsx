@@ -46,11 +46,7 @@ import {
 } from '@/modules/tools/keyword-research/hooks';
 import { useQuery } from '@tanstack/react-query';
 
-export const KeywordsResearchDataTable = ({
-  onChangeTab,
-}: {
-  onChangeTab(): void;
-}) => {
+export const KeywordsResearchDataTable = () => {
   const {
     data: keywordResearch,
     isLoading,
@@ -83,8 +79,7 @@ export const KeywordsResearchDataTable = ({
   const handleEdit = (item: KeywordResearchEntity) => {
     setFormSelectedResearch(String(item.id));
     setFormMode('edit');
-    onChangeTab();
-    router.push('/tools/seo/keyword-research');
+    router.push('/tools/seo/keyword-research-form');
   };
   const onExport = async (item: KeywordResearchEntity) => {
     try {
@@ -119,20 +114,21 @@ export const KeywordsResearchDataTable = ({
     }
   };
 
-  const onExportURL = async (item: KeywordResearchEntity) => {
-    try {
-      setButtonBussy(item.id);
-      const REPO = new KeywordResearchApiRepository();
-      await REPO.exportExcelUrl(String(item.id));
-    } catch (error) {
-      setComponentError(
-        error instanceof Error
-          ? error.message
-          : 'Unexpected Error Downloading Report'
-      );
-    } finally {
-      setButtonBussy(0);
-    }
+  const onExportURL = () => {
+    // try {
+    //   setButtonBussy(item.id);
+    //   const REPO = new KeywordResearchApiRepository();
+    //   await REPO.exportExcelUrl(String(item.id));
+    // } catch (error) {
+    //   setComponentError(
+    //     error instanceof Error
+    //       ? error.message
+    //       : 'Unexpected Error Downloading Report'
+    //   );
+    // } finally {
+    //   setButtonBussy(0);
+    // }
+    router.push('/tools/seo/view-organic-url-report');
   };
 
   const onConfirm = (id: string) => {
@@ -396,7 +392,7 @@ export const KeywordsResearchDataTable = ({
                     },
                     {
                       icon: Link,
-                      label: 'Download the Organic URL report.',
+                      label: 'Review the Organic URL report.',
                       onClick: onExportURL,
                       variant: 'ghost',
                       show: (item) =>
@@ -449,8 +445,7 @@ export const KeywordsResearchDataTable = ({
               columns={columns}
               onAdd={() => {
                 setFormMode('create');
-                onChangeTab();
-                router.push('/tools/seo/keyword-research');
+                router.push('/tools/seo/keyword-research-form');
               }}
             />
             <ControlledDialog
@@ -524,7 +519,6 @@ export const KeywordsResearchDataTable = ({
               title='No Keyword Research Created Yet'
               onClick={() => {
                 setFormMode('create');
-                onChangeTab();
                 router.push('/tools/seo/keyword-research');
               }}
             />

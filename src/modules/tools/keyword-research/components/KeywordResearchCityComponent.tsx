@@ -46,7 +46,7 @@ export const KeywordResearchCityComponent = () => {
     <CustomCard
       title='Cities Filter'
       icon={MapPin}
-      disabled={Cities.length === 0}
+      disabled={Cities.length === 0 && selectedNegativeCities.length === 0}
     >
       <div className='flex flex-col gap-6 w-full'>
         <div className='w-full flex gap-2 items-center'>

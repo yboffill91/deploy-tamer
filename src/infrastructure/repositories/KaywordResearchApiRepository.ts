@@ -148,12 +148,12 @@ export class KeywordResearchApiRepository implements IRepository {
     const payload = {
       title: data.title,
       searchVolume: Number(data.searchVolume),
-      positiveKeywords: data.positiveKeywords as object,
-      negativeKeywords: data.negativeKeywords as object,
-      city: data.city as object,
-      region: data.region as object,
-      requestLanguage: data.requestLanguage === 'en' ? 'english' : 'español',
-      brand: data.brand as object,
+      positiveKeywords: data.positiveKeywords,
+      negativeKeywords: data.negativeKeywords,
+      city: data.city,
+      region: data.region,
+      requestLanguage: data.requestLanguage,
+      brand: data.brand,
       type: data.type.toUpperCase(),
       allCitys: false,
       generatedNegativeKeywords: data.generatedNegativeKeywords,
@@ -161,6 +161,7 @@ export class KeywordResearchApiRepository implements IRepository {
     };
 
     try {
+      console.log('Payload -->:', payload);
       const response = await fetchHelper(keywordResearchApi + `/${id}`, {
         method: 'PATCH',
         headers: {
@@ -170,7 +171,7 @@ export class KeywordResearchApiRepository implements IRepository {
         body: JSON.stringify(payload),
       });
       if (!response) {
-        throw new Error('Error creating new Keyword Research Report');
+        throw new Error('Error updating new Keyword Research Report');
       }
     } catch (error) {
       throw error;

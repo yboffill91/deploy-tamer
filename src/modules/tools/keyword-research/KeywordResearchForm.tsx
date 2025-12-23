@@ -15,7 +15,7 @@ import {
   RadioGroup,
   RadioGroupItem,
 } from '@/components/ui';
-import { Play, Focus, RefreshCw, SaveAll, Goal } from 'lucide-react';
+import { Focus, RefreshCw, SaveAll, Goal } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { KeywordPositiveNegativeWords } from './components/KeywordPositiveNegativeWords';
 import { KeywordResearchCityComponent } from './components/KeywordResearchCityComponent';
@@ -33,12 +33,9 @@ import { useFormStore } from './context/FormStore';
 import { CustomPageLoader } from '@/components/CustomPageLoader';
 import { KeywordStatus } from '@/core/entities';
 import { CreateKeywordResearchDTO } from '@/core/dto';
+import { useRouter } from 'next/navigation';
 
-export const KeywordResearchForm = ({
-  onChangeTab,
-}: {
-  onChangeTab: () => void;
-}) => {
+export const KeywordResearchForm = () => {
   const [isError, setIsError] = useState('');
   const brands = useBrandStore((st) => st.words);
   const errorLoadingData = useFormStore((st) => st.error);
@@ -76,6 +73,7 @@ export const KeywordResearchForm = ({
     region.value.join(',').trim()
   );
   const initialValues = getInitialValues();
+  const router = useRouter();
 
   const resetForm = () => {
     reset();
@@ -109,12 +107,11 @@ export const KeywordResearchForm = ({
     formState: { errors, isValid, isSubmitting },
   } = useForm<KeywordResearchFormInput>({
     resolver: zodResolver(KeywordResearchSchema),
-    mode: 'onBlur',
+    mode: 'onSubmit',
     defaultValues: initialValues,
   });
 
   const onSubmitHandler = async (data: KeywordResearchFormInput) => {
-    console.log(data);
     if (positiveWords.length === 0) {
       showToast({
         type: 'error',
@@ -134,14 +131,17 @@ export const KeywordResearchForm = ({
     }
     const UpdatePayload: CreateKeywordResearchDTO = {
       ...data,
-      region: regionValues,
+      region: regionValues
+        .map((el) => el.split(',').toReversed().join())
+        .flat(),
       city: negativeCities,
       positiveKeywords: positiveWords,
       negativeKeywords: negativeWords,
       brand: brands,
-      generatedNegativeKeywords: null,
-      generatedPositiveKeywords: null,
+      generatedNegativeKeywords: {},
+      generatedPositiveKeywords: {},
       searchVolume: Number(data.searchVolume),
+      companyId: 1,
     };
 
     const createPayload = {
@@ -152,31 +152,20 @@ export const KeywordResearchForm = ({
       negativeKeywords: negativeWords,
       brand: brands,
     };
-
     const REPO = new KeywordResearchApiRepository();
     try {
       if (mode === 'edit') {
-        await REPO.runKeyword(String(keywordResearch.id));
-        showToast({
-          message: 'Keyword Research relaunched',
-          type: 'success',
-          description: '',
-        });
-        onChangeTab();
-      }
-      if (
-        mode === 'edit' &&
-        keywordResearch.status === KeywordStatus.READY_TO_CHECK
-      ) {
+        setIsError('');
+        console.log(JSON.stringify(UpdatePayload));
         await REPO.update(String(keywordResearch.id), UpdatePayload);
-        await REPO.runKeyword(String(keywordResearch.id));
+
         showToast({
-          message: 'Performanced Keyword Research',
+          message: 'Performed Keyword Research',
           type: 'success',
           description: '',
         });
-        onChangeTab();
       }
+
       if (mode === 'create' || mode === 'new') {
         await REPO.create(createPayload);
         showToast({
@@ -184,7 +173,6 @@ export const KeywordResearchForm = ({
           type: 'success',
           description: '',
         });
-        onChangeTab();
       }
       setMode('create');
       resetForm();
@@ -194,6 +182,7 @@ export const KeywordResearchForm = ({
           ? error.message
           : 'Unexpected Error Submiting The Form'
       );
+      router.push('/tools/seo/keyword-research');
     }
   };
 
@@ -323,7 +312,7 @@ export const KeywordResearchForm = ({
                     mode === 'edit' &&
                     keywordResearch.status === KeywordStatus.DRAFT && (
                       <>
-                        <Play /> Performance Research
+                        <SaveAll /> Save Draft
                       </>
                     )}
                   {!isSubmitting &&
@@ -335,23 +324,6 @@ export const KeywordResearchForm = ({
                       </>
                     )}
                 </Button>
-                {mode !== 'create' && (
-                  <>
-                    <ButtonGroupSeparator />
-                    <Button
-                      onClick={() => {
-                        resetForm();
-                        setMode('create');
-                      }}
-                      type='reset'
-                      size='lg'
-                      variant='secondary'
-                    >
-                      <RefreshCw />
-                      <span className='hidden lh:block'> Reset Form </span>
-                    </Button>
-                  </>
-                )}
               </ButtonGroup>
             </div>
           </div>
@@ -360,4 +332,3 @@ export const KeywordResearchForm = ({
     </>
   );
 };
-

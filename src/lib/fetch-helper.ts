@@ -1,4 +1,5 @@
 import { AuthError } from '@/core';
+import { SessionRepository } from '@/infrastructure/repositories';
 
 export interface FetchOptions extends RequestInit {
   signal?: AbortSignal;
@@ -19,6 +20,10 @@ export async function fetchHelper<T>(
     });
 
     if ([401].includes(response.status)) {
+      const REPO = new SessionRepository();
+      await REPO.deleteSessionCookie();
+      window.location.href = '/sign_in';
+
       throw AuthError.unauthorized();
     }
     if (![200, 201].includes(response.status)) {

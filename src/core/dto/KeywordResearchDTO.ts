@@ -5,8 +5,8 @@ export class CreateKeywordResearchDTO {
   readonly searchVolume?: number;
   readonly positiveKeywords?: string[];
   readonly negativeKeywords?: string[];
-  readonly generatedPositiveKeywords?: KeywordResultEntity[];
-  readonly generatedNegativeKeywords?: KeywordResultEntity[];
+  readonly generatedPositiveKeywords?: KeywordResultEntity[] | {};
+  readonly generatedNegativeKeywords?: KeywordResultEntity[] | {};
   readonly city?: string[];
   readonly allCitys?: boolean;
   readonly region?: string[];
@@ -14,7 +14,6 @@ export class CreateKeywordResearchDTO {
   readonly brand?: string[];
   readonly type?: string;
   readonly companyId?: number;
-  
 }
 
 export class KeywordResearchDTO extends CreateKeywordResearchDTO {
@@ -30,7 +29,6 @@ export class KeywordResearchDTO extends CreateKeywordResearchDTO {
   readonly deletedAt?: Date | null;
   readonly organicResult?: string | null;
   readonly organicResultFull?: OrganicResultFull | null;
-  
 }
 
 // interface Result {
@@ -66,7 +64,6 @@ interface monthleSearches {
   month: number;
   search_volume: number;
 }
-
 
 interface OrganicResultFull {
   type: string;
