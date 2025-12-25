@@ -49,11 +49,11 @@ export const ReviewResultsDataDataTable = ({
     },
     {
       accessorKey: 'cpc',
-      header: 'CPC',
+      header: 'CPC-(USD)',
       cell: ({ row }) => {
         const cpc = row.original.cpc;
         if (cpc == null) return <span>—</span>;
-        return <span>${cpc.toFixed(2)}</span>;
+        return <span className='bg-destructive'>{cpc.toFixed(2)}</span>;
       },
     },
   ];

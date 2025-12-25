@@ -61,6 +61,7 @@ import { ControlledDialog } from '@/components/ControlledDialog';
 import { CustomWordsComponent } from '../components';
 import { useNegativeListStore } from '../context/WordsStoreFactory';
 import { formatNumberAbbreviated } from './helpers/formatNumberAbbreviated';
+import { KeywordMonthlyTrend } from './KaywordMonthlyTrend';
 
 interface Props {
   data: KeywordResultEntity[];
@@ -237,6 +238,25 @@ export const ResultResearchDataTable = ({ data }: Props) => {
         return <span className='font-medium'>{value}</span>;
       },
     },
+    {
+      accessorKey: 'search_volume',
+      header: 'Search Volume',
+      cell: ({ row }) => {
+        const vol = row.original.search_volume ?? 0;
+
+        const formattedVolume = formatNumberAbbreviated(vol);
+
+        return <span className='font-semibold'>{formattedVolume}</span>;
+      },
+    },
+    {
+      accessorKey: 'high_top_of_page_bid',
+      header: 'HTB',
+      cell: ({ row }) => {
+        const value = row.original.high_top_of_page_bid;
+        return <span>{value}</span>;
+      },
+    },
 
     {
       accessorKey: 'competition',
@@ -259,25 +279,23 @@ export const ResultResearchDataTable = ({ data }: Props) => {
 
     {
       accessorKey: 'cpc',
-      header: 'CPC',
+      header: 'CPC (USD)',
       cell: ({ row }) => {
         const cpc = row.original.cpc;
         if (cpc == null) return <span>—</span>;
-        return <span>${cpc.toFixed(2)}</span>;
+        return <span>{cpc.toFixed(2)}</span>;
       },
     },
 
     {
-      accessorKey: 'search_volume',
-      header: 'Search Volume',
+      accessorKey: 'monthly_searches',
+      header: 'Trend',
       cell: ({ row }) => {
-        const vol = row.original.search_volume ?? 0;
-
-        const formattedVolume = formatNumberAbbreviated(vol);
-
-        return <span className='font-semibold'>{formattedVolume}</span>;
+        const data = row.original.monthly_searches;
+        return <KeywordMonthlyTrend data={data} />;
       },
     },
+
     {
       id: 'actions',
       header: () => (
@@ -693,26 +711,8 @@ export const ResultResearchDataTable = ({ data }: Props) => {
           </div>
         </TabsContent>
       </Tabs>
-      {/* <ControlledDialog
-        open={openNegativeList}
-        onOpenChange={() => {
-          setOpenNegativeList(false);
-          setKeyword('');
-        }}
-        title='Negative List'
-      >
-        <CustomWordsComponent
-          list={negativeListWords}
-          emptyMessageWorldsContainer='No negative words filter added'
-          inputHandleOnClick={() => {
-            addNegativeListWords(keyword);
-            setKeyword('');
-          }}
-          inputOnChangeValue={(e) => setKeyword(e.target.value)}
-          inputValue={keyword}
-          onDeleteWorldsContainer={deleteNegativeListWords}
-        />
-      </ControlledDialog> */}
     </div>
   );
 };
+
+

@@ -1,4 +1,4 @@
-import { ResponseUsersDTO } from '@/core';
+import { AuthError, ResponseUsersDTO } from '@/core';
 import { getTokenApi, sessionApi } from '@/lib/apis';
 import { fetchHelper } from '@/lib/fetch-helper';
 
@@ -61,12 +61,14 @@ export class SessionRepository implements ISessionRepository {
         credentials: 'include',
       });
 
+      console.log(tokenFromCookie);
+
       if (!tokenFromCookie) {
         throw new Error('Error fetching access token');
       }
       return tokenFromCookie.token.value;
-    } catch (error) {
-      throw new Error(`error: ${error}`);
+    } catch (_) {
+      throw AuthError.unauthorized;
     }
   }
 

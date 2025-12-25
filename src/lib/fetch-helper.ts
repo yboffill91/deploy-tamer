@@ -23,7 +23,6 @@ export async function fetchHelper<T>(
       const REPO = new SessionRepository();
       await REPO.deleteSessionCookie();
       window.location.href = '/sign_in';
-
       throw AuthError.unauthorized();
     }
     if (![200, 201].includes(response.status)) {
