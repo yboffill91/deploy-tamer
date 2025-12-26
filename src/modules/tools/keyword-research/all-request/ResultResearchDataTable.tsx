@@ -37,6 +37,7 @@ import {
   Columns2,
   Eye,
   Goal,
+  Info,
   ListCheck,
   ListFilter,
   ListMinus,
@@ -57,11 +58,11 @@ import { CreateKeywordResearchDTO } from '@/core/dto';
 import { useFormStore } from '../context/FormStore';
 import { ImperativePanelHandle } from 'react-resizable-panels';
 import { LoadingBase } from '@/components/LoadingBase';
-import { ControlledDialog } from '@/components/ControlledDialog';
 import { CustomWordsComponent } from '../components';
 import { useNegativeListStore } from '../context/WordsStoreFactory';
 import { formatNumberAbbreviated } from './helpers/formatNumberAbbreviated';
 import { KeywordMonthlyTrend } from './KaywordMonthlyTrend';
+import { KeywordInfoSheet } from './LateralInfo/KeywordSheet';
 
 interface Props {
   data: KeywordResultEntity[];
@@ -103,10 +104,11 @@ export const ResultResearchDataTable = ({ data }: Props) => {
   const deleteNegativeListWords = useNegativeListStore((st) => st.deleteWord);
 
   const resetNegativeList = useNegativeListStore((st) => st.resetWords);
-  const resetPositiveoNewKeyword = useKeywordStore(
-    (st) => st.resetPositiveToNewResearch
-  );
-  const resetDescardsWords = useKeywordStore((st) => st.setUnSelec);
+
+  const [selectedKeyword, setSelectedKeyword] =
+    useState<KeywordResultEntity | null>(null);
+
+  const [openSheet, setOpenSheet] = useState(false);
 
   const router = useRouter();
 
@@ -216,6 +218,11 @@ export const ResultResearchDataTable = ({ data }: Props) => {
     return true;
   });
 
+  const showSheet = (item: KeywordResultEntity) => {
+    setSelectedKeyword(item);
+    setOpenSheet(true);
+  };
+
   useEffect(() => {
     if (isError) {
       showToast({
@@ -314,6 +321,13 @@ export const ResultResearchDataTable = ({ data }: Props) => {
                 label: 'See Google screenshot',
                 onClick: async (item) => {
                   await onShow(item);
+                },
+              },
+              {
+                icon: Info,
+                label: 'See Keyword Info',
+                onClick: () => {
+                  showSheet(item);
                 },
               },
               {
@@ -711,6 +725,13 @@ export const ResultResearchDataTable = ({ data }: Props) => {
           </div>
         </TabsContent>
       </Tabs>
+      {selectedKeyword && (
+        <KeywordInfoSheet
+          keyword={selectedKeyword}
+          open={openSheet}
+          onOpenChange={setOpenSheet}
+        />
+      )}
     </div>
   );
 };
