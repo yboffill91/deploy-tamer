@@ -65,107 +65,127 @@ export function PricingRequirements() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className='space-y-6'>
+      <div className='flex items-center justify-between'>
         <div>
-          <h2 className="text-2xl font-semibold text-foreground">Pricing Requirements</h2>
-          <p className="text-sm text-muted-foreground">Define technical, legal, and business requirements per plan</p>
+          <h2 className='text-2xl font-semibold text-foreground'>
+            Pricing Requirements
+          </h2>
+          <p className='text-sm text-muted-foreground'>
+            Define technical, legal, and business requirements per plan
+          </p>
         </div>
         <Button
           onClick={() => {
-            setEditingRequirement(undefined)
-            setDialogOpen(true)
+            setEditingRequirement(undefined);
+            setDialogOpen(true);
           }}
         >
-          <Plus className="mr-2 h-4 w-4" />
-          New Requirement
+          <Plus className='mr-2 h-4 w-4' />
+          Create
         </Button>
       </div>
 
-          {requirements.length === 0 ? (
-            
-          <CustomEmpty description="No requirements yet. Create your first requirement to get started."  icon={ListCheck} title="No Requirements Yet"/>
-          ) : (
-      <Card>
-        <CardHeader>
-          <CardTitle>Requirements Table</CardTitle>
-          <CardDescription>Manage requirements associated with each plan</CardDescription>  
-        </CardHeader>
-        <CardContent>
-              
+      {requirements.length === 0 ? (
+        <CustomEmpty
+          description='No requirements yet. Create your first requirement to get started.'
+          icon={ListCheck}
+          title='No Requirements Yet'
+          onClick={() => {
+            setEditingRequirement(undefined);
+            setDialogOpen(true);
+          }}
+        />
+      ) : (
+        <Card>
+          <CardHeader>
+            <CardTitle>Requirements Table</CardTitle>
+            <CardDescription>
+              Manage requirements associated with each plan
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Requirement</TableHead>
                   <TableHead>Category</TableHead>
                   <TableHead>Description</TableHead>
-                  <TableHead className="text-center">Mandatory</TableHead>
+                  <TableHead className='text-center'>Mandatory</TableHead>
                   <TableHead>Used in Plans</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className='text-right'>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {requirements.map((requirement) => {
-                  const usedInPlans = getPlansUsingRequirement(requirement.id)
+                  const usedInPlans = getPlansUsingRequirement(requirement.id);
                   return (
                     <TableRow key={requirement.id}>
-                      <TableCell className="font-medium">{requirement.name}</TableCell>
+                      <TableCell className='font-medium'>
+                        {requirement.name}
+                      </TableCell>
                       <TableCell>
-                        <Badge className={getCategoryColor(requirement.category)}>
+                        <Badge
+                          className={getCategoryColor(requirement.category)}
+                        >
                           {getCategoryLabel(requirement.category)}
                         </Badge>
                       </TableCell>
-                      <TableCell className="max-w-75 text-sm text-muted-foreground">
+                      <TableCell className='max-w-75 text-sm text-muted-foreground'>
                         {requirement.description}
                       </TableCell>
-                      <TableCell className="text-center">
+                      <TableCell className='text-center'>
                         {requirement.required ? (
-                          <CheckCircle2 className="h-5 w-5 text-success mx-auto" />
+                          <CheckCircle2 className='h-5 w-5 text-success mx-auto' />
                         ) : (
-                          <XCircle className="h-5 w-5 text-muted-foreground mx-auto" />
+                          <XCircle className='h-5 w-5 text-muted-foreground mx-auto' />
                         )}
                       </TableCell>
                       <TableCell>
-                        <div className="flex flex-wrap gap-1">
+                        <div className='flex flex-wrap gap-1'>
                           {usedInPlans.length > 0 ? (
                             usedInPlans.map((plan) => (
-                              <Badge key={plan.id} variant="outline">
+                              <Badge key={plan.id} variant='outline'>
                                 {plan.name}
                               </Badge>
                             ))
                           ) : (
-                            <span className="text-xs text-muted-foreground italic">Not assigned</span>
+                            <span className='text-xs text-muted-foreground italic'>
+                              Not assigned
+                            </span>
                           )}
                         </div>
                       </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-1">
+                      <TableCell className='text-right'>
+                        <div className='flex justify-end gap-1'>
                           <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8"
+                            variant='ghost'
+                            size='icon'
+                            className='h-8 w-8'
                             onClick={() => handleEditRequirement(requirement)}
                           >
-                            <Edit className="h-4 w-4" />
+                            <Edit className='h-4 w-4' />
                           </Button>
                           <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-destructive"
-                            onClick={() => handleDeleteRequirement(requirement.id)}
+                            variant='ghost'
+                            size='icon'
+                            className='h-8 w-8 text-destructive'
+                            onClick={() =>
+                              handleDeleteRequirement(requirement.id)
+                            }
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className='h-4 w-4' />
                           </Button>
                         </div>
                       </TableCell>
                     </TableRow>
-                  )
+                  );
                 })}
               </TableBody>
             </Table>
-        </CardContent>
-      </Card>
-          )}
+          </CardContent>
+        </Card>
+      )}
 
       <RequirementDialog
         open={dialogOpen}
@@ -174,5 +194,5 @@ export function PricingRequirements() {
         onSave={handleSaveRequirement}
       />
     </div>
-  )
+  );
 }
