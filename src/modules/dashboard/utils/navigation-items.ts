@@ -1,4 +1,5 @@
 import {
+  Banknote,
   Briefcase,
   Building,
   ClipboardList,
@@ -16,7 +17,7 @@ import {
   Mail,
   MonitorCloud,
   SearchIcon,
-Send,
+  Send,
   ShieldCheck,
   Sliders,
   Tags,
@@ -221,7 +222,7 @@ export const AdminSidebarItems: NavGroup[] = [
       {
         title: 'Plans',
         url: '/admin/pricing',
-        icon: Inbox,
+        icon: Banknote,
       },
     ],
   },

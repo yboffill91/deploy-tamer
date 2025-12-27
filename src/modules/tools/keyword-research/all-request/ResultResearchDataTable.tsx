@@ -251,42 +251,46 @@ export const ResultResearchDataTable = ({ data }: Props) => {
       cell: ({ row }) => {
         const vol = row.original.search_volume ?? 0;
 
-        const formattedVolume = formatNumberAbbreviated(vol);
-
-        return <span className='font-semibold'>{formattedVolume}</span>;
-      },
-    },
-    {
-      accessorKey: 'high_top_of_page_bid',
-      header: 'HTB',
-      cell: ({ row }) => {
-        const value = row.original.high_top_of_page_bid;
-        return <span>{value}</span>;
-      },
-    },
-
-    {
-      accessorKey: 'competition',
-      header: 'Competition',
-      cell: ({ row }) => {
-        const comp = row.original.competition ?? 'Unknown';
+        const formattedVolume = vol;
 
         return (
-          <Badge
-            variant={
-              comp === 'HIGH'
-                ? 'destructive'
-                : comp === 'MEDIUM'
-                ? 'warning'
-                : 'success'
-            }
-            className='w-full'
-          >
-            {comp}
-          </Badge>
+          <span className='font-semibold w-full flec items-center'>
+            {formattedVolume}
+          </span>
         );
       },
     },
+    // {
+    //   accessorKey: 'high_top_of_page_bid',
+    //   header: 'HTB',
+    //   cell: ({ row }) => {
+    //     const value = row.original.high_top_of_page_bid;
+    //     return <span>{value}</span>;
+    //   },
+    // },
+
+    // {
+    //   accessorKey: 'competition',
+    //   header: 'Competition',
+    //   cell: ({ row }) => {
+    //     const comp = row.original.competition ?? 'Unknown';
+
+    //     return (
+    //       <Badge
+    //         variant={
+    //           comp === 'HIGH'
+    //             ? 'destructive'
+    //             : comp === 'MEDIUM'
+    //             ? 'warning'
+    //             : 'success'
+    //         }
+    //         className='w-full'
+    //       >
+    //         {comp}
+    //       </Badge>
+    //     );
+    //   },
+    // },
 
     {
       accessorKey: 'cpc',
@@ -294,7 +298,14 @@ export const ResultResearchDataTable = ({ data }: Props) => {
       cell: ({ row }) => {
         const cpc = row.original.cpc;
         if (cpc == null) return <span>—</span>;
-        return <Badge className='w-full' variant={cpc > 2 ? 'success' : cpc > 1 ? 'info' : 'destructive'}>{cpc.toFixed(2)}</Badge>;
+        return (
+          <Badge
+            className='w-full'
+            variant={cpc > 2 ? 'success' : cpc > 1 ? 'info' : 'destructive'}
+          >
+            {cpc.toFixed(2)}
+          </Badge>
+        );
       },
     },
 
