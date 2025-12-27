@@ -214,6 +214,17 @@ export const AdminSidebarItems: NavGroup[] = [
       },
     ],
   },
+  {
+    id: 6,
+    label: 'Pricing',
+    items: [
+      {
+        title: 'Plans',
+        url: '/admin/pricing',
+        icon: Inbox,
+      },
+    ],
+  },
 ];
 
 export const sidebarItems: NavGroup[] = [

@@ -26,11 +26,15 @@ export const buildMonthColumns = (): ColumnDef<KeywordResultEntity>[] => {
           <div
             style={{
               backgroundColor,
-              padding: '6px 8px',
               borderRadius: '4px',
               textAlign: 'right',
               fontWeight: 500,
               margin: '0',
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+              padding: '0 8px',
+              boxSizing: 'border-box',
             }}
           >
             {value}

@@ -13,7 +13,9 @@ export class AuthError extends Error {
   }
 
   static unauthorized() {
-    return new AuthError('Unauthorized access');
+    return new AuthError(
+      'Your token has expired, for security reasons your session will be closed.'
+    );
   }
   static userNotFound() {
     return new AuthError('User not found');

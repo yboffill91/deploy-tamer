@@ -271,16 +271,20 @@ export const ResultResearchDataTable = ({ data }: Props) => {
       cell: ({ row }) => {
         const comp = row.original.competition ?? 'Unknown';
 
-        const color =
-          comp === 'HIGH'
-            ? 'bg-red-500/10 text-red-500'
-            : comp === 'MEDIUM'
-            ? 'bg-orange-500/10 text-orange-500'
-            : comp === 'LOW'
-            ? 'bg-green-500/10 text-green-500'
-            : 'bg-gray-400/10 text-gray-500';
-
-        return <Badge className={color}>{comp}</Badge>;
+        return (
+          <Badge
+            variant={
+              comp === 'HIGH'
+                ? 'destructive'
+                : comp === 'MEDIUM'
+                ? 'warning'
+                : 'success'
+            }
+            className='w-full'
+          >
+            {comp}
+          </Badge>
+        );
       },
     },
 
@@ -290,7 +294,7 @@ export const ResultResearchDataTable = ({ data }: Props) => {
       cell: ({ row }) => {
         const cpc = row.original.cpc;
         if (cpc == null) return <span>—</span>;
-        return <span>{cpc.toFixed(2)}</span>;
+        return <Badge className='w-full' variant={cpc > 2 ? 'success' : cpc > 1 ? 'info' : 'destructive'}>{cpc.toFixed(2)}</Badge>;
       },
     },
 
