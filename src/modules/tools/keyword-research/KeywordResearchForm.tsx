@@ -10,12 +10,11 @@ import {
 import {
   Button,
   ButtonGroup,
-  ButtonGroupSeparator,
   Label,
   RadioGroup,
   RadioGroupItem,
 } from '@/components/ui';
-import { Focus, RefreshCw, SaveAll, Goal } from 'lucide-react';
+import { Focus, SaveAll, Goal } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { KeywordPositiveNegativeWords } from './components/KeywordPositiveNegativeWords';
 import { KeywordResearchCityComponent } from './components/KeywordResearchCityComponent';
@@ -107,7 +106,7 @@ export const KeywordResearchForm = () => {
     formState: { errors, isValid, isSubmitting },
   } = useForm<KeywordResearchFormInput>({
     resolver: zodResolver(KeywordResearchSchema),
-    mode: 'onSubmit',
+    mode: 'onBlur',
     defaultValues: initialValues,
   });
 
@@ -129,6 +128,16 @@ export const KeywordResearchForm = () => {
       });
       return;
     }
+
+    if (data.title.trim().length < 3) {
+      showToast({
+        type: 'error',
+        message: 'Error validating the form.',
+        description: 'Title must be at least 3 characters long',
+      });
+      return;
+    }
+
     const UpdatePayload: CreateKeywordResearchDTO = {
       ...data,
       region: regionValues
@@ -176,17 +185,16 @@ export const KeywordResearchForm = () => {
       }
       setMode('create');
       resetForm();
+      router.push('/tools/seo/keyword-research');
     } catch (error) {
       setIsError(
         error instanceof Error
           ? error.message
           : 'Unexpected Error Submiting The Form'
       );
-      router.push('/tools/seo/keyword-research');
     }
   };
 
-  console.log(errors);
   useEffect(() => {
     if (mode === 'edit' && keywordResearch) {
       if (Array.isArray(initialValues.positiveKeywords))

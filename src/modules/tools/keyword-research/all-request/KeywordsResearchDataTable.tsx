@@ -44,7 +44,6 @@ import {
   useRunKeywordResearch,
   useForceEndKeywordResearch,
 } from '@/modules/tools/keyword-research/hooks';
-import { useQuery } from '@tanstack/react-query';
 
 export const KeywordsResearchDataTable = () => {
   const {
@@ -72,6 +71,7 @@ export const KeywordsResearchDataTable = () => {
   const [gettingResults, setGettingResults] = useState(false);
 
   const handleShowConfirm = (el: KeywordResearchEntity) => {
+    console.log(el);
     setSelectedResearch(el);
     setShowDialog(!showDialog);
   };
@@ -338,6 +338,7 @@ export const KeywordsResearchDataTable = () => {
                 <ActionsButtonSet
                   item={item}
                   bussy={buttonsBussy === item.id}
+                  showRow
                   actions={[
                     {
                       icon: Play,
@@ -346,7 +347,9 @@ export const KeywordsResearchDataTable = () => {
                         onRun(String(item.id));
                       },
                       variant: 'ghost',
-                      show: (item) => item.status === KeywordStatus.DRAFT,
+                      show: (item) =>
+                        item.status === KeywordStatus.DRAFT ||
+                        item.status === KeywordStatus.POSSIBLE_FINISHED,
                     },
                     {
                       icon: Goal,
@@ -354,7 +357,8 @@ export const KeywordsResearchDataTable = () => {
                       onClick: () => onFinish(String(item.id)),
                       show: (item) =>
                         item.status === KeywordStatus.READY_TO_CHECK ||
-                        item.status === KeywordStatus.ORGANIC_FINISHED,
+                        item.status === KeywordStatus.ORGANIC_FINISHED ||
+                        item.status === KeywordStatus.POSSIBLE_FINISHED,
                     },
                     {
                       icon: Eye,
@@ -365,7 +369,8 @@ export const KeywordsResearchDataTable = () => {
                       show: (item) =>
                         item.status === KeywordStatus.READY_TO_CHECK ||
                         item.status === KeywordStatus.FINISHED ||
-                        item.status === KeywordStatus.ORGANIC_FINISHED,
+                        item.status === KeywordStatus.ORGANIC_FINISHED ||
+                        item.status === KeywordStatus.POSSIBLE_FINISHED,
                     },
                     {
                       icon: FileText,
@@ -519,7 +524,7 @@ export const KeywordsResearchDataTable = () => {
               title='No Keyword Research Created Yet'
               onClick={() => {
                 setFormMode('create');
-                router.push('/tools/seo/keyword-research');
+                router.push('/tools/seo/keyword-research-form');
               }}
             />
           </Card>

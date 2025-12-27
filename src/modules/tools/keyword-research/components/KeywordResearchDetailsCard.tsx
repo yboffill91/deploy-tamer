@@ -25,6 +25,7 @@ import { CustomTooltipContent } from '@/components/CustomTooltipContentArray';
 import { RegionsTrigger } from './RegionsTrigguer';
 import { GenerateWordsWithAiButton } from './GenerateWordsWithAiButton';
 import { useBrandStore } from '../context/WordsStoreFactory';
+import { useFormStore } from '../context/FormStore';
 
 interface Props {
   control: Control<KeywordResearchFormInput>;
@@ -38,6 +39,7 @@ export const KeywordResearchDetailsCard = ({ control, errors }: Props) => {
   const isLoadingRegions = useRegionStore((st) => st.isLoading);
   const Step = useRegionStore((st) => st.step);
   const isLoadingBrands = useBrandStore((st) => st.isLoading);
+  const mode = useFormStore((st) => st.mode);
 
   useEffect(() => {
     getCountries();
@@ -63,6 +65,7 @@ export const KeywordResearchDetailsCard = ({ control, errors }: Props) => {
               name='title'
               placeholder='Title for your Keyword Research'
               error={errors.title}
+              disabled={mode === 'edit'}
             />
           </div>
 

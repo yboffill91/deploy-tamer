@@ -1,7 +1,7 @@
 import z from 'zod';
 
 export const KeywordResearchSchema = z.object({
-  title: z.string().min(3, 'Title must be at least 3 characters wide'),
+  title: z.string(),
   searchVolume: z
     .string()
     .min(0, 'Search volume must be at positive')
