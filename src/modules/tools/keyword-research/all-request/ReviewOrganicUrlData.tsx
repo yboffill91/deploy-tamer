@@ -2,23 +2,31 @@
 import {
   Badge,
   Button,
+  ButtonGroup,
+  ButtonGroupSeparator,
   Card,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
   Separator,
 } from '@/components/ui';
 import {
   ChevronsUpDown,
   Circle,
+  Columns2,
   Dot,
   Layers,
   Link2,
   ListEndIcon,
+  PanelLeft,
+  PanelRight,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useRef, useState } from 'react';
 import { formatNumberAbbreviated } from './helpers/formatNumberAbbreviated';
 import { cn } from '@/lib/utils';
 import {
@@ -26,15 +34,18 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@radix-ui/react-collapsible';
+import { HierarchyTree } from './HeriarchyTree/HeriairchyTree';
+import { ImperativePanelHandle } from 'react-resizable-panels';
 
 interface MockData {
   url: string;
   globalVolume: number;
   globalKd: number;
-  childNodes: {
+  topics: {
+    id: string;
     path: string;
-    nodeVolume: number;
-    nodeKd: number;
+    volume: number;
+    kd: number;
     searchIntent: 'TRANSACTIONAL' | 'INFORMATIONAL';
     keywords: {
       keyword: string;
@@ -44,77 +55,81 @@ interface MockData {
   }[];
 }
 
-const mockData: MockData[] = [
-  {
-    url: 'example.com',
-    globalVolume: 395000,
-    globalKd: 44.5,
-    childNodes: [
-      {
-        path: '/blog/seo-basico',
-        nodeVolume: 245000,
-        nodeKd: 45,
-        searchIntent: 'INFORMATIONAL',
-        keywords: [
-          { keyword: 'seo', volume: 120000, kd: 55 },
-          { keyword: 'seo basico', volume: 80000, kd: 42 },
-          { keyword: 'posicionamiento web', volume: 45000, kd: 38 },
-        ],
-      },
-      {
-        path: '/blog/marketing-digital',
-        nodeVolume: 150000,
-        nodeKd: 44,
-        searchIntent: 'TRANSACTIONAL',
-        keywords: [
-          { keyword: 'marketing digital', volume: 90000, kd: 48 },
-          { keyword: 'estrategia digital', volume: 60000, kd: 40 },
-        ],
-      },
-    ],
-  },
-  {
-    url: 'mysite.com',
-    globalVolume: 600000,
-    globalKd: 44.75,
-    childNodes: [
-      {
-        path: '/guias/seo-on-page',
-        nodeVolume: 200000,
-        nodeKd: 60,
-        searchIntent: 'INFORMATIONAL',
-        keywords: [{ keyword: 'seo on page', volume: 200000, kd: 60 }],
-      },
-      {
-        path: '/servicios/consultoria-seo',
-        nodeVolume: 190000,
-        nodeKd: 41,
-        searchIntent: 'TRANSACTIONAL',
-        keywords: [
-          { keyword: 'consultoria seo', volume: 85000, kd: 45 },
-          { keyword: 'servicio seo', volume: 65000, kd: 41 },
-          { keyword: 'agencia seo', volume: 40000, kd: 37 },
-        ],
-      },
-    ],
-  },
-];
+const mockData: MockData = {
+  url: 'example.com',
+  globalVolume: 395000,
+  globalKd: 44.5,
+  topics: [
+    {
+      id: '1',
+      path: '/blog/seo-basico',
+      volume: 245000,
+      kd: 45,
+      searchIntent: 'INFORMATIONAL',
+      keywords: [
+        { keyword: 'seo', volume: 120000, kd: 55 },
+        { keyword: 'seo basico', volume: 80000, kd: 42 },
+        { keyword: 'posicionamiento web', volume: 45000, kd: 38 },
+      ],
+    },
+    {
+      id: '2',
+      path: '/blog/marketing-digital',
+      volume: 150000,
+      kd: 44,
+      searchIntent: 'TRANSACTIONAL',
+      keywords: [
+        { keyword: 'marketing digital', volume: 90000, kd: 48 },
+        { keyword: 'estrategia digital', volume: 60000, kd: 40 },
+      ],
+    },
+  ],
+};
 
 export const ReviewOrganicUrlData = () => {
-  const [geneKeywords, setGeneKeywords] = useState('');
-
-  useEffect(() => {
-    const fillKw = () => {
-      const rndNumb = (Math.random() * 100).toFixed(0);
-      setGeneKeywords(rndNumb);
-    };
-    fillKw();
-  }, []);
-
+  const leftPanelRef = useRef<ImperativePanelHandle>(null);
+  const rightPanelRef = useRef<ImperativePanelHandle>(null);
   return (
     <div className='min-h-screen bg-muted/30 p-6'>
-      <div className='grid  lg:grid-cols-5 gap-6  mx-auto'>
-        <div className='col-span-3'>
+      <div className='w-full flex justify-center bg-muted/20 rounded my-2 '>
+        <ButtonGroup>
+          <Button
+            variant={'outline'}
+            size='icon'
+            onClick={() => {
+              leftPanelRef.current.resize(25);
+              rightPanelRef.current.resize(100);
+            }}
+          >
+            <PanelLeft />
+          </Button>
+          <ButtonGroupSeparator />
+          <Button
+            variant='outline'
+            size='icon'
+            onClick={() => {
+              leftPanelRef.current.resize(50);
+              rightPanelRef.current.resize(50);
+            }}
+          >
+            <Columns2 />
+          </Button>
+          <ButtonGroupSeparator />
+
+          <Button
+            variant='outline'
+            size='icon'
+            onClick={() => {
+              leftPanelRef.current.resize(100);
+              rightPanelRef.current.collapse();
+            }}
+          >
+            <PanelRight />
+          </Button>
+        </ButtonGroup>
+      </div>
+      <ResizablePanelGroup direction='horizontal' className='border rounded-lg'>
+        <ResizablePanel defaultSize={60} className='p-2' ref={leftPanelRef}>
           <Card>
             <CardHeader>
               <div className='flex items-center justify-start'>
@@ -124,41 +139,36 @@ export const ReviewOrganicUrlData = () => {
                 <div className='flex flex-col items-baseline p-2 gap-1'>
                   <CardTitle>URL Structure</CardTitle>
                   <CardDescription className='flex'>
-                    {mockData.length} Cluster <Dot /> {geneKeywords} keywords{' '}
+                    Cluster <Dot /> xxx keywords{' '}
                   </CardDescription>
                 </div>
               </div>
             </CardHeader>
             <Separator />
             <CardContent className='flex-col gap-4 flex'>
-              {mockData.map((data, idx) => (
-                <Card key={data.url + idx} className='p-0'>
-                  <CardHeader className='rounded-t-lg py-3 bg-success/10 border-b-2'>
-                    <div className='flex items-center justify-between gap-2'>
-                      <CardTitle className='flex gap-2 items-center'>
-                        <Link2 className='text-muted-foreground size-4' />
-                        {data.url}
-                      </CardTitle>
-                      <div className='flex items-center gap-2'>
-                        <LabelBadge
-                          label='VOL'
-                          value={data.globalVolume}
-                          formated
-                        />
-                        <LabelBadge label='KD%' value={data.globalKd} />
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className='px-1'>
-                    {data.childNodes.map((child, childIdx) => (
-                      <ChildNodeCard
-                        key={child.path + childIdx}
-                        child={child}
+              <Card className='p-0'>
+                <CardHeader className='rounded-t-lg py-3 bg-muted/20 text-muted-foreground border-b-2'>
+                  <div className='flex items-center justify-between gap-2'>
+                    <CardTitle className='flex gap-2 items-center'>
+                      <Link2 className='text-muted-foreground size-4' />
+                      {mockData.url}
+                    </CardTitle>
+                    <div className='flex items-center gap-2'>
+                      <LabelBadge
+                        label='VOL'
+                        value={mockData.globalVolume}
+                        formated
                       />
-                    ))}
-                  </CardContent>
-                </Card>
-              ))}
+                      <LabelBadge label='KD%' value={mockData.globalKd} />
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className='px-1'>
+                  {mockData.topics.map((child, childIdx) => (
+                    <ChildNodeCard key={child.path + childIdx} child={child} />
+                  ))}
+                </CardContent>
+              </Card>
             </CardContent>
             <Separator />
             <CardFooter>
@@ -173,9 +183,10 @@ export const ReviewOrganicUrlData = () => {
               </div>
             </CardFooter>
           </Card>
-        </div>
+        </ResizablePanel>
+        <ResizableHandle />
 
-        <div className='col-span-2'>
+        <ResizablePanel defaultSize={40} className='p-2' ref={rightPanelRef}>
           <Card className='sticky top-6'>
             <CardHeader>
               <div className='flex items-center justify-start'>
@@ -192,11 +203,11 @@ export const ReviewOrganicUrlData = () => {
             </CardHeader>
             <Separator />
             <CardContent className='p-6'>
-              <TreeVisualization data={mockData} />
+              <HierarchyTree data={mockData} />
             </CardContent>
           </Card>
-        </div>
-      </div>
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </div>
   );
 };
@@ -204,8 +215,8 @@ export const ReviewOrganicUrlData = () => {
 interface ChildNodeCardProps {
   child: {
     path: string;
-    nodeVolume: number;
-    nodeKd: number;
+    volume: number;
+    kd: number;
     searchIntent: 'TRANSACTIONAL' | 'INFORMATIONAL';
     keywords: {
       keyword: string;
@@ -227,14 +238,10 @@ const ChildNodeCard = ({ child }: ChildNodeCardProps) => {
               {child.path}
             </CardTitle>
             <div className='flex gap-2 items-center'>
-              <LabelBadge label='VOL' formated value={child.nodeVolume} />
-              <LabelBadge label='KD%' value={child.nodeKd} />
-              <Badge
-                variant={
-                  child.searchIntent === 'INFORMATIONAL' ? 'info' : 'warning'
-                }
-              >
-                {child.searchIntent}
+              <LabelBadge label='VOL' formated value={child.volume} />
+              <LabelBadge label='KD%' value={child.kd} />
+              <Badge className='capitalize' variant={'info'}>
+                {child.searchIntent.toLowerCase().slice(0, 2)}
               </Badge>
             </div>
           </div>
@@ -339,98 +346,14 @@ interface PropsLabelBadge {
 
 const LabelBadge = ({ label, value, formated = false }: PropsLabelBadge) => {
   return (
-    <div className='flex items-center gap-1'>
-      <span className='text-xs text-foreground/30'>{label} </span>
+    <Badge
+      variant='outline'
+      className='flex items-center gap-1 text-xs border-none bg-transparent'
+    >
+      <span className=' text-foreground/30'>{label} </span>
       {formated ? formatNumberAbbreviated(value) : value}
-    </div>
+    </Badge>
   );
 };
 
-interface TreeVisualizationProps {
-  data: MockData[];
-}
 
-const TreeVisualization = ({ data }: TreeVisualizationProps) => {
-  return (
-    <div className='space-y-6'>
-      {data.map((urlData, urlIdx) => (
-        <div key={urlData.url + urlIdx} className='space-y-3'>
-          {/* Root URL Node */}
-          <div className='flex items-start gap-3'>
-            <div className='flex flex-col items-center'>
-              <div className='w-3 h-3 rounded-full bg-success' />
-              <div className='w-0.5 h-full bg-border min-h-10' />
-            </div>
-            <div className='flex-1 pt-0.5'>
-              <div className='font-semibold text-sm'>{urlData.url}</div>
-              <div className='text-xs text-muted-foreground flex gap-2 mt-1'>
-                <span>
-                  VOL: {formatNumberAbbreviated(urlData.globalVolume)}
-                </span>
-                <span>KD: {urlData.globalKd}%</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Child Nodes (Paths) */}
-          {urlData.childNodes.map((child, childIdx) => (
-            <div key={child.path + childIdx} className='ml-6 space-y-2'>
-              <div className='flex items-start gap-3'>
-                <div className='flex flex-col items-center'>
-                  <div
-                    className={cn(
-                      'w-2.5 h-2.5 rounded-full',
-                      child.searchIntent === 'INFORMATIONAL'
-                        ? 'bg-blue-500'
-                        : 'bg-amber-500'
-                    )}
-                  />
-                  <div className='w-0.5 h-full bg-border/50 min-h-7.5' />
-                </div>
-                <div className='flex-1 pt-0.5'>
-                  <div className='font-medium text-xs text-muted-foreground'>
-                    {child.path}
-                  </div>
-                  <div className='text-xs text-muted-foreground/70 flex gap-2 mt-0.5'>
-                    <span>
-                      VOL: {formatNumberAbbreviated(child.nodeVolume)}
-                    </span>
-                    <span>KD: {child.nodeKd}%</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Keywords */}
-              {child.keywords.map((kw, kwIdx) => (
-                <div
-                  key={kw.keyword + kwIdx}
-                  className='ml-6 flex items-center gap-3'
-                >
-                  <div
-                    className={cn(
-                      'w-1.5 h-1.5 rounded-full',
-                      kwIdx === 0 ? 'bg-success' : 'bg-muted-foreground/40'
-                    )}
-                  />
-                  <div className='flex-1'>
-                    <div
-                      className={cn(
-                        'text-xs',
-                        kwIdx === 0
-                          ? 'font-medium text-foreground'
-                          : 'text-muted-foreground'
-                      )}
-                    >
-                      {kwIdx === 0 && '★ '}
-                      {kw.keyword}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
-      ))}
-    </div>
-  );
-};

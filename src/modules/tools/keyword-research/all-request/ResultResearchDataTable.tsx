@@ -33,6 +33,7 @@ import Image from 'next/image';
 import { ActionsButtonSet } from '@/components/data-table/ActionsButtons';
 import {
   ArrowLeftCircle,
+  Circle,
   CircleMinusIcon,
   Columns2,
   Eye,
@@ -60,9 +61,10 @@ import { ImperativePanelHandle } from 'react-resizable-panels';
 import { LoadingBase } from '@/components/LoadingBase';
 import { CustomWordsComponent } from '../components';
 import { useNegativeListStore } from '../context/WordsStoreFactory';
-import { formatNumberAbbreviated } from './helpers/formatNumberAbbreviated';
 import { KeywordMonthlyTrend } from './KaywordMonthlyTrend';
 import { KeywordInfoSheet } from './LateralInfo/KeywordSheet';
+import { cn } from '@/lib/utils';
+import { TableHeadLabel } from './TableHeadLabel';
 
 interface Props {
   data: KeywordResultEntity[];
@@ -239,90 +241,101 @@ export const ResultResearchDataTable = ({ data }: Props) => {
   const columns: ColumnDef<KeywordResultEntity>[] = [
     {
       accessorKey: 'keyword',
-      header: 'Keyword',
+      header: () => <TableHeadLabel label='Keyword' />,
       cell: ({ row }) => {
         const value = row.original.keyword ?? 'N/A';
-        return <span className='font-medium'>{value}</span>;
+        return <span className='text-sm'>{value}</span>;
       },
     },
     {
-      accessorKey: 'search_volume',
-      header: 'Search Volume',
+      accessorKey: 'search volume',
+      header: () => <TableHeadLabel label='Search Volume' isCentered />,
       cell: ({ row }) => {
         const vol = row.original.search_volume ?? 0;
 
-        const formattedVolume = vol;
-
         return (
-          <span className='font-semibold w-full flec items-center'>
-            {formattedVolume}
-          </span>
+          <div className='flex items-center justify-center font-semibold w-full '>
+            {vol}
+          </div>
         );
       },
     },
-    // {
-    //   accessorKey: 'high_top_of_page_bid',
-    //   header: 'HTB',
-    //   cell: ({ row }) => {
-    //     const value = row.original.high_top_of_page_bid;
-    //     return <span>{value}</span>;
-    //   },
-    // },
+    {
+      accessorKey: 'trend',
+      header: () => <TableHeadLabel label='Trend' isCentered />,
+      cell: ({ row }) => {
+        const data = row.original.monthly_searches;
+        return (
+          <div className='flex items-center justify-center w-full'>
+            <KeywordMonthlyTrend data={data} />
+          </div>
+        );
+      },
+    },
 
-    // {
-    //   accessorKey: 'competition',
-    //   header: 'Competition',
-    //   cell: ({ row }) => {
-    //     const comp = row.original.competition ?? 'Unknown';
-
-    //     return (
-    //       <Badge
-    //         variant={
-    //           comp === 'HIGH'
-    //             ? 'destructive'
-    //             : comp === 'MEDIUM'
-    //             ? 'warning'
-    //             : 'success'
-    //         }
-    //         className='w-full'
-    //       >
-    //         {comp}
-    //       </Badge>
-    //     );
-    //   },
-    // },
+    {
+      accessorKey: 'keyword difficulty',
+      header: () => <TableHeadLabel label='KD %' isCentered />,
+      cell: ({ row }) => {
+        const difficulty = row.original.competition_index;
+        if (difficulty == null) return <span>—</span>;
+        return (
+          <div
+            className={cn(
+              'flex items-center justify-center font-semibold w-full gap-1 '
+            )}
+          >
+            {difficulty}{' '}
+            <Circle
+              className={cn(
+                'size-3',
+                difficulty <= 14 && 'text-success fill-success/50',
+                difficulty > 14 &&
+                  difficulty < 30 &&
+                  'text-yellow-500 fill-yellow-500/50',
+                difficulty >= 30 &&
+                  difficulty < 50 &&
+                  'text-warning fill-warning/50',
+                difficulty >= 50 &&
+                  difficulty < 70 &&
+                  'text-orange-500 fill-orange-500/50',
+                difficulty >= 70 &&
+                  difficulty < 85 &&
+                  'text-destructive fill-destructive/50',
+                difficulty >= 85 && 'text-red-700 fill-red-500/50'
+              )}
+            />
+          </div>
+        );
+      },
+    },
 
     {
       accessorKey: 'cpc',
-      header: 'CPC (USD)',
+      header: () => <TableHeadLabel label='CPC (USD)' isCentered />,
       cell: ({ row }) => {
         const cpc = row.original.cpc;
         if (cpc == null) return <span>—</span>;
         return (
-          <Badge
-            className='w-full'
-            variant={cpc > 2 ? 'success' : cpc > 1 ? 'info' : 'destructive'}
+          <div
+            className={cn(
+              'w-full flex items-center justify-center font-semibold',
+              cpc > 2
+                ? 'text-success'
+                : cpc > 1
+                ? 'text-info'
+                : 'text-destructive'
+            )}
           >
-            {cpc.toFixed(2)}
-          </Badge>
+            {cpc}
+          </div>
         );
-      },
-    },
-
-    {
-      accessorKey: 'monthly_searches',
-      header: 'Trend',
-      cell: ({ row }) => {
-        const data = row.original.monthly_searches;
-        return <KeywordMonthlyTrend data={data} />;
       },
     },
 
     {
       id: 'actions',
-      header: () => (
-        <div className='flex items-center w-full justify-center'>Actions</div>
-      ),
+      header: () => <TableHeadLabel label='Actions' isCentered />,
 
       cell: ({ row }) => {
         const item = row.original;
@@ -383,7 +396,6 @@ export const ResultResearchDataTable = ({ data }: Props) => {
     },
   ];
 
-  console.log(selectedResearch);
   const columnsUnSelected: ColumnDef<KeywordResultEntity>[] = [
     {
       accessorKey: 'keyword',
@@ -469,7 +481,7 @@ export const ResultResearchDataTable = ({ data }: Props) => {
   return (
     <div className='relative'>
       <Tabs defaultValue='results'>
-        <TabsList className='w-full container mx-auto max-w-7xl flex shrink-0 items-center justify-start lg:justify-center   p-0 mb-8 rounded-none overflow-x-auto snap-none md:snap-x md:snap-mandatory snap-always bg-transparent'>
+        <TabsList className=''>
           <CustomTabTrigger
             tab_value='results'
             icon={ListCheck}
@@ -597,7 +609,7 @@ export const ResultResearchDataTable = ({ data }: Props) => {
             >
               <ResizablePanel
                 ref={leftPanelRef}
-                defaultSize={50}
+                defaultSize={75}
                 className='p-2'
               >
                 <DataTable
@@ -612,45 +624,28 @@ export const ResultResearchDataTable = ({ data }: Props) => {
 
               <ResizablePanel
                 ref={rightPanelRef}
-                defaultSize={50}
-                className='p-2'
+                defaultSize={25}
+                className='p-2 bg-accent/10'
               >
-                <Card>
-                  <CardHeader>
-                    <CardTitle>
-                      <div className='flex items-center gap-2'>
-                        {' '}
+                <div>
+                  {isLoading ? (
+                    <div>
+                      <CustomLoading message='Getting Google Snapshot' />
+                    </div>
+                  ) : (
+                    <>
+                      {image && (
                         <Image
-                          src={'/logos/google.svg'}
-                          alt='Google'
-                          className='size-6'
-                          width={128}
-                          height={128}
-                        />{' '}
-                        <h2 className='texl-xl'>Google Snap</h2>
-                      </div>
-                    </CardTitle>
-                    <CardContent className=' w-full min-h-64'>
-                      {isLoading ? (
-                        <div>
-                          <CustomLoading message='Getting Google Snapshot' />
-                        </div>
-                      ) : (
-                        <>
-                          {image && (
-                            <Image
-                              src={`data:image/jpeg; base64, ${image}`}
-                              width={4800}
-                              height={8600}
-                              alt='Google Snapshot'
-                              className='w-full rounded-lg'
-                            ></Image>
-                          )}
-                        </>
+                          src={`data:image/jpeg; base64, ${image}`}
+                          width={4800}
+                          height={8600}
+                          alt='Google Snapshot'
+                          className='w-full rounded-lg'
+                        ></Image>
                       )}
-                    </CardContent>
-                  </CardHeader>
-                </Card>
+                    </>
+                  )}
+                </div>
               </ResizablePanel>
             </ResizablePanelGroup>
           </div>
@@ -750,5 +745,4 @@ export const ResultResearchDataTable = ({ data }: Props) => {
     </div>
   );
 };
-
 

@@ -4,6 +4,8 @@ import { formatNumberAbbreviated } from './helpers/formatNumberAbbreviated';
 import { DataTable } from '@/components/data-table/DataTable';
 import { buildMonthColumns } from './BuildMonthColumns';
 import { Badge } from '@/components/ui';
+import { TableHeadLabel } from './TableHeadLabel';
+import { cn } from '@/lib/utils';
 
 export const ReviewResultsDataDataTable = ({
   data,
@@ -21,11 +23,11 @@ export const ReviewResultsDataDataTable = ({
       enableSorting: false,
     },
     {
-      accessorKey: 'search_volume',
-      header: 'Volume',
+      accessorKey: 'Search Volume',
+      header: () => <TableHeadLabel label='Volume' isCentered />,
       cell: ({ row }) => {
-        const value = row.getValue<number>('search_volume');
-        return <span>{formatNumberAbbreviated(value)}</span>;
+        const value = row.original.search_volume;
+        return <span className='w-full text-center'>{value}</span>;
       },
     },
     ...buildMonthColumns(),
@@ -34,7 +36,18 @@ export const ReviewResultsDataDataTable = ({
       header: 'Competition',
       cell: ({ row }) => {
         const comp = row.original.competition ?? 'Unknown';
-        return <Badge variant={comp === 'HIGH' ? 'destructive' : comp === 'MEDIUM' ? 'warning' : 'success'} className='w-full'>{comp}</Badge>;
+        return (
+          <Badge
+            variant='outline'
+            className={cn(
+              'w-full capitalize border-none bg-transparent ',
+              comp === 'HIGH' && 'text-destructive',
+              comp === 'MEDIUM' ? 'text-warning' : 'text-success'
+            )}
+          >
+            {comp.toLowerCase()}
+          </Badge>
+        );
       },
     },
     {
@@ -45,7 +58,15 @@ export const ReviewResultsDataDataTable = ({
         if (cpc == null) return <span>—</span>;
         return (
           <Badge
-            variant={cpc > 2 ? 'success' : cpc > 1 ? 'info' : 'destructive'} className='w-full'
+            variant={'outline'}
+            className={cn(
+              'w-full border-none bg-transparent',
+              cpc > 2
+                ? 'text-success'
+                : cpc > 1
+                ? 'text-warning'
+                : 'text-destructive'
+            )}
           >
             {cpc.toFixed(2)}
           </Badge>
@@ -54,7 +75,11 @@ export const ReviewResultsDataDataTable = ({
     },
   ];
 
-  return <><DataTable data={data} columns={ResultsColumns} /></>;
+  return (
+    <>
+      <DataTable data={data} columns={ResultsColumns} />
+    </>
+  );
 };
 
 

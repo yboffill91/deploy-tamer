@@ -22,6 +22,7 @@
     "@react-email/components": "^0.5.7",
     "@tanstack/react-query": "^5.90.12",
     "@tanstack/react-table": "^8.21.3",
+    "@visx/visx": "^3.12.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",

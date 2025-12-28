@@ -31,7 +31,7 @@ export function KeywordMonthlyTrend({ data }: Props) {
   const chartData = data.toReversed();
 
   return (
-    <div style={{ width: 80, height: 40 }}>
+    <div style={{ width: 120, height: 40 }}>
       <ResponsiveContainer width='100%' height='100%'>
         <AreaChart data={chartData}>
           <Tooltip
@@ -39,7 +39,7 @@ export function KeywordMonthlyTrend({ data }: Props) {
             contentStyle={{
               fontSize: '12px',
               padding: '4px 8px',
-              background: '#1a1a1a100',
+              background: '#2563eb50',
               border: 'none',
             }}
             labelFormatter={(_, payload) => {

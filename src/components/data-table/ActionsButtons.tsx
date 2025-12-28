@@ -47,7 +47,9 @@ export function ActionsButtonSet<T>({
       {showRow ? (
         <>
           {bussy ? (
-            <Loader className='animate-spin size-4' />
+            <div className='w-full flex items-center justify-center'>
+              <Loader className='animate-spin size-4' />
+            </div>
           ) : (
             actions
               .filter((a) => (a.show ? a.show(item) : true))

@@ -1,14 +1,14 @@
 export const colors = [
-  '#F8666995',
-  '#F97B6895',
-  '#F98F6895',
-  '#F9A36895',
-  '#FAB76895',
-  '#FACC6895',
-  '#D7D16F95',
-  '#A6D67695',
-  '#86D97A95',
-  '#74DB7A95',
-  '#69DC7A95',
-  '#62BD7A95',
+  '#E65D6095', // Rojo intenso (Bajo rendimiento)
+  '#EB715B95',
+  '#EF855695',
+  '#F3995195',
+  '#F7AD4C95', // Naranja/Dorado
+  '#FBC14795', // Amarillo cálido
+  '#BFC44F95', // Transición Oliva
+  '#84C75895',
+  '#48C96195',
+  '#35BA6595',
+  '#22AC6895',
+  '#0F9B6B95', // Tu nuevo Verde Meta (Alto rendimiento)
 ];

@@ -1,7 +1,7 @@
 'use client';
 
 import {
-  ColumnDef,
+  type ColumnDef,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -10,7 +10,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 
-import { DndContext, closestCenter, DragEndEvent } from '@dnd-kit/core';
+import { DndContext, closestCenter, type DragEndEvent } from '@dnd-kit/core';
 
 import {
   SortableContext,
@@ -64,9 +64,11 @@ import {
   Search,
   SlidersHorizontal,
   GripVertical,
+  Ban,
 } from 'lucide-react';
 
 import { useEffect, useMemo, useState } from 'react';
+import { CustomEmpty } from '../CustomEmpty';
 
 /* ---------------------------------------------------
    Sortable column item
@@ -140,7 +142,6 @@ export function DataTable<TData, TValue>({
   onAdd,
   enableSelection = false,
   pageSize = 20,
-  persistKey,
 }: DataTableProps<TData, TValue>) {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
@@ -156,8 +157,7 @@ export function DataTable<TData, TValue>({
   const [pageSizeValue, setPageSizeValue] = useState<string>(String(pageSize));
 
   /* ---------- selection column ---------- */
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const selectionColumn: ColumnDef<TData> = {
+  const selectionColumn = {
     id: 'select',
     header: ({ table }) => (
       <Checkbox
@@ -177,7 +177,7 @@ export function DataTable<TData, TValue>({
 
   const finalColumns = useMemo(() => {
     return enableSelection ? [selectionColumn, ...columns] : columns;
-  }, [enableSelection, selectionColumn, columns]);
+  }, [enableSelection, columns]);
 
   const table = useReactTable({
     data,
@@ -206,7 +206,6 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
   });
 
-  /* ---------- INIT column order from TABLE ---------- */
   useEffect(() => {
     if (columnOrder.length > 0) return;
 
@@ -214,32 +213,6 @@ export function DataTable<TData, TValue>({
     setColumnOrder(ids);
   }, [table, columnOrder.length]);
 
-  /* ---------- hydrate persisted order ---------- */
-  useEffect(() => {
-    if (!persistKey) return;
-
-    const stored = localStorage.getItem(persistKey);
-    if (!stored) return;
-
-    const storedIds: string[] = JSON.parse(stored);
-    const currentIds = table.getAllLeafColumns().map((c) => c.id);
-
-    const next = storedIds.filter((id) => currentIds.includes(id));
-
-    currentIds.forEach((id) => {
-      if (!next.includes(id)) next.push(id);
-    });
-
-    setColumnOrder(next);
-  }, [table, persistKey]);
-
-  /* ---------- persist order ---------- */
-  useEffect(() => {
-    if (!persistKey || columnOrder.length === 0) return;
-    localStorage.setItem(persistKey, JSON.stringify(columnOrder));
-  }, [columnOrder, persistKey]);
-
-  /* ---------- DND ---------- */
   const draggableIds = table
     .getAllLeafColumns()
     .filter((c) => c.getCanHide())
@@ -269,8 +242,8 @@ export function DataTable<TData, TValue>({
   }, [totalRows, pageSizeValue, table]);
 
   return (
-    <Card className='rounded-xl border bg-card'>
-      <CardHeader className='p-3 border-b bg-muted/20'>
+    <Card className='rounded-xl border-0 shadow-sm bg-card p-0 gap-0 '>
+      <CardHeader className='p-4 border-b-0 bg-accent/10 rounded-t-xl'>
         <div className='flex justify-between gap-3'>
           <InputGroup>
             <InputGroupInput
@@ -302,7 +275,7 @@ export function DataTable<TData, TValue>({
                 }
               }}
             >
-              <SelectTrigger className='w-[90px] h-9'>
+              <SelectTrigger className='w-22.5 h-9'>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -357,16 +330,19 @@ export function DataTable<TData, TValue>({
         </div>
       </CardHeader>
 
-      <CardContent>
+      <CardContent className='p-0'>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((hg) => (
-              <TableRow key={hg.id}>
+              <TableRow
+                key={hg.id}
+                className='border-b-0 hover:bg-transparent p-0'
+              >
                 {hg.headers.map((h) => (
                   <TableHead
                     key={h.id}
                     onClick={h.column.getToggleSortingHandler()}
-                    className='cursor-pointer'
+                    className='cursor-pointer py-4 font-semibold text-muted-foreground bg-accent/10'
                   >
                     <div className='flex items-center gap-1'>
                       {flexRender(h.column.columnDef.header, h.getContext())}
@@ -384,20 +360,41 @@ export function DataTable<TData, TValue>({
           </TableHeader>
 
           <TableBody>
-            {table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
+            {table.getRowModel().rows.length === 0 ? (
+              <TableRow className='hover:bg-transparent border-b-0 '>
+                <TableCell
+                  colSpan={finalColumns.length}
+                  className='h-40 text-center'
+                >
+                  <CustomEmpty
+                    icon={Ban}
+                    title='No results found'
+                    description='Try adjusting your search or filters'
+                  />
+                </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  className='border-b-0 hover:bg-muted/30 transition-colors px-2'
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id} className='px-2'>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </CardContent>
 
-      <CardFooter className='flex justify-between border-t bg-muted/20'>
+      <CardFooter className='flex justify-between border-t-0 bg-muted/10 rounded-b-xl p-4'>
         <Badge variant='secondary'>
           Page {table.getState().pagination.pageIndex + 1} of{' '}
           {table.getPageCount()}
